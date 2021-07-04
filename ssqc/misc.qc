@@ -461,7 +461,7 @@ void() bubble_remove =
 	remove(self);
 };
 
-void () bubble_bob = {
+void() bubble_bob = {
 	float rnd1, rnd2, rnd3;
 
 	self.cnt = self.cnt + 1;

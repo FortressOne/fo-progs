@@ -108,7 +108,7 @@ When a button is touched, it moves some distance in the direction of it's angle,
 2) metallic click
 3) in-out
 */
-void () func_button = {
+void() func_button = {
 	if (self.sounds == 0)
 	{
 		precache_sound ("buttons/airbut1.wav");

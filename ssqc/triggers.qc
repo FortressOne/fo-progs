@@ -244,7 +244,7 @@ void() trigger_secret =
 //=============================================================================
 
 
-void () counter_use = {
+void() counter_use = {
 	self.count = self.count - 1;
 	if (self.count < 0)
 		return;

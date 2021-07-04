@@ -1224,7 +1224,7 @@ END OF LEVEL RUNES
 ===============================================================================
 */
 
-void () sigil_touch = {
+void() sigil_touch = {
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)

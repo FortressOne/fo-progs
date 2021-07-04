@@ -38,7 +38,7 @@ void() SUB_Remove = {remove(self);};
 QuakeEd only writes a single float for angles (bad idea), so up and down are
 just constant angles.
 */
-void () SetMovedir = {
+void() SetMovedir = {
 	if (self.angles == '0 -1 0')
 		self.movedir = '0 0 1';
 	else if (self.angles == '0 -2 0')

@@ -26,7 +26,7 @@
 */
 
 void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
-void () player_run;
+void() player_run;
 void(entity bomb, entity attacker, float rad, entity ignore, string dtype) T_RadiusDamage;
 void(vector org, float damage) SpawnBlood;
 void() SuperDamageSound;
@@ -830,7 +830,7 @@ void() spike_touch = {
 
 };
 
-void () superspike_touch = {
+void() superspike_touch = {
 	if (other == self.owner)
 		return;
 
