@@ -24,9 +24,6 @@
 		Boston, MA  02111-1307, USA
 
 */
-
-void() bubble_bob;
-
 /*
 ==============================================================================
 
@@ -112,8 +109,6 @@ PLAYER
 ==============================================================================
 */
 
-void() player_run;
-
 void()  player_stand1 =[        $axstnd1,       player_stand1   ]
 {
 	self.weaponframe=0;
@@ -164,7 +159,7 @@ void()  player_run =[   $rockrun1,      player_run      ]
 	self.walkframe = self.walkframe + 1;
 };
 
-void()muzzleflash =
+void() muzzleflash =
 {
 	WriteByte (MSG_MULTICAST, SVC_MUZZLEFLASH);
 	WriteEntity (MSG_MULTICAST, self);
@@ -427,6 +422,125 @@ local entity    bubble_spawner;
 	return;
 };
 
+class player_c : entity 
+{
+
+	nonvirtual void() Respawn =
+	{
+		entity spot;
+
+		self.classname = "player";
+		self.health = 100;
+		self.takedamage = DAMAGE_AIM;
+		self.solid = SOLID_SLIDEBOX;
+		self.movetype = MOVETYPE_WALK;
+		self.show_hostile = 0;
+		self.max_health = 100;
+		self.flags = FL_CLIENT;
+		self.air_finished = time + 12;
+		self.dmg = 2;                   // initial water damage
+		self.super_damage_finished = 0;
+		self.radsuit_finished = 0;
+		self.invisible_finished = 0;
+		self.invincible_finished = 0;
+		self.effects = 0;
+		self.invincible_time = 0;
+
+		DecodeLevelParms ();
+		
+		W_SetCurrentAmmo ();
+
+		self.attack_finished = time;
+		self.th_pain = player_pain;
+		self.th_die = PlayerDie;
+		
+		self.deadflag = DEAD_NO;
+	// paustime is set by teleporters to keep the player from moving a while
+		self.pausetime = 0;
+		
+		spot = SelectSpawnPoint ();
+
+		self.origin = spot.origin + '0 0 1';
+		self.angles = spot.angles;
+		self.fixangle = TRUE;           // turn this way immediately
+
+	// oh, this is a hack!
+		setmodel (self, "progs/eyes.mdl");
+		modelindex_eyes = self.modelindex;
+
+		setmodel (self, "progs/player.mdl");
+		modelindex_player = self.modelindex;
+
+		setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+		
+		self.view_ofs = '0 0 22';
+
+	// Mod - Xian (May.20.97)
+	// Bug where player would have velocity from their last kill
+
+		self.velocity = '0 0 0';
+
+		player_stand1 ();
+		
+		makevectors(self.angles);
+		spawn_tfog (self.origin + v_forward*20);
+
+		spawn_tdeath (self.origin, self);
+
+		// Set Rocket Jump Modifiers
+		if (stof(infokey(world, "rj")) != 0)
+		{                
+			rj = stof(infokey(world, "rj"));
+		}
+
+		if (deathmatch == 4)
+		{
+			self.ammo_shells = 0;
+			if (stof(infokey(world, "axe")) == 0)
+			{
+				self.ammo_nails = 255;
+				self.ammo_shells = 255;
+				self.ammo_rockets = 255;
+				self.ammo_cells = 255;
+				self.items = self.items | IT_NAILGUN;
+				self.items = self.items | IT_SUPER_NAILGUN;
+				self.items = self.items | IT_SUPER_SHOTGUN;
+				self.items = self.items | IT_ROCKET_LAUNCHER;
+	//		self.items = self.items | IT_GRENADE_LAUNCHER;
+				self.items = self.items | IT_LIGHTNING;
+			}
+			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+			self.armorvalue = 200;
+			self.armortype = 0.8;
+			self.health = 250;
+			self.items = self.items | IT_INVULNERABILITY;
+			self.invincible_time = 1;
+			self.invincible_finished = time + 3;
+		}
+
+		if (deathmatch == 5)
+		{
+			self.ammo_nails = 80;
+			self.ammo_shells = 30;
+			self.ammo_rockets = 10;
+			self.ammo_cells = 30;
+			self.items = self.items | IT_NAILGUN;
+			self.items = self.items | IT_SUPER_NAILGUN;
+			self.items = self.items | IT_SUPER_SHOTGUN;
+			self.items = self.items | IT_ROCKET_LAUNCHER;
+			self.items = self.items | IT_GRENADE_LAUNCHER;
+			self.items = self.items | IT_LIGHTNING;
+			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+			self.armorvalue = 200;
+			self.armortype = 0.8;
+			self.health = 200;
+			self.items = self.items | IT_INVULNERABILITY;
+			self.invincible_time = 1;
+			self.invincible_finished = time + 3;
+		}
+	};
+
+};
 
 void() DeathSound =
 {
