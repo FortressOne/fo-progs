@@ -25,16 +25,6 @@
 
 */
 
-// prototypes
-void () W_WeaponFrame;
-void() W_SetCurrentAmmo;
-void() player_pain;
-void() player_stand1;
-void (vector org) spawn_tfog;
-void (vector org, entity death_owner) spawn_tdeath;
-
-float   modelindex_eyes, modelindex_player;
-
 /*
 =============================================================================
 
@@ -42,11 +32,6 @@ float   modelindex_eyes, modelindex_player;
 
 =============================================================================
 */
-
-string nextmap;
-
-float   intermission_running;
-float   intermission_exittime;
 
 /*QUAKED info_intermission (1 0.5 0.5) (-16 -16 -16) (16 16 16)
 This is the camera point for the intermission.
@@ -155,6 +140,7 @@ entity() FindIntermission =
 		return spot;
 	
 	objerror ("FindIntermission: no spot");
+	return world;
 };
 
 
@@ -243,8 +229,6 @@ void() execute_changelevel =
 
 void() changelevel_touch =
 {
-	local entity    pos;
-
 	if (other.classname != "player")
 		return;
 
@@ -337,16 +321,9 @@ SelectSpawnPoint
 Returns the entity to spawn at
 ============
 */
-entity() SelectSpawnPoint =
-{
-	local   entity spot, newspot, thing;
-	local   float   numspots, totalspots;
-	local   float   rnum, pcount;
-	local   float   rs;
-	local entity spots;
-
-	numspots = 0;
-	totalspots = 0;
+entity () SelectSpawnPoint = {
+	entity spot, thing, spots;
+	float numspots = 0, totalspots = 0, pcount;
 
 // testinfo_player_start is only found in regioned levels
 	spot = find (world, classname, "testplayerstart");
@@ -409,65 +386,6 @@ entity() SelectSpawnPoint =
 	return spot;
 
 };
-void() DecodeLevelParms;
-void() PlayerDie;
-
-/*
-===========
-ValidateUser
-
-
-============
-*/
-float(entity e) ValidateUser =
-{
-/*
-	local string    s;
-	local string    userclan;
-	local float     rank, rankmin, rankmax;
-
-//
-// if the server has set "clan1" and "clan2", then it
-// is a clan match that will allow only those two clans in
-//
-	s = serverinfo("clan1");
-	if (s)
-	{
-		userclan = masterinfo(e,"clan");
-		if (s == userclan)
-			return true;
-		s = serverinfo("clan2");
-		if (s == userclan)
-			return true;
-		return false;
-	}
-
-//
-// if the server has set "rankmin" and/or "rankmax" then
-// the users rank must be between those two values
-//
-	s = masterinfo (e, "rank");
-	rank = stof (s);
-
-	s = serverinfo("rankmin");
-	if (s)
-	{
-		rankmin = stof (s);
-		if (rank < rankmin)
-			return false;
-	}
-	s = serverinfo("rankmax");
-	if (s)
-	{
-		rankmax = stof (s);
-		if (rankmax < rank)
-			return false;
-	}
-
-	return true;
-*/
-};
-
 
 /*
 ===========
@@ -476,10 +394,8 @@ PutClientInServer
 called each time a player enters a new level
 ============
 */
-void() PutClientInServer =
-{
-	local   entity spot;
-	local 	string	s;
+void () PutClientInServer = {
+	entity spot;
 
 	self.classname = "player";
 	self.health = 100;
@@ -644,10 +560,8 @@ RULES
 /*
 go to the next level for deathmatch
 */
-void() NextLevel =
-{
-	local entity o;
-	local string newmap;
+void() NextLevel = {
+	entity o;
 
 	if (nextmap != "")
 		return; // already done
@@ -720,10 +634,8 @@ void() CheckRules =
 
 //============================================================================
 
-void() PlayerDeathThink =
-{
-	local entity    old_self;
-	local float             forward;
+void () PlayerDeathThink = {
+	float forward;
 
 	if ((self.flags & FL_ONGROUND))
 	{
@@ -755,10 +667,7 @@ void() PlayerDeathThink =
 };
 
 
-void() PlayerJump =
-{
-	local vector start, end;
-
+void () PlayerJump = {
 	if (self.flags & FL_WATERJUMP)
 		return;
 	
@@ -913,11 +822,7 @@ PlayerPreThink
 Called every frame before physics are run
 ================
 */
-void() PlayerPreThink =
-{
-	local   float   mspeed, aspeed;
-	local   float   r;
-
+void () PlayerPreThink = {
 	if (intermission_running)
 	{
 		IntermissionThink ();   // otherwise a button could be missed between
@@ -1150,11 +1055,7 @@ PlayerPostThink
 Called every frame after physics are run
 ================
 */
-void() PlayerPostThink =
-{
-	local   float   mspeed, aspeed;
-	local   float   r;
-
+void () PlayerPostThink = {
 //dprint ("post think\n");
 	if (self.view_ofs == '0 0 0')
 		return;         // intermission or finale
@@ -1192,8 +1093,7 @@ ClientConnect
 called when a player connects to a server
 ============
 */
-void() ClientConnect =
-{
+void (optional float csqcactive) ClientConnect = {
 	bprint (PRINT_HIGH, self.netname);
 	bprint (PRINT_HIGH, " entered the game\n");
 	
@@ -1229,12 +1129,10 @@ called when a player dies
 ============
 */
 
-void(entity targ, entity attacker) ClientObituary =
-{
-	local   float rnum;
-	local   string deathstring, deathstring2;
-	local   string s;
-	local   string  attackerteam, targteam;
+void (entity targ, entity attacker) ClientObituary = {
+	float rnum;
+	string deathstring = "", deathstring2 = "";
+	string attackerteam, targteam;
 
 	rnum = random();
 	//ZOID 12-13-96: self.team doesn't work in QW.  Use keys

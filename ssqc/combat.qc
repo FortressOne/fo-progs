@@ -131,13 +131,11 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
-{
+void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
 	local   vector  dir;
 	local   entity  oldself;
 	local   float   save;
 	local   float   take;
-	local   string  s;
 	local   string  attackerteam, targteam;
 
 

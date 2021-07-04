@@ -25,7 +25,6 @@
 
 */
 
-entity stemp, otemp, s, old;
 
 
 void() trigger_reactivate =
@@ -245,10 +244,7 @@ void() trigger_secret =
 //=============================================================================
 
 
-void() counter_use =
-{
-	local string junk;
-
+void () counter_use = {
 	self.count = self.count - 1;
 	if (self.count < 0)
 		return;
@@ -328,7 +324,7 @@ void() play_teleport =
 
 void(vector org) spawn_tfog =
 {
-	s = spawn ();
+	entity s = spawn ();
 	s.origin = org;
 	s.nextthink = time + 0.2;
 	s.think = play_teleport;

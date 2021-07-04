@@ -50,13 +50,8 @@ void() noclass =
 	remove (self);
 };
 
-void() q_touch;
-
-void() q_touch =
-{
-local entity    stemp;
-local float     best;
-local string    s;
+void() q_touch = {
+	string    s;
 
 	if (other.classname != "player")
 		return;
@@ -122,10 +117,7 @@ void(float timeleft) DropQuad =
 
 void() r_touch;
 
-void() r_touch =
-{
-local entity    stemp;
-local float     best;
+void() r_touch = {
 local string    s;
 
 	if (other.classname != "player")
@@ -300,10 +292,8 @@ void() item_health =
 };
 
 
-void() health_touch =
-{
-	local   float amount;
-	local   string  s;
+void() health_touch = {
+	string  s;
 	
 	if (deathmatch == 4)
 		if (other.invincible_time > 0)
@@ -396,7 +386,7 @@ void() armor_touch;
 
 void() armor_touch =
 {
-	local   float   type, value, bit;
+	float type = 0, value = 0, bit = 0;
 	
 	if (other.health <= 0)
 		return;
@@ -571,7 +561,7 @@ float() W_BestWeapon;
 
 void() weapon_touch =
 {
-	local   float   hadammo, best, new, old;
+	local   float   hadammo, best, new = 0, old;
 	local   entity  stemp;
 	local   float   leave;
 
@@ -1105,11 +1095,7 @@ KEYS
 ===============================================================================
 */
 
-void() key_touch =
-{
-local entity    stemp;
-local float             best;
-
+void() key_touch = {
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
@@ -1238,11 +1224,7 @@ END OF LEVEL RUNES
 ===============================================================================
 */
 
-void() sigil_touch =
-{
-local entity    stemp;
-local float             best;
-
+void () sigil_touch = {
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
@@ -1308,14 +1290,7 @@ POWERUPS
 ===============================================================================
 */
 
-void() powerup_touch;
-
-
-void() powerup_touch =
-{
-local entity    stemp;
-local float             best;
-
+void() powerup_touch = {
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)

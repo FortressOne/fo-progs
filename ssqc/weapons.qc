@@ -120,7 +120,6 @@ SpawnMeatSpray
 void(vector org, vector vel) SpawnMeatSpray =
 {
 	local   entity missile;
-	local   vector  org;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -384,7 +383,7 @@ void() T_MissileTouch =
 //			{
 //				if (other != world)
 //				{
-//	//				bprint (PRINT_HIGH, "Got here\n");
+//	//				bprint( "Got here\n");
 //					other.deathtype = "blaze";
 //					T_Damage (other, self, self.owner, 1000 );
 //					T_RadiusDamage (self, self.owner, 1000, other);
@@ -742,10 +741,8 @@ void(vector org, vector dir) launch_spike =
 	newmis.velocity = dir * 1000;
 };
 
-void() W_FireSuperSpikes =
-{
-	local vector    dir;
-	local entity    old;
+void() W_FireSuperSpikes = {
+	vector dir;
 	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
@@ -760,10 +757,8 @@ void() W_FireSuperSpikes =
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
 };
 
-void(float ox) W_FireSpikes =
-{
-	local vector    dir;
-	local entity    old;
+void(float ox) W_FireSpikes = {
+	vector dir;
 	
 	makevectors (self.v_angle);
 	
@@ -791,12 +786,7 @@ void(float ox) W_FireSpikes =
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
 };
 
-
-
-.float hit_z;
-void() spike_touch =
-{
-local float rand;
+void() spike_touch = {
 	if (other == self.owner)
 		return;
 
@@ -840,9 +830,7 @@ local float rand;
 
 };
 
-void() superspike_touch =
-{
-local float rand;
+void () superspike_touch = {
 	if (other == self.owner)
 		return;
 
@@ -1092,10 +1080,7 @@ W_ChangeWeapon
 */
 void() W_ChangeWeapon =
 {
-	local   float   it, am, fl;
-	
-	it = self.items;
-	am = 0;
+	float it = self.items, am = 0, fl = 0;
 	
 	if (self.impulse == 1)
 	{
@@ -1162,37 +1147,6 @@ void() W_ChangeWeapon =
 // set weapon, set ammo
 //
 	self.weapon = fl;               
-	W_SetCurrentAmmo ();
-};
-
-/*
-============
-CheatCommand
-============
-*/
-void() CheatCommand =
-{
-//      if (deathmatch || coop)
-		return;
-
-	self.ammo_rockets = 100;
-	self.ammo_nails = 200;
-	self.ammo_shells = 100;
-	self.items = self.items | 
-		IT_AXE |
-		IT_SHOTGUN |
-		IT_SUPER_SHOTGUN |
-		IT_NAILGUN |
-		IT_SUPER_NAILGUN |
-		IT_GRENADE_LAUNCHER |
-		IT_ROCKET_LAUNCHER |
-		IT_KEY1 | IT_KEY2;
-
-	self.ammo_cells = 200;
-	self.items = self.items | IT_LIGHTNING;
-
-	self.weapon = IT_ROCKET_LAUNCHER;
-	self.impulse = 0;
 	W_SetCurrentAmmo ();
 };
 
@@ -1370,8 +1324,6 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 
-	if (self.impulse == 9)
-		CheatCommand ();
 	if (self.impulse == 10)
 		CycleWeaponCommand ();
 	if (self.impulse == 11)

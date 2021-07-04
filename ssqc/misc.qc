@@ -202,7 +202,7 @@ void() misc_fireball =
 	self.nextthink = time + (random() * 5);
 	self.think = fire_fly;
 	if (!self.speed)
-		self.speed == 1000;
+		self.speed = 1000;
 };
 
 void() fire_fly =
@@ -298,10 +298,7 @@ void() Laser_Touch =
 	remove(self);   
 };
 
-void(vector org, vector vec) LaunchLaser =
-{
-	local   vector  vec;
-		
+void(vector org, vector vec) LaunchLaser = {	
 	if (self.classname == "monster_enforcer")
 		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
 
@@ -464,10 +461,8 @@ void() bubble_remove =
 	remove(self);
 };
 
-void() bubble_bob =
-{
-local float             rnd1, rnd2, rnd3;
-local vector    vtmp1, modi;
+void () bubble_bob = {
+	float rnd1, rnd2, rnd3;
 
 	self.cnt = self.cnt + 1;
 	if (self.cnt == 4)

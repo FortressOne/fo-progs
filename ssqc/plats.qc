@@ -25,15 +25,6 @@
 
 */
 
-
-void() plat_center_touch;
-void() plat_outside_touch;
-void() plat_trigger_use;
-void() plat_go_up;
-void() plat_go_down;
-void() plat_crush;
-float PLAT_LOW_TRIGGER = 1;
-
 void() plat_spawn_inside_trigger =
 {
 	local entity	trigger;
@@ -171,11 +162,7 @@ Set "sounds" to one of the following:
 */
 
 
-void() func_plat =
-
-{
-local entity t;
-
+void () func_plat = {
 	if (!self.t_length)
 		self.t_length = 80;
 	if (!self.t_width)

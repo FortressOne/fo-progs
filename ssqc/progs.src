@@ -1,5 +1,6 @@
 ./qwprogs.dat
 
+#define QUAKEWORLD
 ../share/fteextensions.qc
 defs.qc
 tfdefs.qc

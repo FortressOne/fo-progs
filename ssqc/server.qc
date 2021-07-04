@@ -83,9 +83,6 @@ local entity    temp;
 	self = other;
 	other = temp;
 
-	if (self.classname == "monster_ogre")
-		sound (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);// play chainsaw drag sound
-
 //dprint ("t_movetarget\n");
 	self.goalentity = self.movetarget = find (world, targetname, other.target);
 	self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
