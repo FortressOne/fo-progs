@@ -8,7 +8,10 @@ tfdefs.qc
 subs.qc
 combat.qc
 items.qc
-weapons.qc
+Weapons/weapons.qc
+Weapons/weapon.qc
+Weapons/shotgun.qc
+Weapons/supershotgun.qc
 world.qc
 client.qc
 spectate.qc

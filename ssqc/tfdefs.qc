@@ -11,6 +11,14 @@ string nextmap;
 
 float   intermission_running;
 float   intermission_exittime;
+//entity  multi_ent;
+//float   multi_damage;
+
+//vector  blood_org;
+//float   blood_count;
+
+//vector  puff_org;
+//float   puff_count;
 
 float DOOR_START_OPEN = 1;
 float DOOR_DONT_LINK = 4;
