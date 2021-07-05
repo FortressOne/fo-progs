@@ -24,7 +24,6 @@
 		Boston, MA  02111-1307, USA
 
 */
-void() W_SetCurrentAmmo;
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
 
