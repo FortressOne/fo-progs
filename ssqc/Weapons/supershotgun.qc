@@ -5,10 +5,12 @@ class supershotgun_c : shotgun_c
         shoot_sound = "weapons/shotgn2.wav";
         spread = '0.14 0.08 0';
         shot_count = 14;
+        weapon = IT_SUPER_SHOTGUN;
     };
 
     virtual void () Attack =
     {
+        super::Attack();
         if (this.owner.currentammo == 1)
         {
             // FIXME - confirm super is base class or parent class

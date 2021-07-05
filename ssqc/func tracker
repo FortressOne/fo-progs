@@ -1,0 +1,2 @@
+W_WeaponFrame = weapon_c -> Frame
+W_Attack = weapon_c -> super::Attack

@@ -8,11 +8,12 @@ class shotgun_c : weapon_c
         shoot_sound = "weapons/guncock.wav";
         spread = '0.04 0.04 0';
         shot_count = 6;
+        weapon = IT_SHOTGUN;
     };
 
     virtual void () Attack =
     {
-        //super::Attack();
+        super::Attack();
         sound(this.owner, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
 
         msg_entity = this.owner;

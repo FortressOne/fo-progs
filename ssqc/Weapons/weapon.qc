@@ -1,7 +1,7 @@
 class weapon_c : entity
 {
     string shoot_sound;
-    
+
     entity multi_ent;
     float multi_damage;
     vector  blood_org;
@@ -12,7 +12,81 @@ class weapon_c : entity
 
     virtual void () Attack = 
     {
+        float   r;
 
+        if (!W_CheckNoAmmo ())
+            return;
+
+        makevectors     (self.v_angle);                 // calculate forward angle for velocity
+        self.show_hostile = time + 1;   // wake monsters up
+
+        if (self.weapon == IT_AXE)
+        {
+            self.attack_finished = time + 0.5;
+            sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
+            r = random();
+            if (r < 0.25)
+                player_axe1 ();
+            else if (r<0.5)
+                player_axeb1 ();
+            else if (r<0.75)
+                player_axec1 ();
+            else
+                player_axed1 ();
+        }
+        else if (self.weapon == IT_SHOTGUN)
+        {
+            player_shot1 ();
+            self.attack_finished = time + 0.5;
+            W_FireShotgun ();
+        }
+        else if (self.weapon == IT_SUPER_SHOTGUN)
+        {
+            player_shot1 ();
+            self.attack_finished = time + 0.7;
+            W_FireSuperShotgun ();
+        }
+        else if (self.weapon == IT_NAILGUN)
+        {
+            player_nail1 ();
+        }
+        else if (self.weapon == IT_SUPER_NAILGUN)
+        {
+            player_nail1 ();
+        }
+        else if (self.weapon == IT_GRENADE_LAUNCHER)
+        {
+            player_rocket1();
+            self.attack_finished = time + 0.6;
+            W_FireGrenade();
+        }
+        else if (self.weapon == IT_ROCKET_LAUNCHER)
+        {
+            player_rocket1();
+            self.attack_finished = time + 0.8;
+            W_FireRocket();
+        }
+        else if (self.weapon == IT_LIGHTNING)
+        {
+            self.attack_finished = time + 0.1;
+            sound (self, CHAN_AUTO, "weapons/lstart.wav", 1, ATTN_NORM);
+            player_light1();
+        }
+    };
+
+    nonvirtual void () Frame =
+    {
+        if (time < self.attack_finished)
+            return;
+
+        ImpulseCommands();
+        
+        // check for attack
+        if (self.button0)
+        {
+            SuperDamageSound();
+            this.Attack();
+        }
     };
 
     nonvirtual void(float damage, vector dir) TraceAttack =
