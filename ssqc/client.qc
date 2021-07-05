@@ -946,32 +946,8 @@ Called every frame after physics are run
 */
 void() PlayerPostThink = {
 //dprint ("post think\n");
-	if (self.view_ofs == '0 0 0')
-		return;         // intermission or finale
-	if (self.deadflag)
-		return;
-
-// check to see if player landed and play landing sound 
-	if ((self.jump_flag < -300) && (self.flags & FL_ONGROUND) )
-	{
-		if (self.watertype == CONTENT_WATER)
-			sound (self, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
-		else if (self.jump_flag < -650)
-		{
-			self.deathtype = "falling";
-			T_Damage (self, world, world, 5); 
-			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
-		}
-		else
-			sound (self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
-	}
-
-	self.jump_flag = self.velocity_z;
-
-	CheckPowerups ();
-
-	W_WeaponFrame ();
-
+	player_c player = (player_c)self;
+	player.PostThink();
 };
 
 

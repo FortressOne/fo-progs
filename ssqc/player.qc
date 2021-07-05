@@ -424,6 +424,40 @@ local entity    bubble_spawner;
 
 class player_c : entity 
 {
+	weapon_c current_weapon;
+	weapon_c weapon1;
+	weapon_c weapon2;
+	weapon_c weapon3;
+	weapon_c weapon4;
+
+	nonvirtual void() PostThink =
+	{
+		if (this.view_ofs == '0 0 0')
+			return;         // intermission or finale
+		if (this.deadflag)
+			return;
+
+		// check to see if player landed and play landing sound 
+		if ((this.jump_flag < -300) && (this.flags & FL_ONGROUND) )
+		{
+			if (this.watertype == CONTENT_WATER)
+				sound(this, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
+			else if (this.jump_flag < -650)
+			{
+				this.deathtype = "falling";
+				T_Damage (this, world, world, 5); 
+				sound (this, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
+			}
+			else
+				sound (this, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
+		}
+
+		this.jump_flag = self.velocity_z;
+
+		CheckPowerups ();
+
+		this.current_weapon.Frame();
+	};
 
 	nonvirtual void() Respawn =
 	{
