@@ -1,5 +1,6 @@
 class weapon_c : entity
 {
+    float ammo_type;
     string shoot_sound;
 
     entity multi_ent;
@@ -9,6 +10,24 @@ class weapon_c : entity
 
     vector puff_org;
     float puff_count;
+
+    set float ammo_count = { return; };
+
+    get float ammo_count =
+    {
+        switch (this.ammo_type)
+        {
+            case IT_SHELLS:
+                return this.owner.ammo_shells;
+            case IT_NAILS:
+                return this.owner.ammo_nails;
+            case IT_ROCKETS:
+                return this.owner.ammo_rockets;
+            case IT_CELLS:
+                return this.owner.ammo_cells;
+        }
+        return 0;
+    };
 
     nonvirtual weapon_c() GetBestWeapon =
     {
@@ -38,33 +57,13 @@ class weapon_c : entity
 
     nonvirtual float() HasAmmo =
     {
-        float amount = 0;
-        switch (this.ammo_type)
-        {
-            case AMMO_SHELLS:
-                amount = this.owner.ammo_shells;
-                break;
-            case AMMO_NAILS:
-                amount = this.owner.ammo_nails;
-                break;
-            case AMMO_ROCKETS:
-                amount = this.owner.ammo_rockets;
-                break;
-            case AMMO_CELLS:
-                amount = this.owner.ammo_cells;
-                break;
-        }
-
         if (this.weapon == IT_AXE)
             return TRUE;
 
-        if (amount >= this.ammo_per_shot)
+        if (this.amount_count >= this.ammo_per_shot)
             return TRUE;
         
-        
         this.owner.current_weapon = this.GetBestWeapon();
-
-        W_SetCurrentAmmo();
         
     // drop the weapon down
         return FALSE;

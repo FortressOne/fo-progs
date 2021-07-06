@@ -6,6 +6,8 @@ class supershotgun_c : shotgun_c
         spread = '0.14 0.08 0';
         shot_count = 14;
         weapon = IT_SUPER_SHOTGUN;
+        ammo_type = IT_SHELLS;
+        weaponmodel = "progs/v_shot2.mdl";
     };
 
     virtual void () Attack =

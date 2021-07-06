@@ -693,20 +693,6 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_axe.mdl";
 		self.weaponframe = 0;
 	}
-	else if (self.weapon == IT_SHOTGUN)
-	{
-		self.currentammo = self.ammo_shells;
-		self.weaponmodel = "progs/v_shot.mdl";
-		self.weaponframe = 0;
-		self.items = self.items | IT_SHELLS;
-	}
-	else if (self.weapon == IT_SUPER_SHOTGUN)
-	{
-		self.currentammo = self.ammo_shells;
-		self.weaponmodel = "progs/v_shot2.mdl";
-		self.weaponframe = 0;
-		self.items = self.items | IT_SHELLS;
-	}
 	else if (self.weapon == IT_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
