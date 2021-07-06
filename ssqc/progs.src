@@ -1,0 +1,25 @@
+./qwprogs.dat
+
+#define QUAKEWORLD
+../share/fteextensions.qc
+defs.qc
+tfdefs.qc
+
+subs.qc
+combat.qc
+items.qc
+Weapons/weapons.qc
+Weapons/weapon.qc
+Weapons/shotgun.qc
+Weapons/supershotgun.qc
+world.qc
+client.qc
+spectate.qc
+player.qc
+doors.qc
+buttons.qc
+triggers.qc
+plats.qc
+misc.qc
+
+server.qc
