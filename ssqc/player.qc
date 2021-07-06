@@ -32,6 +32,162 @@ PLAYER
 ==============================================================================
 */
 
+
+class player_c : entity 
+{
+	weapon_c current_weapon;
+	weapon_c weapon1;
+	weapon_c weapon2;
+	weapon_c weapon3;
+	weapon_c weapon4;
+
+	nonvirtual void() PostThink =
+	{
+		if (this.view_ofs == '0 0 0')
+			return;         // intermission or finale
+		if (this.deadflag)
+			return;
+
+		// check to see if player landed and play landing sound 
+		if ((this.jump_flag < -300) && (this.flags & FL_ONGROUND) )
+		{
+			if (this.watertype == CONTENT_WATER)
+				sound(this, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
+			else if (this.jump_flag < -650)
+			{
+				this.deathtype = "falling";
+				T_Damage (this, world, world, 5); 
+				sound (this, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
+			}
+			else
+				sound (this, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
+		}
+
+		this.jump_flag = self.velocity_z;
+
+		CheckPowerups ();
+
+		this.current_weapon.Frame();
+	};
+
+	nonvirtual void() Respawn =
+	{
+		entity spot;
+
+		self.classname = "player";
+		self.health = 100;
+		self.takedamage = DAMAGE_AIM;
+		self.solid = SOLID_SLIDEBOX;
+		self.movetype = MOVETYPE_WALK;
+		self.show_hostile = 0;
+		self.max_health = 100;
+		self.flags = FL_CLIENT;
+		self.air_finished = time + 12;
+		self.dmg = 2;                   // initial water damage
+		self.super_damage_finished = 0;
+		self.radsuit_finished = 0;
+		self.invisible_finished = 0;
+		self.invincible_finished = 0;
+		self.effects = 0;
+		self.invincible_time = 0;
+
+		DecodeLevelParms ();
+		
+		W_SetCurrentAmmo ();
+
+		self.attack_finished = time;
+		self.th_pain = player_pain;
+		self.th_die = PlayerDie;
+		
+		self.deadflag = DEAD_NO;
+	// paustime is set by teleporters to keep the player from moving a while
+		self.pausetime = 0;
+		
+		spot = SelectSpawnPoint ();
+
+		self.origin = spot.origin + '0 0 1';
+		self.angles = spot.angles;
+		self.fixangle = TRUE;           // turn this way immediately
+
+	// oh, this is a hack!
+		setmodel (self, "progs/eyes.mdl");
+		modelindex_eyes = self.modelindex;
+
+		setmodel (self, "progs/player.mdl");
+		modelindex_player = self.modelindex;
+
+		setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+		
+		self.view_ofs = '0 0 22';
+
+	// Mod - Xian (May.20.97)
+	// Bug where player would have velocity from their last kill
+
+		self.velocity = '0 0 0';
+
+		player_stand1 ();
+		
+		makevectors(self.angles);
+		spawn_tfog (self.origin + v_forward*20);
+
+		spawn_tdeath (self.origin, self);
+
+		// Set Rocket Jump Modifiers
+		if (stof(infokey(world, "rj")) != 0)
+		{                
+			rj = stof(infokey(world, "rj"));
+		}
+
+		if (deathmatch == 4)
+		{
+			self.ammo_shells = 0;
+			if (stof(infokey(world, "axe")) == 0)
+			{
+				self.ammo_nails = 255;
+				self.ammo_shells = 255;
+				self.ammo_rockets = 255;
+				self.ammo_cells = 255;
+				self.items = self.items | IT_NAILGUN;
+				self.items = self.items | IT_SUPER_NAILGUN;
+				self.items = self.items | IT_SUPER_SHOTGUN;
+				self.items = self.items | IT_ROCKET_LAUNCHER;
+	//		self.items = self.items | IT_GRENADE_LAUNCHER;
+				self.items = self.items | IT_LIGHTNING;
+			}
+			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+			self.armorvalue = 200;
+			self.armortype = 0.8;
+			self.health = 250;
+			self.items = self.items | IT_INVULNERABILITY;
+			self.invincible_time = 1;
+			self.invincible_finished = time + 3;
+		}
+
+		if (deathmatch == 5)
+		{
+			self.ammo_nails = 80;
+			self.ammo_shells = 30;
+			self.ammo_rockets = 10;
+			self.ammo_cells = 30;
+			self.items = self.items | IT_NAILGUN;
+			self.items = self.items | IT_SUPER_NAILGUN;
+			self.items = self.items | IT_SUPER_SHOTGUN;
+			self.items = self.items | IT_ROCKET_LAUNCHER;
+			self.items = self.items | IT_GRENADE_LAUNCHER;
+			self.items = self.items | IT_LIGHTNING;
+			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+			self.armorvalue = 200;
+			self.armortype = 0.8;
+			self.health = 200;
+			self.items = self.items | IT_INVULNERABILITY;
+			self.invincible_time = 1;
+			self.invincible_finished = time + 3;
+		}
+	};
+
+};
+
+
 $cd /raid/quake/id1/models/player_4
 $origin 0 -6 24
 $base base              
@@ -420,160 +576,6 @@ local entity    bubble_spawner;
 	bubble_spawner.owner = self;
 	bubble_spawner.bubble_count = num_bubbles;
 	return;
-};
-
-class player_c : entity 
-{
-	weapon_c current_weapon;
-	weapon_c weapon1;
-	weapon_c weapon2;
-	weapon_c weapon3;
-	weapon_c weapon4;
-
-	nonvirtual void() PostThink =
-	{
-		if (this.view_ofs == '0 0 0')
-			return;         // intermission or finale
-		if (this.deadflag)
-			return;
-
-		// check to see if player landed and play landing sound 
-		if ((this.jump_flag < -300) && (this.flags & FL_ONGROUND) )
-		{
-			if (this.watertype == CONTENT_WATER)
-				sound(this, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
-			else if (this.jump_flag < -650)
-			{
-				this.deathtype = "falling";
-				T_Damage (this, world, world, 5); 
-				sound (this, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
-			}
-			else
-				sound (this, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
-		}
-
-		this.jump_flag = self.velocity_z;
-
-		CheckPowerups ();
-
-		this.current_weapon.Frame();
-	};
-
-	nonvirtual void() Respawn =
-	{
-		entity spot;
-
-		self.classname = "player";
-		self.health = 100;
-		self.takedamage = DAMAGE_AIM;
-		self.solid = SOLID_SLIDEBOX;
-		self.movetype = MOVETYPE_WALK;
-		self.show_hostile = 0;
-		self.max_health = 100;
-		self.flags = FL_CLIENT;
-		self.air_finished = time + 12;
-		self.dmg = 2;                   // initial water damage
-		self.super_damage_finished = 0;
-		self.radsuit_finished = 0;
-		self.invisible_finished = 0;
-		self.invincible_finished = 0;
-		self.effects = 0;
-		self.invincible_time = 0;
-
-		DecodeLevelParms ();
-		
-		W_SetCurrentAmmo ();
-
-		self.attack_finished = time;
-		self.th_pain = player_pain;
-		self.th_die = PlayerDie;
-		
-		self.deadflag = DEAD_NO;
-	// paustime is set by teleporters to keep the player from moving a while
-		self.pausetime = 0;
-		
-		spot = SelectSpawnPoint ();
-
-		self.origin = spot.origin + '0 0 1';
-		self.angles = spot.angles;
-		self.fixangle = TRUE;           // turn this way immediately
-
-	// oh, this is a hack!
-		setmodel (self, "progs/eyes.mdl");
-		modelindex_eyes = self.modelindex;
-
-		setmodel (self, "progs/player.mdl");
-		modelindex_player = self.modelindex;
-
-		setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
-		
-		self.view_ofs = '0 0 22';
-
-	// Mod - Xian (May.20.97)
-	// Bug where player would have velocity from their last kill
-
-		self.velocity = '0 0 0';
-
-		player_stand1 ();
-		
-		makevectors(self.angles);
-		spawn_tfog (self.origin + v_forward*20);
-
-		spawn_tdeath (self.origin, self);
-
-		// Set Rocket Jump Modifiers
-		if (stof(infokey(world, "rj")) != 0)
-		{                
-			rj = stof(infokey(world, "rj"));
-		}
-
-		if (deathmatch == 4)
-		{
-			self.ammo_shells = 0;
-			if (stof(infokey(world, "axe")) == 0)
-			{
-				self.ammo_nails = 255;
-				self.ammo_shells = 255;
-				self.ammo_rockets = 255;
-				self.ammo_cells = 255;
-				self.items = self.items | IT_NAILGUN;
-				self.items = self.items | IT_SUPER_NAILGUN;
-				self.items = self.items | IT_SUPER_SHOTGUN;
-				self.items = self.items | IT_ROCKET_LAUNCHER;
-	//		self.items = self.items | IT_GRENADE_LAUNCHER;
-				self.items = self.items | IT_LIGHTNING;
-			}
-			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
-			self.armorvalue = 200;
-			self.armortype = 0.8;
-			self.health = 250;
-			self.items = self.items | IT_INVULNERABILITY;
-			self.invincible_time = 1;
-			self.invincible_finished = time + 3;
-		}
-
-		if (deathmatch == 5)
-		{
-			self.ammo_nails = 80;
-			self.ammo_shells = 30;
-			self.ammo_rockets = 10;
-			self.ammo_cells = 30;
-			self.items = self.items | IT_NAILGUN;
-			self.items = self.items | IT_SUPER_NAILGUN;
-			self.items = self.items | IT_SUPER_SHOTGUN;
-			self.items = self.items | IT_ROCKET_LAUNCHER;
-			self.items = self.items | IT_GRENADE_LAUNCHER;
-			self.items = self.items | IT_LIGHTNING;
-			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
-			self.armorvalue = 200;
-			self.armortype = 0.8;
-			self.health = 200;
-			self.items = self.items | IT_INVULNERABILITY;
-			self.invincible_time = 1;
-			self.invincible_finished = time + 3;
-		}
-	};
-
 };
 
 void() DeathSound =

@@ -4,27 +4,85 @@ class weapon_c : entity
 
     entity multi_ent;
     float multi_damage;
-    vector  blood_org;
-    float   blood_count;
+    vector blood_org;
+    float blood_count;
 
-    vector  puff_org;
-    float   puff_count;
+    vector puff_org;
+    float puff_count;
+
+    nonvirtual weapon_c() GetBestWeapon =
+    {
+        float it = this.owner.items;
+
+        if (this.owner.waterlevel <= 1 && this.owner.ammo_cells >= 1 && (it & IT_LIGHTNING))
+            return IT_LIGHTNING;
+        else if(this.owner.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
+            return IT_SUPER_NAILGUN;
+        else if(this.owner.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
+            return IT_SUPER_SHOTGUN;
+        else if(this.owner.ammo_nails >= 1 && (it & IT_NAILGUN) )
+            return IT_NAILGUN;
+        else if(this.owner.ammo_shells >= 1 && (it & IT_SHOTGUN)  )
+            return IT_SHOTGUN;
+            
+    /*
+        if(self.ammo_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
+            return IT_ROCKET_LAUNCHER;
+        else if(self.ammo_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
+            return IT_GRENADE_LAUNCHER;
+
+    */
+
+        return IT_AXE;
+    };
+
+    nonvirtual float() HasAmmo =
+    {
+        float amount = 0;
+        switch (this.ammo_type)
+        {
+            case AMMO_SHELLS:
+                amount = this.owner.ammo_shells;
+                break;
+            case AMMO_NAILS:
+                amount = this.owner.ammo_nails;
+                break;
+            case AMMO_ROCKETS:
+                amount = this.owner.ammo_rockets;
+                break;
+            case AMMO_CELLS:
+                amount = this.owner.ammo_cells;
+                break;
+        }
+
+        if (this.weapon == IT_AXE)
+            return TRUE;
+
+        if (amount >= this.ammo_per_shot)
+            return TRUE;
+        
+        
+        this.owner.current_weapon = this.GetBestWeapon();
+
+        W_SetCurrentAmmo();
+        
+    // drop the weapon down
+        return FALSE;
+    };
 
     virtual void () Attack = 
     {
-        float   r;
-
-        if (!W_CheckNoAmmo ())
+        if (!this.HasAmmo())
             return;
 
-        makevectors     (self.v_angle);                 // calculate forward angle for velocity
-        self.show_hostile = time + 1;   // wake monsters up
+        makevectors(this.owner.v_angle);                 // calculate forward angle for velocity
+        this.owner.show_hostile = time + 1;   // wake monsters up
 
         if (self.weapon == IT_AXE)
         {
             self.attack_finished = time + 0.5;
             sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
-            r = random();
+            float r = random();
             if (r < 0.25)
                 player_axe1 ();
             else if (r<0.5)

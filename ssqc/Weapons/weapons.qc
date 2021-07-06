@@ -750,49 +750,9 @@ void() W_SetCurrentAmmo =
 	}
 };
 
-float() W_BestWeapon =
-{
-	local   float   it;
-	
-	it = self.items;
 
-	if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & IT_LIGHTNING) )
-		return IT_LIGHTNING;
-	else if(self.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
-		return IT_SUPER_NAILGUN;
-	else if(self.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
-		return IT_SUPER_SHOTGUN;
-	else if(self.ammo_nails >= 1 && (it & IT_NAILGUN) )
-		return IT_NAILGUN;
-	else if(self.ammo_shells >= 1 && (it & IT_SHOTGUN)  )
-		return IT_SHOTGUN;
-		
-/*
-	if(self.ammo_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
-		return IT_ROCKET_LAUNCHER;
-	else if(self.ammo_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
-		return IT_GRENADE_LAUNCHER;
 
-*/
 
-	return IT_AXE;
-};
-
-float() W_CheckNoAmmo =
-{
-	if (self.currentammo > 0)
-		return TRUE;
-
-	if (self.weapon == IT_AXE)
-		return TRUE;
-	
-	self.weapon = W_BestWeapon ();
-
-	W_SetCurrentAmmo ();
-	
-// drop the weapon down
-	return FALSE;
-};
 
 /*
 ============

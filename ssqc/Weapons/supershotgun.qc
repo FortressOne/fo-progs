@@ -13,11 +13,10 @@ class supershotgun_c : shotgun_c
         super::Attack();
         if (this.owner.currentammo == 1)
         {
-            // FIXME - confirm super is base class or parent class
             shoot_sound = "weapons/guncock.wav";
             spread = '0.04 0.04 0';
             shot_count = 6;
-            super::Attack();
+            shotgun_c::Attack();
             return;
         }
 
