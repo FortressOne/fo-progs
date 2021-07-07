@@ -11,7 +11,13 @@ class weapon_c : entity
     vector puff_org;
     float puff_count;
 
-    set float ammo_count = { return; };
+    float ammo_per_shot;
+    float attack_finish_delay;
+
+    virtual void_f animation_func;
+
+    //float _ammo_count;
+    //set float ammo_count = { _ammo_count = value; };
 
     get float ammo_count =
     {
@@ -27,55 +33,33 @@ class weapon_c : entity
                 return this.owner.ammo_cells;
         }
         return 0;
-    };
-
-    nonvirtual weapon_c() GetBestWeapon =
-    {
-        float it = this.owner.items;
-
-        if (this.owner.waterlevel <= 1 && this.owner.ammo_cells >= 1 && (it & IT_LIGHTNING))
-            return IT_LIGHTNING;
-        else if(this.owner.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
-            return IT_SUPER_NAILGUN;
-        else if(this.owner.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
-            return IT_SUPER_SHOTGUN;
-        else if(this.owner.ammo_nails >= 1 && (it & IT_NAILGUN) )
-            return IT_NAILGUN;
-        else if(this.owner.ammo_shells >= 1 && (it & IT_SHOTGUN)  )
-            return IT_SHOTGUN;
-            
-    /*
-        if(self.ammo_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
-            return IT_ROCKET_LAUNCHER;
-        else if(self.ammo_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
-            return IT_GRENADE_LAUNCHER;
-
-    */
-
-        return IT_AXE;
-    };
+    };   
 
     nonvirtual float() HasAmmo =
     {
         if (this.weapon == IT_AXE)
             return TRUE;
 
-        if (this.amount_count >= this.ammo_per_shot)
+        if (this.ammo_count >= this.ammo_per_shot)
             return TRUE;
         
-        this.owner.current_weapon = this.GetBestWeapon();
-        
-    // drop the weapon down
         return FALSE;
     };
 
     virtual void () Attack = 
     {
+        player_c player = (player_c)this.owner;
         if (!this.HasAmmo())
+        {
+            player.current_weapon = player.GetBestWeapon();
             return;
-
-        makevectors(this.owner.v_angle);                 // calculate forward angle for velocity
-        this.owner.show_hostile = time + 1;   // wake monsters up
+        }
+            
+        makevectors(player.v_angle);                 // calculate forward angle for velocity
+        player.show_hostile = time + 1;   // wake monsters up
+        this.animation_func();
+        player.attack_finished = time + this.attack_finish_delay;
+        sound(this.owner, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
 
         if (self.weapon == IT_AXE)
         {
@@ -90,18 +74,6 @@ class weapon_c : entity
                 player_axec1 ();
             else
                 player_axed1 ();
-        }
-        else if (self.weapon == IT_SHOTGUN)
-        {
-            player_shot1 ();
-            self.attack_finished = time + 0.5;
-            W_FireShotgun ();
-        }
-        else if (self.weapon == IT_SUPER_SHOTGUN)
-        {
-            player_shot1 ();
-            self.attack_finished = time + 0.7;
-            W_FireSuperShotgun ();
         }
         else if (self.weapon == IT_NAILGUN)
         {

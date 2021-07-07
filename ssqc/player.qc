@@ -393,6 +393,7 @@ class player_c : entity
 	weapon_c _current_weapon; // private
 	set weapon_c current_weapon =
 	{
+		this.items = this.items - (this.items & _current_weapon.ammo_type);
 		_current_weapon = value;
 		player_run();          // get out of any weapon firing states
 		this.currentammo = value.ammo_count;
@@ -435,6 +436,25 @@ class player_c : entity
 
 		this.current_weapon.Frame();
 	};
+
+	nonvirtual weapon_c() GetBestWeapon =
+    {
+        if (this.weapon1.HasAmmo())
+		{
+			return this.weapon1;
+		}
+
+		if (this.weapon2.HasAmmo())
+		{
+			return this.weapon2;
+		}
+		if (this.weapon3.HasAmmo())
+		{
+			return this.weapon3;
+		}
+		
+		return this.weapon4;
+    };
 
 	nonvirtual void() Respawn =
 	{

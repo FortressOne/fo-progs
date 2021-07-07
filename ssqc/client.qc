@@ -200,7 +200,7 @@ void() execute_changelevel =
 // enforce a wait time before allowing changelevel
 	intermission_exittime = time + 5;
 
-	pos = FindIntermission ();
+	pos = FindIntermission();
 
 // play intermission music
 	WriteByte (MSG_ALL, SVC_CDTRACK);
@@ -214,8 +214,8 @@ void() execute_changelevel =
 	WriteAngle (MSG_ALL, pos.mangle_y);
 	WriteAngle (MSG_ALL, pos.mangle_z);
 	
-	other = find (world, classname, "player");
-	while (other != world)
+	other = find(world, classname, "player");
+	while (other)
 	{
 		other.takedamage = DAMAGE_NO;
 		other.solid = SOLID_NOT;
@@ -326,7 +326,7 @@ entity () SelectSpawnPoint = {
 	float numspots = 0, totalspots = 0, pcount;
 
 // testinfo_player_start is only found in regioned levels
-	spot = find (world, classname, "testplayerstart");
+	spot = find(world, classname, "testplayerstart");
 	if (spot)
 		return spot;
 		

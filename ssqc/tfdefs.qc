@@ -2,6 +2,9 @@
 #pragma target fte
 #pragma autoproto
 
+
+typedef void () void_f;
+
 // random globals from qw code
 //entity stemp, otemp, s, old;
 
