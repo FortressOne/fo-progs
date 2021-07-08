@@ -712,51 +712,8 @@ Called every frame before physics are run
 ================
 */
 void() PlayerPreThink = {
-	if (intermission_running)
-	{
-		IntermissionThink ();   // otherwise a button could be missed between
-		return;                                 // the think tics
-	}
-
-	if (self.view_ofs == '0 0 0')
-		return;         // intermission or finale
-
-	makevectors (self.v_angle);             // is this still used
-
-        self.deathtype = "";
-
-	CheckRules ();
-	WaterMove ();
-/*
-	if (self.waterlevel == 2)
-		CheckWaterJump ();
-*/
-
-	if (self.deadflag >= DEAD_DEAD)
-	{
-		PlayerDeathThink ();
-		return;
-	}
-	
-	if (self.deadflag == DEAD_DYING)
-		return; // dying, so do nothing
-
-	if (self.button2)
-	{
-		PlayerJump ();
-	}
-	else
-		self.flags = self.flags | FL_JUMPRELEASED;
-
-// teleporters can force a non-moving pause time        
-	if (time < self.pausetime)
-		self.velocity = '0 0 0';
-
-	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
-	{
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
-	}
+	player_c player = (player_c)self;
+	player.PreThink();
 };
 	
 /*
