@@ -393,12 +393,13 @@ class player_c : entity
 	weapon_c _current_weapon; // private
 	set weapon_c current_weapon =
 	{
-		this.items = this.items - (this.items & _current_weapon.ammo_type);
+		this.items = this.items - ( this.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
 		_current_weapon = value;
 		player_run();          // get out of any weapon firing states
 		this.currentammo = value.ammo_count;
 		this.weaponmodel = value.weaponmodel;
 		this.weaponframe = 0;
+		this.weapon = value.weapon;
 		this.items = this.items | value.ammo_type;
 	};
 	inline get weapon_c current_weapon = { return _current_weapon; };
@@ -407,6 +408,55 @@ class player_c : entity
 	weapon_c weapon2;
 	weapon_c weapon3;
 	weapon_c weapon4;
+
+	nonvirtual void() PreThink =
+	{
+		if (intermission_running)
+		{
+			IntermissionThink();   // otherwise a button could be missed between
+			return;                                 // the think tics
+		}
+
+		if (self.view_ofs == '0 0 0')
+			return;         // intermission or finale
+
+		makevectors (self.v_angle);             // is this still used
+
+			self.deathtype = "";
+
+		CheckRules ();
+		WaterMove ();
+	/*
+		if (self.waterlevel == 2)
+			CheckWaterJump ();
+	*/
+
+		if (self.deadflag >= DEAD_DEAD)
+		{
+			PlayerDeathThink ();
+			return;
+		}
+		
+		if (self.deadflag == DEAD_DYING)
+			return; // dying, so do nothing
+
+		if (self.button2)
+		{
+			PlayerJump ();
+		}
+		else
+			self.flags = self.flags | FL_JUMPRELEASED;
+
+	// teleporters can force a non-moving pause time        
+		if (time < self.pausetime)
+			self.velocity = '0 0 0';
+
+		if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+		{
+			self.weapon = W_BestWeapon ();
+			W_SetCurrentAmmo ();
+		}
+	};
 
 	nonvirtual void() PostThink =
 	{

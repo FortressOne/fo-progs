@@ -556,8 +556,6 @@ void(float old, float new) Deathmatch_Weapon =
 weapon_touch
 =============
 */
-float() W_BestWeapon;
-
 void() weapon_touch =
 {
 	local   float   hadammo, best, new = 0, old;
