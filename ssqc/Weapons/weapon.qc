@@ -13,6 +13,8 @@ class weapon_c : entity
 
     float ammo_per_shot;
     float attack_finish_delay;
+    float clip_size;
+    float weapon_type;
 
     virtual void_f animation_func;
 
@@ -37,9 +39,6 @@ class weapon_c : entity
 
     nonvirtual float() HasAmmo =
     {
-        if (this.weapon == IT_AXE)
-            return TRUE;
-
         if (this.ammo_count >= this.ammo_per_shot)
             return TRUE;
         
@@ -60,47 +59,6 @@ class weapon_c : entity
         this.animation_func();
         player.attack_finished = time + this.attack_finish_delay;
         sound(this.owner, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
-
-        if (self.weapon == IT_AXE)
-        {
-            self.attack_finished = time + 0.5;
-            sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
-            float r = random();
-            if (r < 0.25)
-                player_axe1 ();
-            else if (r<0.5)
-                player_axeb1 ();
-            else if (r<0.75)
-                player_axec1 ();
-            else
-                player_axed1 ();
-        }
-        else if (self.weapon == IT_NAILGUN)
-        {
-            player_nail1 ();
-        }
-        else if (self.weapon == IT_SUPER_NAILGUN)
-        {
-            player_nail1 ();
-        }
-        else if (self.weapon == IT_GRENADE_LAUNCHER)
-        {
-            player_rocket1();
-            self.attack_finished = time + 0.6;
-            W_FireGrenade();
-        }
-        else if (self.weapon == IT_ROCKET_LAUNCHER)
-        {
-            player_rocket1();
-            self.attack_finished = time + 0.8;
-            W_FireRocket();
-        }
-        else if (self.weapon == IT_LIGHTNING)
-        {
-            self.attack_finished = time + 0.1;
-            sound (self, CHAN_AUTO, "weapons/lstart.wav", 1, ATTN_NORM);
-            player_light1();
-        }
     };
 
     nonvirtual void () Frame =
