@@ -56,24 +56,11 @@ class weapon_c : entity
             
         makevectors(player.v_angle);                 // calculate forward angle for velocity
         player.show_hostile = time + 1;   // wake monsters up
-        this.animation_func();
+        if (this.animation_func)
+            this.animation_func();
+            
         player.attack_finished = time + this.attack_finish_delay;
         sound(this.owner, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
-    };
-
-    nonvirtual void () Frame =
-    {
-        if (time < self.attack_finished)
-            return;
-
-        ImpulseCommands();
-        
-        // check for attack
-        if (self.button0)
-        {
-            SuperDamageSound();
-            this.Attack();
-        }
     };
 
     nonvirtual void(float damage, vector dir) TraceAttack =

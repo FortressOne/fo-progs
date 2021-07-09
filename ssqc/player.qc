@@ -200,32 +200,19 @@ void()  player_axed4 =  [$axattd4, player_run   ] {self.weaponframe=8;};
 
 //============================================================================
 
-void() player_nail1   =[$nailatt1, player_nail2  ] 
-{
-	muzzleflash();
 
-	if (!self.button0 || intermission_running || self.impulse)
-		{player_run ();return;}
-	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
-		self.weaponframe = 1;
-	SuperDamageSound();
-	W_FireSpikes (4);
-	self.attack_finished = time + 0.2;
-};
-void() player_nail2   =[$nailatt2, player_nail1  ]
+void() player_nail1   =[$nailatt1, player_nail1] 
 {
-	muzzleflash();
-
-	if (!self.button0 || intermission_running || self.impulse)
-		{player_run ();return;}
-	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
-		self.weaponframe = 1;
-	SuperDamageSound();
-	W_FireSpikes (-4);
-	self.attack_finished = time + 0.2;
+	
 };
+
+void() player_nail2   =[$nailatt2, player_nail2] 
+{
+	
+};
+
+
+
 
 //============================================================================
 
@@ -484,10 +471,79 @@ class player_c : entity
 
 		CheckPowerups ();
 
-		this.current_weapon.Frame();
+		this.WeaponFrame();
 	};
 
-	nonvirtual weapon_c() GetBestWeapon =
+	nonvirtual void () WeaponFrame =
+    {
+        if (time < this.attack_finished)
+            return;
+
+        this.ImpulseCommands();
+        
+        // check for attack
+        if (this.button0)
+        {
+            SuperDamageSound();
+            this.current_weapon.Attack();
+        }
+    };
+
+	nonvirtual void (float input) ChangeWeapon =
+	{
+		if (this.IsReloading)
+			return;
+
+		if (this.attack_finished <= time)
+			return;
+
+		weapon_c weap;
+		if (this.IsUsingOldImpulses)
+		{
+
+			return;
+		}
+
+		switch (input)
+		{
+			case 1:
+				weap = this.weapon1;
+				break;
+			case 2:
+				weap = this.weapon2;
+				break;
+			case 3:
+				weap = this.weapon3;
+				break;
+			case 4:
+				weap = this.weapon4;
+				break;
+		}
+
+		if (weap)
+		{
+			if (weap.HasAmmo())
+			{
+				this.current_weapon = weap;
+			}
+			else
+			{
+				sprint(this, PRINT_HIGH, "Not enough ammo.\n");
+			}
+		}
+	};
+
+	nonvirtual void () ImpulseCommands =
+	{
+		if (this.impulse <= 8 && this.impulse >= 1)
+		{
+			this.ChangeWeapon(this.impulse);
+		}
+
+		self.impulse = 0;
+	};
+
+	nonvirtual weapon_c () GetBestWeapon =
     {
         if (this.weapon1.HasAmmo())
 		{
