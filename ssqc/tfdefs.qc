@@ -25,36 +25,9 @@ enum WEAPON
     MEDIKIT
 };
 
-/*
-//basic unnamed enum
-enum {a,b,c};
-
-//named enum
-enum type1 {a,b,c}; type1 v1_2;
-//named enum of specific base type, with variable declaration
-enum type2 : string {a="something", b="something else", c="blarg"} v2; type2 v2_2;
-//strict named enum, with variable declaration
-enum class type3: float {a=0,b=1,c=2} v3; type3 v3_2;
-//strict unnamed enum, with variable declaration
-enum class : vector {a='0 1 2',b=[3,4,5],c=[6*4,[1,2]*[0,1],2]} v4;
-
-//typedefed unamed enum (making an always-named typedef).
-typedef enum{a,b,c} type5;  type5 v5;
-
-void() test =
-{
-    v2 = type2::a;  //a member type
-    v2 = v2::a;     //uses the type's a member.
-    v2 = "splat";   //not 'class', so allowed.
-
-    v3 = type3::c;  //allowed.
-    v3 = v3::b; //allowed.
-//  v3 = 16; //not allowed, must use only defined values.
-
-    (void)v1_2; (void)v2_2; (void)v3_2; (void)v4; (void)v5;
-};
-*/
-
+class player_c;
+class gamemanager_c;
+gamemanager_c GameManager;
 
 // random globals from qw code
 //entity stemp, otemp, s, old;
@@ -62,11 +35,8 @@ void() test =
 
 
 float   modelindex_eyes, modelindex_player;
-string nextmap;
 .float hit_z; // FIXME - is this used by engine?
-
-float   intermission_running;
-float   intermission_exittime;
+.float  dmgtime;
 //entity  multi_ent;
 //float   multi_damage;
 

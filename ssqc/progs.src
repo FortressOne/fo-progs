@@ -4,6 +4,7 @@
 ../share/fteextensions.qc
 defs.qc
 tfdefs.qc
+gamemanager.qc
 
 subs.qc
 combat.qc

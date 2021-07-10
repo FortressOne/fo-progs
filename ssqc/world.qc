@@ -369,6 +369,8 @@ void() worldspawn =
 
 	// 63 testing
 	lightstyle(63, "a");
+
+	GameManager = spawn(gamemanager_c);
 };
 
 void() StartFrame =

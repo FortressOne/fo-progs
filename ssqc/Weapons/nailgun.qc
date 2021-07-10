@@ -20,7 +20,7 @@ class nailgun_c : weapon_c
 
     nonvirtual void () NailAttack =
     {
-        if (!this.owner.button0 || intermission_running)
+        if (!this.owner.button0 || GameManager.intermission_running)
         {
             player_run();
             return;
@@ -39,7 +39,7 @@ class nailgun_c : weapon_c
 
     nonvirtual void () NailAttack2 =
     {
-        if (!this.owner.button0 || intermission_running)
+        if (!this.owner.button0 || GameManager.intermission_running)
         {
             player_run();
             return;
