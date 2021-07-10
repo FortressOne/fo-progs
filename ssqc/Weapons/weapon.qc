@@ -1,92 +1,66 @@
 class weapon_c : entity
 {
+    float ammo_type;
     string shoot_sound;
 
     entity multi_ent;
     float multi_damage;
-    vector  blood_org;
-    float   blood_count;
+    vector blood_org;
+    float blood_count;
 
-    vector  puff_org;
-    float   puff_count;
+    vector puff_org;
+    float puff_count;
+
+    float ammo_per_shot;
+    float attack_finish_delay;
+    float clip_size;
+    float weapon_type;
+
+    virtual void_f animation_func;
+
+    //float _ammo_count;
+    //set float ammo_count = { _ammo_count = value; };
+
+    get float ammo_count =
+    {
+        switch (this.ammo_type)
+        {
+            case IT_SHELLS:
+                return this.owner.ammo_shells;
+            case IT_NAILS:
+                return this.owner.ammo_nails;
+            case IT_ROCKETS:
+                return this.owner.ammo_rockets;
+            case IT_CELLS:
+                return this.owner.ammo_cells;
+        }
+        return 0;
+    };   
+
+    nonvirtual float() HasAmmo =
+    {
+        if (this.ammo_count >= this.ammo_per_shot)
+            return TRUE;
+        
+        return FALSE;
+    };
 
     virtual void () Attack = 
     {
-        float   r;
-
-        if (!W_CheckNoAmmo ())
+        player_c player = (player_c)this.owner;
+        if (!this.HasAmmo())
+        {
+            player.current_weapon = player.GetBestWeapon();
             return;
-
-        makevectors     (self.v_angle);                 // calculate forward angle for velocity
-        self.show_hostile = time + 1;   // wake monsters up
-
-        if (self.weapon == IT_AXE)
-        {
-            self.attack_finished = time + 0.5;
-            sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
-            r = random();
-            if (r < 0.25)
-                player_axe1 ();
-            else if (r<0.5)
-                player_axeb1 ();
-            else if (r<0.75)
-                player_axec1 ();
-            else
-                player_axed1 ();
         }
-        else if (self.weapon == IT_SHOTGUN)
-        {
-            player_shot1 ();
-            self.attack_finished = time + 0.5;
-            W_FireShotgun ();
-        }
-        else if (self.weapon == IT_SUPER_SHOTGUN)
-        {
-            player_shot1 ();
-            self.attack_finished = time + 0.7;
-            W_FireSuperShotgun ();
-        }
-        else if (self.weapon == IT_NAILGUN)
-        {
-            player_nail1 ();
-        }
-        else if (self.weapon == IT_SUPER_NAILGUN)
-        {
-            player_nail1 ();
-        }
-        else if (self.weapon == IT_GRENADE_LAUNCHER)
-        {
-            player_rocket1();
-            self.attack_finished = time + 0.6;
-            W_FireGrenade();
-        }
-        else if (self.weapon == IT_ROCKET_LAUNCHER)
-        {
-            player_rocket1();
-            self.attack_finished = time + 0.8;
-            W_FireRocket();
-        }
-        else if (self.weapon == IT_LIGHTNING)
-        {
-            self.attack_finished = time + 0.1;
-            sound (self, CHAN_AUTO, "weapons/lstart.wav", 1, ATTN_NORM);
-            player_light1();
-        }
-    };
-
-    nonvirtual void () Frame =
-    {
-        if (time < self.attack_finished)
-            return;
-
-        ImpulseCommands();
-        
-        // check for attack
-        if (self.button0)
-        {
-            SuperDamageSound();
-            this.Attack();
-        }
+            
+        makevectors(player.v_angle);                 // calculate forward angle for velocity
+        player.show_hostile = time + 1;   // wake monsters up
+        if (this.animation_func)
+            this.animation_func();
+            
+        player.attack_finished = time + this.attack_finish_delay;
+        sound(this.owner, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
     };
 
     nonvirtual void(float damage, vector dir) TraceAttack =

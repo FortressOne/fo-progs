@@ -200,7 +200,7 @@ void() execute_changelevel =
 // enforce a wait time before allowing changelevel
 	intermission_exittime = time + 5;
 
-	pos = FindIntermission ();
+	pos = FindIntermission();
 
 // play intermission music
 	WriteByte (MSG_ALL, SVC_CDTRACK);
@@ -214,8 +214,8 @@ void() execute_changelevel =
 	WriteAngle (MSG_ALL, pos.mangle_y);
 	WriteAngle (MSG_ALL, pos.mangle_z);
 	
-	other = find (world, classname, "player");
-	while (other != world)
+	other = find(world, classname, "player");
+	while (other)
 	{
 		other.takedamage = DAMAGE_NO;
 		other.solid = SOLID_NOT;
@@ -326,7 +326,7 @@ entity () SelectSpawnPoint = {
 	float numspots = 0, totalspots = 0, pcount;
 
 // testinfo_player_start is only found in regioned levels
-	spot = find (world, classname, "testplayerstart");
+	spot = find(world, classname, "testplayerstart");
 	if (spot)
 		return spot;
 		
@@ -712,51 +712,8 @@ Called every frame before physics are run
 ================
 */
 void() PlayerPreThink = {
-	if (intermission_running)
-	{
-		IntermissionThink ();   // otherwise a button could be missed between
-		return;                                 // the think tics
-	}
-
-	if (self.view_ofs == '0 0 0')
-		return;         // intermission or finale
-
-	makevectors (self.v_angle);             // is this still used
-
-        self.deathtype = "";
-
-	CheckRules ();
-	WaterMove ();
-/*
-	if (self.waterlevel == 2)
-		CheckWaterJump ();
-*/
-
-	if (self.deadflag >= DEAD_DEAD)
-	{
-		PlayerDeathThink ();
-		return;
-	}
-	
-	if (self.deadflag == DEAD_DYING)
-		return; // dying, so do nothing
-
-	if (self.button2)
-	{
-		PlayerJump ();
-	}
-	else
-		self.flags = self.flags | FL_JUMPRELEASED;
-
-// teleporters can force a non-moving pause time        
-	if (time < self.pausetime)
-		self.velocity = '0 0 0';
-
-	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
-	{
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
-	}
+	player_c player = (player_c)self;
+	player.PreThink();
 };
 	
 /*

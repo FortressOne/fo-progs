@@ -1,2 +1,7 @@
-W_WeaponFrame = weapon_c -> Frame
+W_WeaponFrame = player_c -> WeaponFrame
 W_Attack = weapon_c -> super::Attack
+W_CheckNoAmmo = weapon_c -> super::HasAmmo
+W_BestWeapon = player_c -> GetBestWeapon
+
+W_SetCurrentAmmo = player_c -> setter on current_weapon
+W_ChangeWeapon = player_c -> ChangeWeapon

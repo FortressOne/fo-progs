@@ -32,6 +32,9 @@ PLAYER
 ==============================================================================
 */
 
+
+
+
 $cd /raid/quake/id1/models/player_4
 $origin 0 -6 24
 $base base              
@@ -197,32 +200,19 @@ void()  player_axed4 =  [$axattd4, player_run   ] {self.weaponframe=8;};
 
 //============================================================================
 
-void() player_nail1   =[$nailatt1, player_nail2  ] 
-{
-	muzzleflash();
 
-	if (!self.button0 || intermission_running || self.impulse)
-		{player_run ();return;}
-	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
-		self.weaponframe = 1;
-	SuperDamageSound();
-	W_FireSpikes (4);
-	self.attack_finished = time + 0.2;
-};
-void() player_nail2   =[$nailatt2, player_nail1  ]
+void() player_nail1   =[$nailatt1, player_nail1] 
 {
-	muzzleflash();
-
-	if (!self.button0 || intermission_running || self.impulse)
-		{player_run ();return;}
-	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
-		self.weaponframe = 1;
-	SuperDamageSound();
-	W_FireSpikes (-4);
-	self.attack_finished = time + 0.2;
+	
 };
+
+void() player_nail2   =[$nailatt2, player_nail2] 
+{
+	
+};
+
+
+
 
 //============================================================================
 
@@ -264,6 +254,8 @@ void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.weaponframe=4;};
 void() player_rocket5   =[$rockatt5, player_rocket6  ] {self.weaponframe=5;};
 void() player_rocket6   =[$rockatt6, player_run  ] {self.weaponframe=6;};
 void(float num_bubbles) DeathBubbles;
+
+
 
 void() PainSound =
 {
@@ -382,53 +374,76 @@ void() player_died1;
 void() player_diee1;
 void() player_die_ax1;
 
-void() DeathBubblesSpawn =
-{
-local entity    bubble;
-	if (self.owner.waterlevel != 3)
-		return;
-	bubble = spawn();
-	setmodel (bubble, "progs/s_bubble.spr");
-	setorigin (bubble, self.owner.origin + '0 0 24');
-	bubble.movetype = MOVETYPE_NOCLIP;
-	bubble.solid = SOLID_NOT;
-	bubble.velocity = '0 0 15';
-	bubble.nextthink = time + 0.5;
-	bubble.think = bubble_bob;
-	bubble.classname = "bubble";
-	bubble.frame = 0;
-	bubble.cnt = 0;
-	setsize (bubble, '-8 -8 -8', '8 8 8');
-	self.nextthink = time + 0.1;
-	self.think = DeathBubblesSpawn;
-	self.air_finished = self.air_finished + 1;
-	if (self.air_finished >= self.bubble_count)
-		remove(self);
-};
-
-void(float num_bubbles) DeathBubbles =
-{
-local entity    bubble_spawner;
-	
-	bubble_spawner = spawn();
-	setorigin (bubble_spawner, self.origin);
-	bubble_spawner.movetype = MOVETYPE_NONE;
-	bubble_spawner.solid = SOLID_NOT;
-	bubble_spawner.nextthink = time + 0.1;
-	bubble_spawner.think = DeathBubblesSpawn;
-	bubble_spawner.air_finished = 0;
-	bubble_spawner.owner = self;
-	bubble_spawner.bubble_count = num_bubbles;
-	return;
-};
 
 class player_c : entity 
 {
-	weapon_c current_weapon;
+	weapon_c _current_weapon; // private
+	set weapon_c current_weapon =
+	{
+		this.items = this.items - ( this.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+		_current_weapon = value;
+		player_run();          // get out of any weapon firing states
+		this.currentammo = value.ammo_count;
+		this.weaponmodel = value.weaponmodel;
+		this.weaponframe = 0;
+		this.weapon = value.weapon;
+		this.items = this.items | value.ammo_type;
+	};
+	inline get weapon_c current_weapon = { return _current_weapon; };
+
 	weapon_c weapon1;
 	weapon_c weapon2;
 	weapon_c weapon3;
 	weapon_c weapon4;
+
+	nonvirtual void() PreThink =
+	{
+		if (intermission_running)
+		{
+			IntermissionThink();   // otherwise a button could be missed between
+			return;                                 // the think tics
+		}
+
+		if (self.view_ofs == '0 0 0')
+			return;         // intermission or finale
+
+		makevectors (self.v_angle);             // is this still used
+
+			self.deathtype = "";
+
+		CheckRules ();
+		WaterMove ();
+	/*
+		if (self.waterlevel == 2)
+			CheckWaterJump ();
+	*/
+
+		if (self.deadflag >= DEAD_DEAD)
+		{
+			PlayerDeathThink ();
+			return;
+		}
+		
+		if (self.deadflag == DEAD_DYING)
+			return; // dying, so do nothing
+
+		if (self.button2)
+		{
+			PlayerJump ();
+		}
+		else
+			self.flags = self.flags | FL_JUMPRELEASED;
+
+	// teleporters can force a non-moving pause time        
+		if (time < self.pausetime)
+			self.velocity = '0 0 0';
+
+		if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+		{
+			self.weapon = W_BestWeapon ();
+			W_SetCurrentAmmo ();
+		}
+	};
 
 	nonvirtual void() PostThink =
 	{
@@ -456,8 +471,96 @@ class player_c : entity
 
 		CheckPowerups ();
 
-		this.current_weapon.Frame();
+		this.WeaponFrame();
 	};
+
+	nonvirtual void () WeaponFrame =
+    {
+        if (time < this.attack_finished)
+            return;
+
+        this.ImpulseCommands();
+        
+        // check for attack
+        if (this.button0)
+        {
+            SuperDamageSound();
+            this.current_weapon.Attack();
+        }
+    };
+
+	nonvirtual void (float input) ChangeWeapon =
+	{
+		if (this.IsReloading)
+			return;
+
+		if (this.attack_finished <= time)
+			return;
+
+		weapon_c weap;
+		if (this.IsUsingOldImpulses)
+		{
+
+			return;
+		}
+
+		switch (input)
+		{
+			case 1:
+				weap = this.weapon1;
+				break;
+			case 2:
+				weap = this.weapon2;
+				break;
+			case 3:
+				weap = this.weapon3;
+				break;
+			case 4:
+				weap = this.weapon4;
+				break;
+		}
+
+		if (weap)
+		{
+			if (weap.HasAmmo())
+			{
+				this.current_weapon = weap;
+			}
+			else
+			{
+				sprint(this, PRINT_HIGH, "Not enough ammo.\n");
+			}
+		}
+	};
+
+	nonvirtual void () ImpulseCommands =
+	{
+		if (this.impulse <= 8 && this.impulse >= 1)
+		{
+			this.ChangeWeapon(this.impulse);
+		}
+
+		self.impulse = 0;
+	};
+
+	nonvirtual weapon_c () GetBestWeapon =
+    {
+        if (this.weapon1.HasAmmo())
+		{
+			return this.weapon1;
+		}
+
+		if (this.weapon2.HasAmmo())
+		{
+			return this.weapon2;
+		}
+		if (this.weapon3.HasAmmo())
+		{
+			return this.weapon3;
+		}
+		
+		return this.weapon4;
+    };
 
 	nonvirtual void() Respawn =
 	{
@@ -574,6 +677,46 @@ class player_c : entity
 		}
 	};
 
+};
+
+void() DeathBubblesSpawn =
+{
+local entity    bubble;
+	if (self.owner.waterlevel != 3)
+		return;
+	bubble = spawn();
+	setmodel (bubble, "progs/s_bubble.spr");
+	setorigin (bubble, self.owner.origin + '0 0 24');
+	bubble.movetype = MOVETYPE_NOCLIP;
+	bubble.solid = SOLID_NOT;
+	bubble.velocity = '0 0 15';
+	bubble.nextthink = time + 0.5;
+	bubble.think = bubble_bob;
+	bubble.classname = "bubble";
+	bubble.frame = 0;
+	bubble.cnt = 0;
+	setsize (bubble, '-8 -8 -8', '8 8 8');
+	self.nextthink = time + 0.1;
+	self.think = DeathBubblesSpawn;
+	self.air_finished = self.air_finished + 1;
+	if (self.air_finished >= self.bubble_count)
+		remove(self);
+};
+
+void(float num_bubbles) DeathBubbles =
+{
+local entity    bubble_spawner;
+	
+	bubble_spawner = spawn();
+	setorigin (bubble_spawner, self.origin);
+	bubble_spawner.movetype = MOVETYPE_NONE;
+	bubble_spawner.solid = SOLID_NOT;
+	bubble_spawner.nextthink = time + 0.1;
+	bubble_spawner.think = DeathBubblesSpawn;
+	bubble_spawner.air_finished = 0;
+	bubble_spawner.owner = self;
+	bubble_spawner.bubble_count = num_bubbles;
+	return;
 };
 
 void() DeathSound =
