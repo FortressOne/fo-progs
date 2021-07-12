@@ -203,16 +203,13 @@ void()  player_axed4 =  [$axattd4, player_run   ] {self.weaponframe=8;};
 
 void() player_nail1   =[$nailatt1, player_nail1] 
 {
-	
+	return;
 };
 
 void() player_nail2   =[$nailatt2, player_nail2] 
 {
-	
+	return;
 };
-
-
-
 
 //============================================================================
 
@@ -220,26 +217,26 @@ void() player_light1   =[$light1, player_light2  ]
 {
 	muzzleflash();
 
-	if (!self.button0 || intermission_running)
+	if (!self.button0 || GameManager.intermission_running)
 		{player_run ();return;}
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
 	SuperDamageSound();
-	W_FireLightning();
+	//W_FireLightning();
 	self.attack_finished = time + 0.2;
 };
 void() player_light2   =[$light2, player_light1  ]
 {
 	muzzleflash();
 
-	if (!self.button0 || intermission_running)
+	if (!self.button0 || GameManager.intermission_running)
 		{player_run ();return;}
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
 	SuperDamageSound();
-	W_FireLightning();
+	//W_FireLightning();
 	self.attack_finished = time + 0.2;
 };
 
@@ -396,52 +393,67 @@ class player_c : entity
 	weapon_c weapon3;
 	weapon_c weapon4;
 
+	float is_reloading;
+	float is_using_old_impulses;
+
+	// spy
+	float is_feigning;
+
+	// sniper, hwguy
+	float is_aiming;
+
+	nonvirtual float () CanInteract =
+	{
+		if (is_feigning)
+			return FALSE;
+
+		if (is_aiming)
+			return FALSE;
+
+		return TRUE;
+	};
+
 	nonvirtual void() PreThink =
 	{
-		if (intermission_running)
+		if (GameManager.intermission_running)
 		{
-			IntermissionThink();   // otherwise a button could be missed between
+			GameManager.IntermissionThink(this);   // otherwise a button could be missed between
 			return;                                 // the think tics
 		}
 
-		if (self.view_ofs == '0 0 0')
+		if (this.view_ofs == '0 0 0')
 			return;         // intermission or finale
 
-		makevectors (self.v_angle);             // is this still used
+		makevectors (this.v_angle);             // is this still used
 
-			self.deathtype = "";
+		this.deathtype = "";
 
-		CheckRules ();
-		WaterMove ();
-	/*
-		if (self.waterlevel == 2)
-			CheckWaterJump ();
-	*/
+		GameManager.CheckRules();
+		this.WaterMove();
 
-		if (self.deadflag >= DEAD_DEAD)
+		if (this.deadflag >= DEAD_DEAD)
 		{
-			PlayerDeathThink ();
+			this.PlayerDeathThink();
 			return;
 		}
 		
-		if (self.deadflag == DEAD_DYING)
+		if (this.deadflag == DEAD_DYING)
 			return; // dying, so do nothing
 
-		if (self.button2)
+		if (this.button2)
 		{
-			PlayerJump ();
+			this.PlayerJump();
 		}
 		else
-			self.flags = self.flags | FL_JUMPRELEASED;
+			this.flags = this.flags | FL_JUMPRELEASED;
 
 	// teleporters can force a non-moving pause time        
-		if (time < self.pausetime)
-			self.velocity = '0 0 0';
+		if (time < this.pausetime)
+			this.velocity = '0 0 0';
 
-		if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+		if (time > this.attack_finished && this.currentammo == 0 && this.weapon != IT_AXE)
 		{
-			self.weapon = W_BestWeapon ();
-			W_SetCurrentAmmo ();
+			this.current_weapon = this.GetBestWeapon();
 		}
 	};
 
@@ -474,6 +486,146 @@ class player_c : entity
 		this.WeaponFrame();
 	};
 
+	nonvirtual void () WaterMove =
+	{
+		if (this.movetype == MOVETYPE_NOCLIP)
+			return;
+		if (this.health < 0)
+			return;
+
+		if (this.waterlevel != 3)
+		{
+			if (this.air_finished < time)
+				sound(this, CHAN_VOICE, "player/gasp2.wav", 1, ATTN_NORM);
+			else if (this.air_finished < time + 9)
+				sound(this, CHAN_VOICE, "player/gasp1.wav", 1, ATTN_NORM);
+			this.air_finished = time + 12;
+			this.dmg = 2;
+		}
+		else if (this.air_finished < time)
+		{       
+			// drown!
+			if (this.pain_finished < time)
+			{
+				this.dmg = this.dmg + 2;
+				if (this.dmg > 15)
+					this.dmg = 10;
+				T_Damage(this, world, world, this.dmg);
+				this.pain_finished = time + 1;
+			}
+		}
+		
+		if (!this.waterlevel)
+		{
+			if (this.flags & FL_INWATER)
+			{       
+				// play leave water sound
+				sound(this, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);
+				this.flags = this.flags - FL_INWATER;
+			}
+			return;
+		}
+
+		if (this.watertype == CONTENT_LAVA)
+		{       
+			// do damage
+			if (this.dmgtime < time)
+			{
+				if (this.radsuit_finished > time)
+					this.dmgtime = time + 1;
+				else
+					this.dmgtime = time + 0.2;
+
+				T_Damage(this, world, world, 10*this.waterlevel);
+			}
+		}
+		else if (this.watertype == CONTENT_SLIME)
+		{       
+			// do damage
+			if (this.dmgtime < time && this.radsuit_finished < time)
+			{
+				this.dmgtime = time + 1;
+				T_Damage(this, world, world, 4*this.waterlevel);
+			}
+		}
+		
+		if (!(this.flags & FL_INWATER))
+		{
+			// player enter water sound
+			if (this.watertype == CONTENT_LAVA)
+				sound(this, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
+			if (this.watertype == CONTENT_WATER)
+				sound(this, CHAN_BODY, "player/inh2o.wav", 1, ATTN_NORM);
+			if (this.watertype == CONTENT_SLIME)
+				sound(this, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
+
+			this.flags = this.flags + FL_INWATER;
+			this.dmgtime = 0;
+		}       
+	};
+
+	nonvirtual void () PlayerDeathThink = {
+		if ((this.flags & FL_ONGROUND))
+		{
+			float forward = vlen(this.velocity);
+			forward = forward - 20;
+			if (forward <= 0)
+				this.velocity = '0 0 0';
+			else    
+				this.velocity = forward * normalize(this.velocity);
+		}
+
+	// wait for all buttons released
+		if (this.deadflag == DEAD_DEAD)
+		{
+			if (this.button2 || this.button1 || this.button0)
+				return;
+			this.deadflag = DEAD_RESPAWNABLE;
+			return;
+		}
+
+	// wait for any button down
+		if (!this.button2 && !this.button1 && !this.button0)
+			return;
+
+		this.button0 = 0;
+		this.button1 = 0;
+		this.button2 = 0;
+		respawn();
+	};
+
+	nonvirtual void() PlayerJump = {
+		if (this.flags & FL_WATERJUMP)
+			return;
+		
+		if (this.waterlevel >= 2)
+		{
+			// play swiming sound
+			if (this.swim_flag < time)
+			{
+				this.swim_flag = time + 1;
+				if (random() < 0.5)
+					sound (this, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
+				else
+					sound (this, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
+			}
+
+			return;
+		}
+
+		if (!(this.flags & FL_ONGROUND))
+			return;
+
+		if (!(this.flags & FL_JUMPRELEASED))
+			return;         // don't pogo stick
+
+		this.flags = this.flags - (this.flags & FL_JUMPRELEASED);       
+		this.button2 = 0;
+
+		// player jumping sound
+		sound(this, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
+	};
+
 	nonvirtual void () WeaponFrame =
     {
         if (time < this.attack_finished)
@@ -491,14 +643,14 @@ class player_c : entity
 
 	nonvirtual void (float input) ChangeWeapon =
 	{
-		if (this.IsReloading)
+		if (this.is_reloading)
 			return;
 
 		if (this.attack_finished <= time)
 			return;
 
-		weapon_c weap;
-		if (this.IsUsingOldImpulses)
+		weapon_c weap = __NULL__;
+		if (this.is_using_old_impulses)
 		{
 
 			return;
@@ -564,65 +716,63 @@ class player_c : entity
 
 	nonvirtual void() Respawn =
 	{
-		entity spot;
+		this.classname = "player";
+		this.health = 100;
+		this.takedamage = DAMAGE_AIM;
+		this.solid = SOLID_SLIDEBOX;
+		this.movetype = MOVETYPE_WALK;
+		this.show_hostile = 0;
+		this.max_health = 100;
+		this.flags = FL_CLIENT;
+		this.air_finished = time + 12;
+		this.dmg = 2;                   // initial water damage
+		this.super_damage_finished = 0;
+		this.radsuit_finished = 0;
+		this.invisible_finished = 0;
+		this.invincible_finished = 0;
+		this.effects = 0;
+		this.invincible_time = 0;
 
-		self.classname = "player";
-		self.health = 100;
-		self.takedamage = DAMAGE_AIM;
-		self.solid = SOLID_SLIDEBOX;
-		self.movetype = MOVETYPE_WALK;
-		self.show_hostile = 0;
-		self.max_health = 100;
-		self.flags = FL_CLIENT;
-		self.air_finished = time + 12;
-		self.dmg = 2;                   // initial water damage
-		self.super_damage_finished = 0;
-		self.radsuit_finished = 0;
-		self.invisible_finished = 0;
-		self.invincible_finished = 0;
-		self.effects = 0;
-		self.invincible_time = 0;
-
-		DecodeLevelParms ();
+		DecodeLevelParms();
 		
-		W_SetCurrentAmmo ();
+		this.current_weapon = this.GetBestWeapon();
 
-		self.attack_finished = time;
-		self.th_pain = player_pain;
-		self.th_die = PlayerDie;
+		this.attack_finished = time;
+		this.th_pain = player_pain;
+		this.th_die = this.Die;
 		
-		self.deadflag = DEAD_NO;
+		this.deadflag = DEAD_NO;
 	// paustime is set by teleporters to keep the player from moving a while
-		self.pausetime = 0;
+		this.pausetime = 0;
 		
-		spot = SelectSpawnPoint ();
+		entity spot = SelectSpawnPoint();
 
-		self.origin = spot.origin + '0 0 1';
-		self.angles = spot.angles;
-		self.fixangle = TRUE;           // turn this way immediately
+		this.origin = spot.origin + '0 0 1';
+		this.angles = spot.angles;
+		this.fixangle = TRUE;           // turn this way immediately
 
 	// oh, this is a hack!
-		setmodel (self, "progs/eyes.mdl");
-		modelindex_eyes = self.modelindex;
+		setmodel(this, "progs/eyes.mdl");
+		modelindex_eyes = this.modelindex;
 
-		setmodel (self, "progs/player.mdl");
-		modelindex_player = self.modelindex;
+		setmodel(this, "progs/player.mdl");
+		modelindex_player = this.modelindex;
 
-		setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+		setsize(this, VEC_HULL_MIN, VEC_HULL_MAX);
 		
-		self.view_ofs = '0 0 22';
+		this.view_ofs = '0 0 22';
 
 	// Mod - Xian (May.20.97)
 	// Bug where player would have velocity from their last kill
 
-		self.velocity = '0 0 0';
+		this.velocity = '0 0 0';
 
-		player_stand1 ();
+		player_stand1();
 		
-		makevectors(self.angles);
-		spawn_tfog (self.origin + v_forward*20);
+		makevectors(this.angles);
+		spawn_tfog(this.origin + v_forward*20);
 
-		spawn_tdeath (self.origin, self);
+		spawn_tdeath(this.origin, this);
 
 		// Set Rocket Jump Modifiers
 		if (stof(infokey(world, "rj")) != 0)
@@ -632,56 +782,139 @@ class player_c : entity
 
 		if (deathmatch == 4)
 		{
-			self.ammo_shells = 0;
+			this.ammo_shells = 0;
 			if (stof(infokey(world, "axe")) == 0)
 			{
-				self.ammo_nails = 255;
-				self.ammo_shells = 255;
-				self.ammo_rockets = 255;
-				self.ammo_cells = 255;
-				self.items = self.items | IT_NAILGUN;
-				self.items = self.items | IT_SUPER_NAILGUN;
-				self.items = self.items | IT_SUPER_SHOTGUN;
-				self.items = self.items | IT_ROCKET_LAUNCHER;
-	//		self.items = self.items | IT_GRENADE_LAUNCHER;
-				self.items = self.items | IT_LIGHTNING;
+				this.ammo_nails = 255;
+				this.ammo_shells = 255;
+				this.ammo_rockets = 255;
+				this.ammo_cells = 255;
+				this.items = this.items | IT_NAILGUN;
+				this.items = this.items | IT_SUPER_NAILGUN;
+				this.items = this.items | IT_SUPER_SHOTGUN;
+				this.items = this.items | IT_ROCKET_LAUNCHER;
+				this.items = this.items | IT_LIGHTNING;
 			}
-			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
-			self.armorvalue = 200;
-			self.armortype = 0.8;
-			self.health = 250;
-			self.items = self.items | IT_INVULNERABILITY;
-			self.invincible_time = 1;
-			self.invincible_finished = time + 3;
+			this.items = this.items - (this.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+			this.armorvalue = 200;
+			this.armortype = 0.8;
+			this.health = 250;
+			this.items = this.items | IT_INVULNERABILITY;
+			this.invincible_time = 1;
+			this.invincible_finished = time + 3;
 		}
 
 		if (deathmatch == 5)
 		{
-			self.ammo_nails = 80;
-			self.ammo_shells = 30;
-			self.ammo_rockets = 10;
-			self.ammo_cells = 30;
-			self.items = self.items | IT_NAILGUN;
-			self.items = self.items | IT_SUPER_NAILGUN;
-			self.items = self.items | IT_SUPER_SHOTGUN;
-			self.items = self.items | IT_ROCKET_LAUNCHER;
-			self.items = self.items | IT_GRENADE_LAUNCHER;
-			self.items = self.items | IT_LIGHTNING;
-			self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
-			self.armorvalue = 200;
-			self.armortype = 0.8;
-			self.health = 200;
-			self.items = self.items | IT_INVULNERABILITY;
-			self.invincible_time = 1;
-			self.invincible_finished = time + 3;
+			this.ammo_nails = 80;
+			this.ammo_shells = 30;
+			this.ammo_rockets = 10;
+			this.ammo_cells = 30;
+			this.items = this.items | IT_NAILGUN;
+			this.items = this.items | IT_SUPER_NAILGUN;
+			this.items = this.items | IT_SUPER_SHOTGUN;
+			this.items = this.items | IT_ROCKET_LAUNCHER;
+			this.items = this.items | IT_GRENADE_LAUNCHER;
+			this.items = this.items | IT_LIGHTNING;
+			this.items = this.items - (this.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+			this.armorvalue = 200;
+			this.armortype = 0.8;
+			this.health = 200;
+			this.items = this.items | IT_INVULNERABILITY;
+			this.invincible_time = 1;
+			this.invincible_finished = time + 3;
 		}
 	};
 
+	nonvirtual void () Die =
+	{
+		self.items = self.items - (self.items & IT_INVISIBILITY);
+
+		if ((stof(infokey(world,"dq"))) != 0)
+		{
+			if (self.super_damage_finished > 0)
+			{
+				DropQuad (self.super_damage_finished - time);
+				bprint (PRINT_LOW, self.netname);
+				if (deathmatch == 4)
+					bprint (PRINT_LOW, " lost an OctaPower with ");
+				else
+					bprint (PRINT_LOW, " lost a quad with ");
+				bprint (PRINT_LOW, ftos(rint(self.super_damage_finished - time)));
+				bprint (PRINT_LOW, " seconds remaining\n");
+			}
+		}
+
+		if ((stof(infokey(world,"dr"))) != 0)
+		{
+			if (self.invisible_finished > 0)
+			{
+				bprint (PRINT_LOW, self.netname);
+				bprint (PRINT_LOW, " lost a ring with ");
+				bprint (PRINT_LOW, ftos(rint(self.invisible_finished - time)));
+				bprint (PRINT_LOW, " seconds remaining\n");
+				DropRing (self.invisible_finished - time);
+			}
+		}
+
+		self.invisible_finished = 0;    // don't die as eyes
+		self.invincible_finished = 0;
+		self.super_damage_finished = 0;
+		self.radsuit_finished = 0;
+		self.modelindex = modelindex_player;    // don't use eyes
+
+		this.DropBackpack();
+		
+		self.weaponmodel="";
+		self.view_ofs = '0 0 -8';
+		self.deadflag = DEAD_DYING;
+		self.solid = SOLID_NOT;
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
+		self.movetype = MOVETYPE_TOSS;
+		if (self.velocity_z < 10)
+			self.velocity_z = self.velocity_z + random()*300;
+
+		if (self.health < -40)
+		{
+			GibPlayer ();
+			return;
+		}
+
+		DeathSound();
+		
+		self.angles_x = 0;
+		self.angles_z = 0;
+		
+		if (self.weapon == IT_AXE)
+		{
+			player_die_ax1 ();
+			return;
+		}
+		
+		float i = 1 + floor(random()*6);
+		
+		if (i == 1)
+			player_diea1();
+		else if (i == 2)
+			player_dieb1();
+		else if (i == 3)
+			player_diec1();
+		else if (i == 4)
+			player_died1();
+		else
+			player_diee1();
+
+	};
+
+	nonvirtual void () DropBackpack =
+	{
+		item_backpack_c ent = (item_backpack_c)spawn(item_backpack_c, owner: this);
+	};
 };
 
 void() DeathBubblesSpawn =
 {
-local entity    bubble;
+	local entity    bubble;
 	if (self.owner.waterlevel != 3)
 		return;
 	bubble = spawn();
@@ -860,91 +1093,7 @@ void() GibPlayer =
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
 };
 
-void() PlayerDie =
-{
-	local   float   i;
-	local	string	s;	
-	self.items = self.items - (self.items & IT_INVISIBILITY);
 
-	if ((stof(infokey(world,"dq"))) != 0)
-	{
-		if (self.super_damage_finished > 0)
-		{
-			DropQuad (self.super_damage_finished - time);
-			bprint (PRINT_LOW, self.netname);
-			if (deathmatch == 4)
-				bprint (PRINT_LOW, " lost an OctaPower with ");
-			else
-				bprint (PRINT_LOW, " lost a quad with ");
-			s = ftos(rint(self.super_damage_finished - time));
-			bprint (PRINT_LOW, s);
-			bprint (PRINT_LOW, " seconds remaining\n");
-		}
-	}
-
-	if ((stof(infokey(world,"dr"))) != 0)
-	{
-		if (self.invisible_finished > 0)
-		{
-			bprint (PRINT_LOW, self.netname);
-			bprint (PRINT_LOW, " lost a ring with ");
-			s = ftos(rint(self.invisible_finished - time));
-			bprint (PRINT_LOW, s);
-			bprint (PRINT_LOW, " seconds remaining\n");
-			DropRing (self.invisible_finished - time);
-		}
-	}
-
-	self.invisible_finished = 0;    // don't die as eyes
-	self.invincible_finished = 0;
-	self.super_damage_finished = 0;
-	self.radsuit_finished = 0;
-	self.modelindex = modelindex_player;    // don't use eyes
-
-	DropBackpack();
-	
-	self.weaponmodel="";
-	self.view_ofs = '0 0 -8';
-	self.deadflag = DEAD_DYING;
-	self.solid = SOLID_NOT;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	self.movetype = MOVETYPE_TOSS;
-	if (self.velocity_z < 10)
-		self.velocity_z = self.velocity_z + random()*300;
-
-	if (self.health < -40)
-	{
-		GibPlayer ();
-		return;
-	}
-
-	DeathSound();
-	
-	self.angles_x = 0;
-	self.angles_z = 0;
-	
-	if (self.weapon == IT_AXE)
-	{
-		player_die_ax1 ();
-		return;
-	}
-	
-	i = cvar("temp1");
-	if (!i)
-		i = 1 + floor(random()*6);
-	
-	if (i == 1)
-		player_diea1();
-	else if (i == 2)
-		player_dieb1();
-	else if (i == 3)
-		player_diec1();
-	else if (i == 4)
-		player_died1();
-	else
-		player_diee1();
-
-};
 
 void() set_suicide_frame =
 {       // used by klill command and diconnect command
