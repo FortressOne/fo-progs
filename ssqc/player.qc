@@ -393,8 +393,25 @@ class player_c : entity
 	weapon_c weapon3;
 	weapon_c weapon4;
 
-	float IsReloading;
-	float IsUsingOldImpulses;
+	float is_reloading;
+	float is_using_old_impulses;
+
+	// spy
+	float is_feigning;
+
+	// sniper, hwguy
+	float is_aiming;
+
+	nonvirtual float () CanInteract =
+	{
+		if (is_feigning)
+			return FALSE;
+
+		if (is_aiming)
+			return FALSE;
+
+		return TRUE;
+	};
 
 	nonvirtual void() PreThink =
 	{
@@ -626,14 +643,14 @@ class player_c : entity
 
 	nonvirtual void (float input) ChangeWeapon =
 	{
-		if (this.IsReloading)
+		if (this.is_reloading)
 			return;
 
 		if (this.attack_finished <= time)
 			return;
 
-		weapon_c weap;
-		if (this.IsUsingOldImpulses)
+		weapon_c weap = __NULL__;
+		if (this.is_using_old_impulses)
 		{
 
 			return;
@@ -722,7 +739,7 @@ class player_c : entity
 
 		this.attack_finished = time;
 		this.th_pain = player_pain;
-		this.th_die = PlayerDie;
+		this.th_die = this.Die;
 		
 		this.deadflag = DEAD_NO;
 	// paustime is set by teleporters to keep the player from moving a while
@@ -809,6 +826,90 @@ class player_c : entity
 		}
 	};
 
+	nonvirtual void () Die =
+	{
+		self.items = self.items - (self.items & IT_INVISIBILITY);
+
+		if ((stof(infokey(world,"dq"))) != 0)
+		{
+			if (self.super_damage_finished > 0)
+			{
+				DropQuad (self.super_damage_finished - time);
+				bprint (PRINT_LOW, self.netname);
+				if (deathmatch == 4)
+					bprint (PRINT_LOW, " lost an OctaPower with ");
+				else
+					bprint (PRINT_LOW, " lost a quad with ");
+				bprint (PRINT_LOW, ftos(rint(self.super_damage_finished - time)));
+				bprint (PRINT_LOW, " seconds remaining\n");
+			}
+		}
+
+		if ((stof(infokey(world,"dr"))) != 0)
+		{
+			if (self.invisible_finished > 0)
+			{
+				bprint (PRINT_LOW, self.netname);
+				bprint (PRINT_LOW, " lost a ring with ");
+				bprint (PRINT_LOW, ftos(rint(self.invisible_finished - time)));
+				bprint (PRINT_LOW, " seconds remaining\n");
+				DropRing (self.invisible_finished - time);
+			}
+		}
+
+		self.invisible_finished = 0;    // don't die as eyes
+		self.invincible_finished = 0;
+		self.super_damage_finished = 0;
+		self.radsuit_finished = 0;
+		self.modelindex = modelindex_player;    // don't use eyes
+
+		this.DropBackpack();
+		
+		self.weaponmodel="";
+		self.view_ofs = '0 0 -8';
+		self.deadflag = DEAD_DYING;
+		self.solid = SOLID_NOT;
+		self.flags = self.flags - (self.flags & FL_ONGROUND);
+		self.movetype = MOVETYPE_TOSS;
+		if (self.velocity_z < 10)
+			self.velocity_z = self.velocity_z + random()*300;
+
+		if (self.health < -40)
+		{
+			GibPlayer ();
+			return;
+		}
+
+		DeathSound();
+		
+		self.angles_x = 0;
+		self.angles_z = 0;
+		
+		if (self.weapon == IT_AXE)
+		{
+			player_die_ax1 ();
+			return;
+		}
+		
+		float i = 1 + floor(random()*6);
+		
+		if (i == 1)
+			player_diea1();
+		else if (i == 2)
+			player_dieb1();
+		else if (i == 3)
+			player_diec1();
+		else if (i == 4)
+			player_died1();
+		else
+			player_diee1();
+
+	};
+
+	nonvirtual void () DropBackpack =
+	{
+		item_backpack_c ent = (item_backpack_c)spawn(item_backpack_c, owner: this);
+	};
 };
 
 void() DeathBubblesSpawn =
@@ -992,91 +1093,7 @@ void() GibPlayer =
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
 };
 
-void() PlayerDie =
-{
-	local   float   i;
-	local	string	s;	
-	self.items = self.items - (self.items & IT_INVISIBILITY);
 
-	if ((stof(infokey(world,"dq"))) != 0)
-	{
-		if (self.super_damage_finished > 0)
-		{
-			DropQuad (self.super_damage_finished - time);
-			bprint (PRINT_LOW, self.netname);
-			if (deathmatch == 4)
-				bprint (PRINT_LOW, " lost an OctaPower with ");
-			else
-				bprint (PRINT_LOW, " lost a quad with ");
-			s = ftos(rint(self.super_damage_finished - time));
-			bprint (PRINT_LOW, s);
-			bprint (PRINT_LOW, " seconds remaining\n");
-		}
-	}
-
-	if ((stof(infokey(world,"dr"))) != 0)
-	{
-		if (self.invisible_finished > 0)
-		{
-			bprint (PRINT_LOW, self.netname);
-			bprint (PRINT_LOW, " lost a ring with ");
-			s = ftos(rint(self.invisible_finished - time));
-			bprint (PRINT_LOW, s);
-			bprint (PRINT_LOW, " seconds remaining\n");
-			DropRing (self.invisible_finished - time);
-		}
-	}
-
-	self.invisible_finished = 0;    // don't die as eyes
-	self.invincible_finished = 0;
-	self.super_damage_finished = 0;
-	self.radsuit_finished = 0;
-	self.modelindex = modelindex_player;    // don't use eyes
-
-	DropBackpack();
-	
-	self.weaponmodel="";
-	self.view_ofs = '0 0 -8';
-	self.deadflag = DEAD_DYING;
-	self.solid = SOLID_NOT;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	self.movetype = MOVETYPE_TOSS;
-	if (self.velocity_z < 10)
-		self.velocity_z = self.velocity_z + random()*300;
-
-	if (self.health < -40)
-	{
-		GibPlayer ();
-		return;
-	}
-
-	DeathSound();
-	
-	self.angles_x = 0;
-	self.angles_z = 0;
-	
-	if (self.weapon == IT_AXE)
-	{
-		player_die_ax1 ();
-		return;
-	}
-	
-	i = cvar("temp1");
-	if (!i)
-		i = 1 + floor(random()*6);
-	
-	if (i == 1)
-		player_diea1();
-	else if (i == 2)
-		player_dieb1();
-	else if (i == 3)
-		player_diec1();
-	else if (i == 4)
-		player_died1();
-	else
-		player_diee1();
-
-};
 
 void() set_suicide_frame =
 {       // used by klill command and diconnect command

@@ -27,7 +27,16 @@ Weapons/incendiarycannon.qc
 Weapons/assaultcannon.qc
 Weapons/rocketlauncher.qc
 Weapons/railgun.qc
-
+Entities/trigger_changelevel.qc
+Entities/item.qc
+Entities/item_weapon.qc
+Entities/item_health.qc
+Entities/item_armor.qc
+Entities/item_ammo.qc
+Entities/item_key.qc
+Entities/item_sigil.qc
+Entities/item_powerup.qc
+Entities/item_backpack.qc
 
 
 

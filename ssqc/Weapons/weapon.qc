@@ -16,7 +16,7 @@ class weapon_c : entity
     float clip_size;
     float weapon_type;
 
-    virtual void_f animation_func;
+    virtual void_f animation_func = __NULL__;
 
     //float _ammo_count;
     //set float ammo_count = { _ammo_count = value; };
