@@ -5,13 +5,10 @@ void() trigger_changelevel =
 {
     trigger_changelevel_c trig = (trigger_changelevel_c)self;
     trig.ParseSpawn();
-
-	
 };
 
 class trigger_changelevel_c : entity
 {
-
     nonvirtual void () ParseSpawn = 
     {
         if (!this.map)

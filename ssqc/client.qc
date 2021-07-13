@@ -113,20 +113,6 @@ void() DecodeLevelParms =
 =============================================================================
 */
 
-void() set_suicide_frame;
-
-// called by ClientKill and DeadThink
-void() respawn =
-{
-	// make a copy of the dead body for appearances sake
-	CopyToBodyQue (self);
-	// set default spawn parms
-	SetNewParms ();
-	// respawn              
-	PutClientInServer ();
-};
-
-
 /*
 ============
 ClientKill
@@ -136,13 +122,8 @@ Player entered the suicide command
 */
 void() ClientKill =
 {
-	bprint (PRINT_MEDIUM, self.netname);
-	bprint (PRINT_MEDIUM, " suicides\n");
-	set_suicide_frame ();
-	self.modelindex = modelindex_player;
-	logfrag (self, self);
-	self.frags = self.frags - 2;    // extra penalty
-	respawn ();
+	player_c player = (player_c)self;
+	player.Suicide();
 };
 
 float(vector v) CheckSpawnPoint =
@@ -232,7 +213,7 @@ called each time a player enters a new level
 */
 void() PutClientInServer = {
 	player_c player = (player_c)self;
-	player.Respawn();
+	player.Respawn(FALSE);
 };
 
 
@@ -275,7 +256,7 @@ void() info_player_coop =
 };
 
 //============================================================================
-
+// FIXME - does engine use this directly? No references, not in defs
 void() CheckWaterJump =
 {
 	local vector start, end;
@@ -316,184 +297,6 @@ void() PlayerPreThink = {
 	player_c player = (player_c)self;
 	player.PreThink();
 };
-	
-/*
-================
-CheckPowerups
-
-Check for turning off powerups
-================
-*/
-void() CheckPowerups =
-{
-	if (self.health <= 0)
-		return;
-
-// invisibility
-	if (self.invisible_finished)
-	{
-// sound and screen flash when items starts to run out
-		if (self.invisible_sound < time)
-		{
-			sound (self, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
-			self.invisible_sound = time + ((random() * 3) + 1);
-		}
-
-
-		if (self.invisible_finished < time + 3)
-		{
-			if (self.invisible_time == 1)
-			{
-				sprint (self, PRINT_HIGH, "Ring of Shadows magic is fading\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
-				self.invisible_time = time + 1;
-			}
-			
-			if (self.invisible_time < time)
-			{
-				self.invisible_time = time + 1;
-				stuffcmd (self, "bf\n");
-			}
-		}
-
-		if (self.invisible_finished < time)
-		{       // just stopped
-			self.items = self.items - IT_INVISIBILITY;
-			self.invisible_finished = 0;
-			self.invisible_time = 0;
-		}
-		
-	// use the eyes
-		self.frame = 0;
-		self.modelindex = modelindex_eyes;
-	}
-	else
-		self.modelindex = modelindex_player;    // don't use eyes
-
-// invincibility
-	if (self.invincible_finished)
-	{
-// sound and screen flash when items starts to run out
-		if (self.invincible_finished < time + 3)
-		{
-			if (self.invincible_time == 1)
-			{
-				sprint (self, PRINT_HIGH, "Protection is almost burned out\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
-				self.invincible_time = time + 1;
-			}
-			
-			if (self.invincible_time < time)
-			{
-				self.invincible_time = time + 1;
-				stuffcmd (self, "bf\n");
-			}
-		}
-		
-		if (self.invincible_finished < time)
-		{       // just stopped
-			self.items = self.items - IT_INVULNERABILITY;
-			self.invincible_time = 0;
-			self.invincible_finished = 0;
-		}
-		if (self.invincible_finished > time)
-		{
-			self.effects = self.effects | EF_DIMLIGHT;
-			self.effects = self.effects | EF_RED;
-		}
-		else
-		{
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-			self.effects = self.effects - (self.effects & EF_RED);
-		}
-	}
-
-// super damage
-	if (self.super_damage_finished)
-	{
-
-// sound and screen flash when items starts to run out
-
-		if (self.super_damage_finished < time + 3)
-		{
-			if (self.super_time == 1)
-			{
-				if (deathmatch == 4)
-					sprint (self, PRINT_HIGH, "OctaPower is wearing off\n");
-				else
-					sprint (self, PRINT_HIGH, "Quad Damage is wearing off\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
-				self.super_time = time + 1;
-			}         
-			
-			if (self.super_time < time)
-			{
-				self.super_time = time + 1;
-				stuffcmd (self, "bf\n");
-			}
-		}
-
-		if (self.super_damage_finished < time)
-		{       // just stopped
-			self.items = self.items - IT_QUAD;
-			if (deathmatch == 4)
-			{
-				self.ammo_cells = 255;
-				self.armorvalue = 1;
-				self.armortype = 0.8;
-				self.health = 100;
-			}
-			self.super_damage_finished = 0;
-			self.super_time = 0;
-		}
-		if (self.super_damage_finished > time)
-		{
-			self.effects = self.effects | EF_DIMLIGHT;
-			self.effects = self.effects | EF_BLUE;
-		}
-		else
-		{
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-			self.effects = self.effects - (self.effects & EF_BLUE);
-		}
-	}       
-
-// suit 
-	if (self.radsuit_finished)
-	{
-		self.air_finished = time + 12;          // don't drown
-
-// sound and screen flash when items starts to run out
-		if (self.radsuit_finished < time + 3)
-		{
-			if (self.rad_time == 1)
-			{
-				sprint (self, PRINT_HIGH, "Air supply in Biosuit expiring\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
-				self.rad_time = time + 1;
-			}
-			
-			if (self.rad_time < time)
-			{
-				self.rad_time = time + 1;
-				stuffcmd (self, "bf\n");
-			}
-		}
-
-		if (self.radsuit_finished < time)
-		{       // just stopped
-			self.items = self.items - IT_SUIT;
-			self.rad_time = 0;
-			self.radsuit_finished = 0;
-		}
-	}       
-
-};
-
 
 /*
 ================

@@ -42,7 +42,7 @@ void() info_notnull =
 
 //============================================================================
 
-float START_OFF = 1;
+
 
 void() light_use =
 {
@@ -207,7 +207,7 @@ void() misc_fireball =
 
 void() fire_fly =
 {
-local entity    fireball;
+	local entity    fireball;
 
 	fireball = spawn();
 	fireball.solid = SOLID_TRIGGER;
@@ -253,14 +253,7 @@ void() barrel_explode =
 	remove (self);
 };
 
-
-
-
-
 //============================================================================
-
-float SPAWNFLAG_SUPERSPIKE      = 1;
-float SPAWNFLAG_LASER = 2;
 
 void() Laser_Touch =
 {

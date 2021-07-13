@@ -41,6 +41,9 @@ float   H_ROTTEN = 1;
 float   H_MEGA = 2;
 .float  healamount, healtype;
 float WEAPON_BIG2 = 1;
+float START_OFF = 1;
+float SPAWNFLAG_SUPERSPIKE      = 1;
+float SPAWNFLAG_LASER = 2;
 //entity  multi_ent;
 //float   multi_damage;
 
