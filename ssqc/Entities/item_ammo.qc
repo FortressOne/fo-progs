@@ -121,7 +121,8 @@ class item_ammo_c : item_c
             other.ammo_cells = other.ammo_cells + self.aflag;
         }
 
-        bound_other_ammo ();
+        
+        player.CheckMaxAmmo();
         
         sprint(other, PRINT_LOW, "You got the ", self.netname, "\n");
 

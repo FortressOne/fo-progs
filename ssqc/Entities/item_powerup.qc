@@ -151,6 +151,57 @@ class item_artifact_invisibility_c : item_powerup_c
 
         item_powerup_c::Process();
     };
+
+    nonvirtual void (float timeleft) Drop =
+    {
+        entity item = spawn();
+        item.origin = self.origin;
+        
+        item.velocity_z = 300;
+        item.velocity_x = -100 + (random() * 200);
+        item.velocity_y = -100 + (random() * 200);
+        
+        item.flags = FL_ITEM;
+        item.solid = SOLID_TRIGGER;
+        item.movetype = MOVETYPE_TOSS;
+        item.noise = "items/inv1.wav";
+        item.model = "progs/invisibl.mdl";
+        setmodel (item, item.model);
+        setsize (item, '-16 -16 -24', '16 16 32');
+        item.cnt = time + timeleft;
+        item.touch = this.DropTouch;
+        item.nextthink = time + timeleft;    // remove after 30 seconds
+        item.think = SUB_Remove;
+    };
+
+    nonvirtual void () DropTouch =
+    {
+        if (other.classname != "player")
+            return;
+        if (other.health <= 0)
+            return;
+
+        self.mdl = self.model;
+
+        sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+        stuffcmd (other, "bf\n");
+        self.solid = SOLID_NOT;
+        other.items = other.items | IT_INVISIBILITY;
+        self.model = "";
+
+    // do the apropriate action
+        other.invisible_time = 1;
+        other.invisible_finished = self.cnt;
+        string s=ftos(rint(other.invisible_finished - time));
+        bprint (PRINT_LOW, other.netname);
+        bprint (PRINT_LOW, " recovered a Ring with ");
+        bprint (PRINT_LOW, s);
+        bprint (PRINT_LOW, " seconds remaining!\n");
+        
+        activator = other;
+        SUB_UseTargets();                               // fire all targets / killtargets
+    };
+    
 };
 
 class item_artifact_super_damage_c : item_powerup_c
@@ -170,5 +221,67 @@ class item_artifact_super_damage_c : item_powerup_c
         self.effects = self.effects | EF_BLUE;
 
         item_powerup_c::Process();
+    };
+
+    nonvirtual void (float timeleft) Drop =
+    {
+        // essentially a static call to spawn
+        entity item = spawn();
+        item.origin = self.origin;
+        
+        item.velocity_z = 300;
+        item.velocity_x = -100 + (random() * 200);
+        item.velocity_y = -100 + (random() * 200);
+        
+        item.flags = FL_ITEM;
+        item.solid = SOLID_TRIGGER;
+        item.movetype = MOVETYPE_TOSS;
+        item.noise = "items/damage.wav";
+        item.model = "progs/quaddama.mdl";
+        setmodel (item, item.model);
+        setsize (item, '-16 -16 -24', '16 16 32');
+        item.cnt = time + timeleft;
+        item.touch = this.DropTouch;
+        item.nextthink = time + timeleft;    // remove it with the time left on it
+        item.think = SUB_Remove;
+    };
+
+    nonvirtual void () DropTouch =
+    {
+        if (other.classname != "player")
+            return;
+        if (other.health <= 0)
+            return;
+
+        self.mdl = self.model;
+
+        sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+        stuffcmd (other, "bf\n");
+        self.solid = SOLID_NOT;
+        other.items = other.items | IT_QUAD;
+        self.model = "";
+            if (deathmatch == 4)
+            {
+                other.armortype = 0;
+                other.armorvalue = 0 * 0.01;
+                other.ammo_cells = 0;
+            }
+
+    // do the apropriate action
+        other.super_time = 1;
+        other.super_damage_finished = self.cnt;
+
+        string s=ftos(rint(other.super_damage_finished - time));
+
+        bprint (PRINT_LOW, other.netname);
+        if (deathmatch == 4)
+            bprint (PRINT_LOW, " recovered an OctaPower with ");
+        else 
+            bprint (PRINT_LOW, " recovered a Quad with ");
+        bprint (PRINT_LOW, s);
+        bprint (PRINT_LOW, " seconds remaining!\n");
+
+        activator = other;
+        SUB_UseTargets();                               // fire all targets / killtargets
     };
 };

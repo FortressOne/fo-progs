@@ -106,7 +106,7 @@ class item_weapon_c : item_c
         sound (player, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
         stuffcmd (player, "bf\n");
 
-        bound_other_ammo ();
+        player.CheckMaxAmmo();
 
         player.items = player.items | new;
 

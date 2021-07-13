@@ -254,96 +254,22 @@ void(float num_bubbles) DeathBubbles;
 
 
 
-void() PainSound =
-{
-local float             rs;
-
-	if (self.health < 0)
-		return;
-
-	if (damage_attacker.classname == "teledeath")
-	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
-		return;
-	}
-
-// water pain sounds
-	if (self.watertype == CONTENT_WATER && self.waterlevel == 3)
-	{
-		DeathBubbles(1);
-		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "player/drown2.wav", 1, ATTN_NORM);
-		return;
-	}
-
-// slime pain sounds
-	if (self.watertype == CONTENT_SLIME)
-	{
-// FIX ME       put in some steam here
-		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
-		return;
-	}
-
-	if (self.watertype == CONTENT_LAVA)
-	{
-		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
-		return;
-	}
-
-	if (self.pain_finished > time)
-	{
-		self.axhitme = 0;
-		return;
-	}
-	self.pain_finished = time + 0.5;
-
-// don't make multiple pain sounds right after each other
-
-// ax pain sound
-	if (self.axhitme == 1)
-	{
-		self.axhitme = 0;
-		sound (self, CHAN_VOICE, "player/axhit1.wav", 1, ATTN_NORM);
-		return;
-	}
-	
-
-	rs = rint((random() * 5) + 1);
-
-	self.noise = "";
-	if (rs == 1)
-		self.noise = "player/pain1.wav";
-	else if (rs == 2)
-		self.noise = "player/pain2.wav";
-	else if (rs == 3)
-		self.noise = "player/pain3.wav";
-	else if (rs == 4)
-		self.noise = "player/pain4.wav";
-	else if (rs == 5)
-		self.noise = "player/pain5.wav";
-	else
-		self.noise = "player/pain6.wav";
-
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	return;
+void()  player_pain1 =  [       $pain1, player_pain2    ] {
+	player_c player = (player_c)self;
+	player.PainSound();
+	self.weaponframe=0;
 };
-
-void()  player_pain1 =  [       $pain1, player_pain2    ] {PainSound();self.weaponframe=0;};
 void()  player_pain2 =  [       $pain2, player_pain3    ] {};
 void()  player_pain3 =  [       $pain3, player_pain4    ] {};
 void()  player_pain4 =  [       $pain4, player_pain5    ] {};
 void()  player_pain5 =  [       $pain5, player_pain6    ] {};
 void()  player_pain6 =  [       $pain6, player_run      ] {};
 
-void()  player_axpain1 =        [       $axpain1,       player_axpain2  ] {PainSound();self.weaponframe=0;};
+void()  player_axpain1 =        [       $axpain1,       player_axpain2  ] {
+	player_c player = (player_c)self;
+	player.PainSound();
+	self.weaponframe=0;
+};
 void()  player_axpain2 =        [       $axpain2,       player_axpain3  ] {};
 void()  player_axpain3 =        [       $axpain3,       player_axpain4  ] {};
 void()  player_axpain4 =        [       $axpain4,       player_axpain5  ] {};
@@ -834,7 +760,7 @@ class player_c : entity
 		{
 			if (self.super_damage_finished > 0)
 			{
-				DropQuad (self.super_damage_finished - time);
+				item_artifact_super_damage_c::Drop(self.super_damage_finished - time);
 				bprint (PRINT_LOW, self.netname);
 				if (deathmatch == 4)
 					bprint (PRINT_LOW, " lost an OctaPower with ");
@@ -853,7 +779,7 @@ class player_c : entity
 				bprint (PRINT_LOW, " lost a ring with ");
 				bprint (PRINT_LOW, ftos(rint(self.invisible_finished - time)));
 				bprint (PRINT_LOW, " seconds remaining\n");
-				DropRing (self.invisible_finished - time);
+				item_artifact_invisibility_c::Drop(self.invisible_finished - time);
 			}
 		}
 
@@ -876,7 +802,7 @@ class player_c : entity
 
 		if (self.health < -40)
 		{
-			GibPlayer ();
+			this.Gib();
 			return;
 		}
 
@@ -887,7 +813,7 @@ class player_c : entity
 		
 		if (self.weapon == IT_AXE)
 		{
-			player_die_ax1 ();
+			player_die_ax1();
 			return;
 		}
 		
@@ -906,9 +832,146 @@ class player_c : entity
 
 	};
 
+	nonvirtual void () CheckMaxAmmo =
+	{
+		if (this.ammo_shells > 100)
+			this.ammo_shells = 100;
+		if (this.ammo_nails > 200)
+			this.ammo_nails = 200;
+		if (this.ammo_rockets > 100)
+			this.ammo_rockets = 100;               
+		if (this.ammo_cells > 100)
+			this.ammo_cells = 100;
+	};
+
 	nonvirtual void () DropBackpack =
 	{
 		item_backpack_c ent = (item_backpack_c)spawn(item_backpack_c, owner: this);
+	};
+
+	nonvirtual void () Gib =
+	{
+		ThrowHead("progs/h_player.mdl", self.health);
+		ThrowGib("progs/gib1.mdl", self.health);
+		ThrowGib("progs/gib2.mdl", self.health);
+		ThrowGib("progs/gib3.mdl", self.health);
+
+		self.deadflag = DEAD_DEAD;
+
+		if (damage_attacker.classname == "teledeath")
+		{
+			sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+			return;
+		}
+
+		if (damage_attacker.classname == "teledeath2")
+		{
+			sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+			return;
+		}
+			
+		if (random() < 0.5)
+			sound (self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
+		else
+			sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
+	};
+
+	nonvirtual void () DeathSound =
+	{
+		// water death sounds
+		if (self.waterlevel == 3)
+		{
+			DeathBubbles(5);
+			sound (self, CHAN_VOICE, "player/h2odeath.wav", 1, ATTN_NONE);
+			return;
+		}
+		
+		float rs = rint ((random() * 4) + 1);
+		if (rs == 1)
+			self.noise = "player/death1.wav";
+		if (rs == 2)
+			self.noise = "player/death2.wav";
+		if (rs == 3)
+			self.noise = "player/death3.wav";
+		if (rs == 4)
+			self.noise = "player/death4.wav";
+		if (rs == 5)
+			self.noise = "player/death5.wav";
+
+		sound(self, CHAN_VOICE, self.noise, 1, ATTN_NONE);
+		return;
+	};
+
+	nonvirtual void () PainSound =
+	{
+		if (self.health < 0)
+			return;
+
+		if (damage_attacker.classname == "teledeath")
+		{
+			sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+			return;
+		}
+
+	// water pain sounds
+		switch (this.watertype)
+		{
+			case CONTENT_WATER:
+				if (this.waterlevel == 3)
+				{
+					DeathBubbles(1);
+					if (random() > 0.5)
+						sound (self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
+					else
+						sound (self, CHAN_VOICE, "player/drown2.wav", 1, ATTN_NORM);
+					return;
+				}
+				break;
+			case CONTENT_SLIME:
+			case CONTENT_LAVA:
+				if (random() > 0.5)
+					sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
+				else
+					sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
+				return;
+				break;
+		}
+
+		if (self.pain_finished > time)
+		{
+			self.axhitme = 0;
+			return;
+		}
+		self.pain_finished = time + 0.5;
+
+	// don't make multiple pain sounds right after each other
+
+	// ax pain sound
+		if (self.axhitme == 1)
+		{
+			self.axhitme = 0;
+			sound (self, CHAN_VOICE, "player/axhit1.wav", 1, ATTN_NORM);
+			return;
+		}
+		
+
+		float rs = rint((random() * 5) + 1);
+
+		self.noise = "";
+		if (rs == 1)
+			self.noise = "player/pain1.wav";
+		else if (rs == 2)
+			self.noise = "player/pain2.wav";
+		else if (rs == 3)
+			self.noise = "player/pain3.wav";
+		else if (rs == 4)
+			self.noise = "player/pain4.wav";
+		else if (rs == 5)
+			self.noise = "player/pain5.wav";
+		else
+			self.noise = "player/pain6.wav";
+
+		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	};
 };
 
@@ -938,7 +1001,7 @@ void() DeathBubblesSpawn =
 
 void(float num_bubbles) DeathBubbles =
 {
-local entity    bubble_spawner;
+	local entity    bubble_spawner;
 	
 	bubble_spawner = spawn();
 	setorigin (bubble_spawner, self.origin);
@@ -952,45 +1015,16 @@ local entity    bubble_spawner;
 	return;
 };
 
-void() DeathSound =
-{
-local float             rs;
-
-	// water death sounds
-	if (self.waterlevel == 3)
-	{
-		DeathBubbles(5);
-		sound (self, CHAN_VOICE, "player/h2odeath.wav", 1, ATTN_NONE);
-		return;
-	}
-	
-	rs = rint ((random() * 4) + 1);
-	if (rs == 1)
-		self.noise = "player/death1.wav";
-	if (rs == 2)
-		self.noise = "player/death2.wav";
-	if (rs == 3)
-		self.noise = "player/death3.wav";
-	if (rs == 4)
-		self.noise = "player/death4.wav";
-	if (rs == 5)
-		self.noise = "player/death5.wav";
-
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NONE);
-	return;
-};
-
-
 void() PlayerDead =
 {
 	self.nextthink = -1;
-// allow respawn after a certain time
+	// allow respawn after a certain time
 	self.deadflag = DEAD_DEAD;
 };
 
 vector(float dm) VelocityForDamage =
 {
-	local vector v;
+	vector v;
 
 	if (vlen(damage_inflictor.velocity)>0)
 	{
@@ -999,7 +1033,6 @@ vector(float dm) VelocityForDamage =
 		v_z = 100 + 240 * random();
 		v_x = v_x + (200 * crandom());
 		v_y = v_y + (200 * crandom());
-		//dprint ("Velocity gib\n");                
 	}
 	else
 	{
@@ -1008,18 +1041,12 @@ vector(float dm) VelocityForDamage =
 		v_z = 200 + 100 * random();
 	}
 
-	//v_x = 100 * crandom();
-	//v_y = 100 * crandom();
-	//v_z = 200 + 100 * random();
-
 	if (dm > -50)
 	{
-	//      dprint ("level 1\n");
 		v = v * 0.7;
 	}
 	else if (dm > -200)
 	{
-	//      dprint ("level 3\n");
 		v = v * 2;
 	}
 	else
@@ -1065,40 +1092,11 @@ void(string gibname, float dm) ThrowHead =
 	self.avelocity = crandom() * '0 600 0';
 };
 
-
-void() GibPlayer =
-{
-	ThrowHead ("progs/h_player.mdl", self.health);
-	ThrowGib ("progs/gib1.mdl", self.health);
-	ThrowGib ("progs/gib2.mdl", self.health);
-	ThrowGib ("progs/gib3.mdl", self.health);
-
-	self.deadflag = DEAD_DEAD;
-
-	if (damage_attacker.classname == "teledeath")
-	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
-		return;
-	}
-
-	if (damage_attacker.classname == "teledeath2")
-	{
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
-		return;
-	}
-		
-	if (random() < 0.5)
-		sound (self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
-	else
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
-};
-
-
-
 void() set_suicide_frame =
-{       // used by klill command and diconnect command
+{       
+	// used by kill command and disconnect command
 	if (self.model != "progs/player.mdl")
-		return; // allready gibbed
+		return; // already gibbed
 	self.frame = $deatha11;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_TOSS;
