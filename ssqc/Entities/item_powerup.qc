@@ -62,7 +62,7 @@ class item_powerup_c : item_c
         else
             self.nextthink = time + 60;
         
-        self.think = SUB_regen;
+        self.think = this.Regen;
 
         sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
         stuffcmd (other, "bf\n");

@@ -143,7 +143,7 @@ class item_ammo_c : item_c
         if (deathmatch == 3 || deathmatch == 5)        
             self.nextthink = time + 15;
 
-        self.think = SUB_regen;
+        self.think = this.Regen;
 
         activator = other;
         SUB_UseTargets();                               // fire all targets / killtargets

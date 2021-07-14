@@ -568,21 +568,6 @@ SECRET DOORS
 =============================================================================
 */
 
-void() fd_secret_move1;
-void() fd_secret_move2;
-void() fd_secret_move3;
-void() fd_secret_move4;
-void() fd_secret_move5;
-void() fd_secret_move6;
-void() fd_secret_done;
-
-float SECRET_OPEN_ONCE = 1;             // stays open
-float SECRET_1ST_LEFT = 2;              // 1st move is left of arrow
-float SECRET_1ST_DOWN = 4;              // 1st move is down from arrow
-float SECRET_NO_SHOOT = 8;              // only opened by trigger
-float SECRET_YES_SHOOT = 16;    // shootable even if targeted
-
-
 void() fd_secret_use =
 {
 	local float temp;

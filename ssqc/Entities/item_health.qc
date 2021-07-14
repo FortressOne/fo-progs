@@ -46,6 +46,25 @@ class item_health_c : item_c
         setsize(this, '0 0 0', '32 32 56');
     };
 
+    // T_Heal: add health to an entity, limiting health to max_health
+    // "ignore" will ignore max_health limit
+    nonvirtual float (entity e, float healamount, float ignore) Heal =
+    {
+        if (e.health <= 0)
+            return FALSE;
+        if ((!ignore) && (e.health >= other.max_health))
+            return FALSE;
+        healamount = ceil(healamount);
+
+        e.health = e.health + healamount;
+        if ((!ignore) && (e.health >= other.max_health))
+            e.health = other.max_health;
+            
+        if (e.health > 250)
+            e.health = 250;
+        return TRUE;
+    };
+
     virtual void () touch =
     {
         if (deathmatch == 4)
@@ -59,12 +78,12 @@ class item_health_c : item_c
         {
             if (other.health >= 250)
                 return;
-            if (!T_Heal(other, this.healamount, 1))
+            if (!this.Heal(other, this.healamount, 1))
                 return;
         }
         else
         {
-            if (!T_Heal(other, this.healamount, 0))
+            if (!this.Heal(other, this.healamount, 0))
                 return;
         }
         
@@ -94,7 +113,7 @@ class item_health_c : item_c
             if (deathmatch != 2)            // deathmatch 2 is the silly old rules
             {
                 this.nextthink = time + 20;
-                this.think = SUB_regen;
+                this.think = this.Regen;
             }
         }
         
@@ -120,7 +139,7 @@ class item_health_c : item_c
         if (deathmatch != 2)    // deathmatch 2 is silly old rules
         {
             this.nextthink = time + 20;
-            this.think = SUB_regen;
+            this.think = this.Regen;
         }
     };
 };

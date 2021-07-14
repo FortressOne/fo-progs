@@ -120,7 +120,7 @@ class item_weapon_c : item_c
             self.solid = SOLID_NOT;
             if (deathmatch != 2)
                 self.nextthink = time + 30;
-            self.think = SUB_regen;
+            self.think = this.Regen;
         }
         activator = other;
         SUB_UseTargets();                               // fire all targets / killtargets

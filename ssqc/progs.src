@@ -8,7 +8,6 @@ gamemanager.qc
 
 subs.qc
 combat.qc
-items.qc
 Weapons/weapons.qc
 Weapons/weapon.qc
 Weapons/axe.qc
@@ -37,9 +36,7 @@ Entities/item_key.qc
 Entities/item_sigil.qc
 Entities/item_powerup.qc
 Entities/item_backpack.qc
-
-
-
+Entities/misc_entities.qc
 
 world.qc
 client.qc
@@ -49,6 +46,5 @@ doors.qc
 buttons.qc
 triggers.qc
 plats.qc
-misc.qc
 
 server.qc

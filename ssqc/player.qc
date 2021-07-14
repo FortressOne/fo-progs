@@ -1001,7 +1001,7 @@ class player_c : entity
 			return;
 		}
 
-		DeathSound();
+		this.DeathSound();
 		
 		self.angles_x = 0;
 		self.angles_z = 0;
@@ -1024,7 +1024,6 @@ class player_c : entity
 			player_died1();
 		else
 			player_diee1();
-
 	};
 
 	nonvirtual void () CheckMaxAmmo =
@@ -1097,6 +1096,36 @@ class player_c : entity
 		return;
 	};
 
+	nonvirtual void (entity attacker, float death_type) Obituary =
+	{
+		string msg = "";
+		switch (attacker.classname)
+		{
+			case "teledeath":
+				msg = strcat(this.netname, " was telefragged by ", attacker.owner.netname, "\n");
+				break;
+			case "teledeath2":
+				msg = strcat("Satan's power deflects ", this.netname, "'s telefrag\n");
+				break;
+			case "teledeath3":
+				msg = strcat(this.netname, " was telefragged by ", attacker.owner.netname, "'s Satan's power\n");
+				break;
+			case "selfwater":
+				msg = strcat(this.netname, " electrocutes himself.\n");
+				break;
+		}
+
+		/*switch (death_type)
+		{
+			case DMSG_TEAMKILL:
+				msg = strcat(attacker.netname, " shoots his teammate one too many times\n");
+				break;
+			
+		}*/
+		// FIXME - do obituary, on classes?
+		
+	};
+
 	nonvirtual void () PainSound =
 	{
 		if (self.health < 0)
@@ -1148,7 +1177,6 @@ class player_c : entity
 			sound (self, CHAN_VOICE, "player/axhit1.wav", 1, ATTN_NORM);
 			return;
 		}
-		
 
 		float rs = rint((random() * 5) + 1);
 
