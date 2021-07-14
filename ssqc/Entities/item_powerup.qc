@@ -152,8 +152,10 @@ class item_artifact_invisibility_c : item_powerup_c
         item_powerup_c::Process();
     };
 
-    nonvirtual void (float timeleft) Drop =
+    nonvirtual void (player_c player) Drop =
     {
+        float timeleft = self.invisible_finished - time;
+        bprint (PRINT_LOW, self.netname, " lost a ring with ", ftos(rint(timeleft)), " seconds remaining\n");
         entity item = spawn();
         item.origin = self.origin;
         
@@ -223,8 +225,16 @@ class item_artifact_super_damage_c : item_powerup_c
         item_powerup_c::Process();
     };
 
-    nonvirtual void (float timeleft) Drop =
+    nonvirtual void (player_c player) Drop =
     {
+        float timeleft = self.super_damage_finished - time;
+        bprint(PRINT_LOW, player.netname);
+        if (deathmatch == 4)
+            bprint(PRINT_LOW, " lost an OctaPower with ");
+        else
+            bprint(PRINT_LOW, " lost a quad with ");
+        bprint(PRINT_LOW, ftos(rint(timeleft)), " seconds remaining\n");
+        
         // essentially a static call to spawn
         entity item = spawn();
         item.origin = self.origin;

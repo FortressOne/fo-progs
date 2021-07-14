@@ -955,14 +955,7 @@ class player_c : entity
 		{
 			if (self.super_damage_finished > 0)
 			{
-				item_artifact_super_damage_c::Drop(self.super_damage_finished - time);
-				bprint (PRINT_LOW, self.netname);
-				if (deathmatch == 4)
-					bprint (PRINT_LOW, " lost an OctaPower with ");
-				else
-					bprint (PRINT_LOW, " lost a quad with ");
-				bprint (PRINT_LOW, ftos(rint(self.super_damage_finished - time)));
-				bprint (PRINT_LOW, " seconds remaining\n");
+				item_artifact_super_damage_c::Drop(this);
 			}
 		}
 
@@ -970,11 +963,7 @@ class player_c : entity
 		{
 			if (self.invisible_finished > 0)
 			{
-				bprint (PRINT_LOW, self.netname);
-				bprint (PRINT_LOW, " lost a ring with ");
-				bprint (PRINT_LOW, ftos(rint(self.invisible_finished - time)));
-				bprint (PRINT_LOW, " seconds remaining\n");
-				item_artifact_invisibility_c::Drop(self.invisible_finished - time);
+				item_artifact_invisibility_c::Drop(this);
 			}
 		}
 
