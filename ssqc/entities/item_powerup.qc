@@ -37,11 +37,15 @@ void() item_artifact_super_damage =
 
 class item_powerup_c : item_c
 {
+    float regen_time;
+
     virtual void () Process =
     {
         precache_model(this.model);
         setmodel(this, this.model);
         setsize (self, '-16 -16 -24', '16 16 32');
+        this.cnt = 30;
+        
         item_c::Process();
     };
 
@@ -55,13 +59,8 @@ class item_powerup_c : item_c
         sprint (other, PRINT_LOW, "You got the ", self.netname, "\n");
 
         self.mdl = self.model;
-        
-        if ((self.classname == "item_artifact_invulnerability") ||
-            (self.classname == "item_artifact_invisibility"))
-            self.nextthink = time + 60*5;
-        else
-            self.nextthink = time + 60;
-        
+
+        this.nextthink = time + this.regen_time;
         self.think = this.Regen;
 
         sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
@@ -69,37 +68,6 @@ class item_powerup_c : item_c
         self.solid = SOLID_NOT;
         other.items = other.items | self.items;
         self.model = "";
-
-    // do the apropriate action
-        if (self.classname == "item_artifact_envirosuit")
-        {
-            other.rad_time = 1;
-            other.radsuit_finished = time + 30;
-        }
-        
-        if (self.classname == "item_artifact_invulnerability")
-        {
-            other.invincible_time = 1;
-            other.invincible_finished = time + 30;
-        }
-        
-        if (self.classname == "item_artifact_invisibility")
-        {
-            other.invisible_time = 1;
-            other.invisible_finished = time + 30;
-        }
-
-        if (self.classname == "item_artifact_super_damage")
-        {
-            if (deathmatch == 4)
-            {
-                other.armortype = 0;
-                other.armorvalue = 0 * 0.01;
-                other.ammo_cells = 0;
-            }
-            other.super_time = 1;
-            other.super_damage_finished = time + 30;
-        }       
 
         activator = other;
         SUB_UseTargets();                               // fire all targets / killtargets
@@ -118,7 +86,16 @@ class item_artifact_invulnerability_c : item_powerup_c
         noise = "items/protect.wav";
         netname = "Pentagram of Protection";
         effects = self.effects | EF_RED;
+        this.regen_time = 60*5;
         item_powerup_c::Process();
+    };
+
+    virtual void () touch =
+    {
+        other.invincible_time = TRUE;
+        other.invincible_finished = this.cnt;
+
+        item_powerup_c::touch();
     };
 };
 
@@ -132,8 +109,17 @@ class item_artifact_envirosuit_c : item_powerup_c
         items = IT_SUIT;
         noise = "items/suit.wav";
         netname = "Biosuit";
+        this.regen_time = 60;
 
         item_powerup_c::Process();
+    };
+
+    virtual void () touch =
+    {
+        other.rad_time = TRUE;
+        other.radsuit_finished = this.cnt;
+
+        item_powerup_c::touch();
     };
 };
 
@@ -148,6 +134,7 @@ class item_artifact_invisibility_c : item_powerup_c
         items = IT_INVISIBILITY;
         noise = "items/inv1.wav";
         netname = "Ring of Shadows";
+        this.regen_time = 60*5;
 
         item_powerup_c::Process();
     };
@@ -185,26 +172,32 @@ class item_artifact_invisibility_c : item_powerup_c
 
         self.mdl = self.model;
 
-        sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+        sound(other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
         stuffcmd (other, "bf\n");
         self.solid = SOLID_NOT;
         other.items = other.items | IT_INVISIBILITY;
         self.model = "";
 
     // do the apropriate action
-        other.invisible_time = 1;
+        other.invisible_time = TRUE;
         other.invisible_finished = self.cnt;
-        string s=ftos(rint(other.invisible_finished - time));
-        bprint (PRINT_LOW, other.netname);
-        bprint (PRINT_LOW, " recovered a Ring with ");
-        bprint (PRINT_LOW, s);
-        bprint (PRINT_LOW, " seconds remaining!\n");
+        string s=ftos(rint(this.cnt - time));
+        bprint(PRINT_LOW, other.netname, " recovered a Ring with ", s, " seconds remaining!\n");
         
         activator = other;
         SUB_UseTargets();                               // fire all targets / killtargets
     };
-    
+
+    virtual void () touch =
+    {
+        other.invisible_time = TRUE;
+        other.invisible_finished = this.cnt;
+
+        item_powerup_c::touch();
+    };
 };
+
+#define QUAD_SHOOT_SOUND "items/damage3.wav"
 
 class item_artifact_super_damage_c : item_powerup_c
 {
@@ -212,17 +205,31 @@ class item_artifact_super_damage_c : item_powerup_c
     {
         precache_sound ("items/damage.wav");
 	    precache_sound ("items/damage2.wav");
-	    precache_sound ("items/damage3.wav");
+	    precache_sound(QUAD_SHOOT_SOUND);
         model = "progs/quaddama.mdl";
         items = IT_QUAD;
         noise = "items/damage.wav";
         if (deathmatch == 4)
-            self.netname = "OctaPower";	
+            this.netname = "OctaPower";	
         else
-            self.netname = "Quad Damage";
-        self.effects = self.effects | EF_BLUE;
+            this.netname = "Quad Damage";
+        this.effects = this.effects | EF_BLUE;
+        this.regen_time = 60;
 
         item_powerup_c::Process();
+    };
+
+    // this sucks but statics don't work on classes
+    nonvirtual void (player_c player) ShootSound =
+    {
+        if (player.super_damage_finished > time)
+        {
+            if (player.super_sound < time)
+            {
+                player.super_sound = time + 1;
+                sound(player, CHAN_BODY, QUAD_SHOOT_SOUND, 1, ATTN_NORM);
+            }
+        }
     };
 
     nonvirtual void (player_c player) Drop =
@@ -293,5 +300,19 @@ class item_artifact_super_damage_c : item_powerup_c
 
         activator = other;
         SUB_UseTargets();                               // fire all targets / killtargets
+    };
+
+    virtual void () touch =
+    {
+        if (deathmatch == 4)
+        {
+            other.armortype = 0;
+            other.armorvalue = 0 * 0.01;
+            other.ammo_cells = 0;
+        }
+        other.super_time = TRUE;
+        other.super_damage_finished = this.cnt;
+
+        item_powerup_c::touch();
     };
 };

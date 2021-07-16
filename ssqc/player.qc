@@ -222,7 +222,7 @@ void() player_light1   =[$light1, player_light2  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
-	SuperDamageSound();
+	item_artifact_super_damage_c::ShootSound((player_c)self);
 	//W_FireLightning();
 	self.attack_finished = time + 0.2;
 };
@@ -235,7 +235,7 @@ void() player_light2   =[$light2, player_light1  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
-	SuperDamageSound();
+	item_artifact_super_damage_c::ShootSound((player_c)self);
 	//W_FireLightning();
 	self.attack_finished = time + 0.2;
 };
@@ -275,28 +275,6 @@ void()  player_axpain3 =        [       $axpain3,       player_axpain4  ] {};
 void()  player_axpain4 =        [       $axpain4,       player_axpain5  ] {};
 void()  player_axpain5 =        [       $axpain5,       player_axpain6  ] {};
 void()  player_axpain6 =        [       $axpain6,       player_run      ] {};
-
-void (entity et, float f) player_pain =
-{
-	if (self.weaponframe)
-		return;
-
-	if (self.invisible_finished > time)
-		return;         // eyes don't have pain frames
-
-	if (self.weapon == IT_AXE)
-		player_axpain1 ();
-	else
-		player_pain1 ();
-};
-
-void() player_diea1;
-void() player_dieb1;
-void() player_diec1;
-void() player_died1;
-void() player_diee1;
-void() player_die_ax1;
-
 
 class player_c : entity 
 {
@@ -410,6 +388,20 @@ class player_c : entity
 		this.CheckPowerups();
 
 		this.WeaponFrame();
+	};
+
+	nonvirtual void (entity et, float f) Pain =
+	{
+		if (self.weaponframe)
+			return;
+
+		if (self.invisible_finished > time)
+			return;         // eyes don't have pain frames
+
+		if (self.weapon == IT_AXE)
+			player_axpain1();
+		else
+			player_pain1();
 	};
 
 	 /*
@@ -670,15 +662,12 @@ class player_c : entity
 	nonvirtual void () Suicide =
 	{
 		bprint (PRINT_MEDIUM, self.netname, " suicides\n");
-		set_suicide_frame();
+		this.SetSuicideFrame();
 		self.modelindex = modelindex_player;
 		logfrag (self, self);
 		self.frags = self.frags - 2;    // extra penalty
 		this.Respawn(TRUE);
 	};
-
-	
-
 
 	nonvirtual void () PlayerDeathThink = 
 	{
@@ -753,7 +742,7 @@ class player_c : entity
         // check for attack
         if (this.button0)
         {
-            SuperDamageSound();
+            item_artifact_super_damage_c::ShootSound(this);
             this.current_weapon.Attack();
         }
     };
@@ -859,7 +848,7 @@ class player_c : entity
 		this.current_weapon = this.GetBestWeapon();
 
 		this.attack_finished = time;
-		this.th_pain = player_pain;
+		this.th_pain = this.Pain;
 		this.th_die = this.Die;
 		
 		this.deadflag = DEAD_NO;
@@ -1032,6 +1021,17 @@ class player_c : entity
 		item_backpack_c ent = (item_backpack_c)spawn(item_backpack_c, owner: this);
 	};
 
+	nonvirtual void() SetSuicideFrame =
+	{       
+		// used by kill command and disconnect command
+		if (self.model != "progs/player.mdl")
+			return; // already gibbed
+		self.frame = $deatha11;
+		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_TOSS;
+		self.deadflag = DEAD_DEAD;
+		self.nextthink = -1;
+	};
 	nonvirtual void () Gib =
 	{
 		ThrowHead("progs/h_player.mdl", self.health);
@@ -1304,17 +1304,7 @@ void(string gibname, float dm) ThrowHead =
 	self.avelocity = crandom() * '0 600 0';
 };
 
-void() set_suicide_frame =
-{       
-	// used by kill command and disconnect command
-	if (self.model != "progs/player.mdl")
-		return; // already gibbed
-	self.frame = $deatha11;
-	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_TOSS;
-	self.deadflag = DEAD_DEAD;
-	self.nextthink = -1;
-};
+
 
 
 void()  player_diea1    =       [       $deatha1,       player_diea2    ] {};

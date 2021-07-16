@@ -30,7 +30,7 @@ class nailgun_c : weapon_c
         this.owner.weaponframe = this.owner.weaponframe + 1;
         if (this.owner.weaponframe == 9)
             this.owner.weaponframe = 1;
-        SuperDamageSound();
+        item_artifact_super_damage_c::ShootSound((player_c)this.owner);
         this.FireSpikes(4);
 
         player_nail1();
@@ -49,7 +49,7 @@ class nailgun_c : weapon_c
         this.owner.weaponframe = this.owner.weaponframe + 1;
         if (this.owner.weaponframe == 9)
             this.owner.weaponframe = 1;
-        SuperDamageSound();
+        item_artifact_super_damage_c::ShootSound((player_c)this.owner);
         this.FireSpikes(-4);
 
         player_nail2();

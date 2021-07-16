@@ -257,8 +257,7 @@ called when a player connects to a server
 ============
 */
 void (optional float csqcactive) ClientConnect = {
-	bprint (PRINT_HIGH, self.netname);
-	bprint (PRINT_HIGH, " entered the game\n");
+	bprint (PRINT_HIGH, self.netname, " entered the game\n");
 	
 // a client connecting during an intermission can cause problems
 	if (GameManager.intermission_running)
@@ -277,5 +276,6 @@ void() ClientDisconnect =
 {
 	bprint(PRINT_HIGH, self.netname, " left the game with ", ftos(self.frags), " frags\n");
 	sound(self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
-	set_suicide_frame();
+	player_c player = (player_c)self;
+	player.SetSuicideFrame();
 };

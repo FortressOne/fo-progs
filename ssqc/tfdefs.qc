@@ -25,11 +25,32 @@ enum WEAPON
     MEDIKIT
 };
 
+enum GRENADE
+{
+    FLASH,
+    CONCUSSION
+};
+
+enum SEASON
+{
+    FO = 0,
+    ONE,
+    TF28
+};
+
+enumflags ATTRIBUTE
+{
+    SCAN,
+    DOUBLEJUMP,
+    DISARM
+};
+
 class player_c;
 class gamemanager_c;
 gamemanager_c GameManager;
 
 // random globals from qw code
+entity  lastspawn;
 float   modelindex_eyes, modelindex_player;
 .float hit_z; // FIXME - is this used by engine?
 .float  dmgtime;

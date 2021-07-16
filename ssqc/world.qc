@@ -24,14 +24,8 @@
 		Boston, MA  02111-1307, USA
 
 */
-
-void() InitBodyQue;
-
-
 void() main =
 {
-	dprint ("main function\n");
-	
 // these are just commands the the prog compiler to copy these files
 
 	precache_file ("progs.dat");
@@ -180,9 +174,6 @@ void() main =
 	precache_file2 ("maps/dm6.bsp");
 };
 
-
-entity  lastspawn;
-
 //=======================
 /*QUAKED worldspawn (0 0 0) ?
 Only used for the world entity.
@@ -240,7 +231,7 @@ void() worldspawn =
 	precache_sound ("items/armor1.wav");            // armor up
 	precache_sound ("weapons/lhit.wav");            //lightning
 	precache_sound ("weapons/lstart.wav");          //lightning start
-	precache_sound ("items/damage3.wav");
+	precache_sound (QUAD_SHOOT_SOUND);
 
 	precache_sound ("misc/power.wav");                      //lightning for boss
 
