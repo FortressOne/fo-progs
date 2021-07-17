@@ -121,7 +121,8 @@ class item_ammo_c : item_c
             other.ammo_cells = other.ammo_cells + self.aflag;
         }
 
-        bound_other_ammo ();
+        
+        player.CheckMaxAmmo();
         
         sprint(other, PRINT_LOW, "You got the ", self.netname, "\n");
 
@@ -142,7 +143,7 @@ class item_ammo_c : item_c
         if (deathmatch == 3 || deathmatch == 5)        
             self.nextthink = time + 15;
 
-        self.think = SUB_regen;
+        self.think = this.Regen;
 
         activator = other;
         SUB_UseTargets();                               // fire all targets / killtargets

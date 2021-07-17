@@ -1,9 +1,53 @@
+typedef struct
+{
+    float season;
+    float old_hp_armor;
+    float spawn_full;
+} gamesettings_t;
+gamesettings_t GameSettings;
+
 class gamemanager_c : entity
 {
     float intermission_running;
     float intermission_exittime;
     string nextmap;
 
+    void () gamemanager_c =
+    {
+        this.nextthink = time + 0.01;
+        this.think = this.PopulateSettings;
+    };
+
+    //if ent is world, return serverinfo, if ent is a player, return that client's setinfo key
+    nonvirtual float (entity ent, string ps_short, string ps_setting, string ps_default) GetSetting = 
+    {
+        string st;
+
+        st = infokey(ent, ps_short);
+        if (st != "") {
+            st = infokey(ent, ps_setting);
+            if (st != "") {
+                st = ps_default;
+            }
+        }
+
+        switch (st)
+        {
+            case "on":
+                return TRUE;
+            case "off":
+                return FALSE;
+            default:
+                return stof(st);
+        }
+    };
+
+    nonvirtual void () PopulateSettings = 
+    {
+        GameSettings.season = this.GetSetting(world, "tfs", "tf_season", ftos(SEASON_ONE));
+        GameSettings.old_hp_armor = this.GetSetting(world, "oh", "old_hp_armor", "on");
+        GameSettings.spawn_full = this.GetSetting(world, "sf", "spawnfull", "on");
+    };
 
     /*
     ============

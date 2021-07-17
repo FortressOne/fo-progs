@@ -18,9 +18,6 @@ class weapon_c : entity
 
     virtual void_f animation_func = __NULL__;
 
-    //float _ammo_count;
-    //set float ammo_count = { _ammo_count = value; };
-
     get float ammo_count =
     {
         switch (this.ammo_type)

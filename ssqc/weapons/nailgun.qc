@@ -30,7 +30,7 @@ class nailgun_c : weapon_c
         this.owner.weaponframe = this.owner.weaponframe + 1;
         if (this.owner.weaponframe == 9)
             this.owner.weaponframe = 1;
-        SuperDamageSound();
+        item_artifact_super_damage_c::ShootSound((player_c)this.owner);
         this.FireSpikes(4);
 
         player_nail1();
@@ -49,7 +49,7 @@ class nailgun_c : weapon_c
         this.owner.weaponframe = this.owner.weaponframe + 1;
         if (this.owner.weaponframe == 9)
             this.owner.weaponframe = 1;
-        SuperDamageSound();
+        item_artifact_super_damage_c::ShootSound((player_c)this.owner);
         this.FireSpikes(-4);
 
         player_nail2();
@@ -77,8 +77,10 @@ class nailgun_c : weapon_c
         this.owner.attack_finished = time + this.attack_finish_delay;
         if (deathmatch != 4)
             this.owner.currentammo = this.owner.ammo_nails = this.owner.ammo_nails - this.ammo_per_shot;
+
         vector dir = aim (this.owner, 1000);
-        launch_spike(this.owner.origin + '0 0 16' + v_right*offset, dir);
+        proj_spike_c ent = spawn(proj_spike_c);
+		ent.Setup(this.owner.origin + '0 0 16' + v_right*offset, dir, self);
 
         msg_entity = this.owner;
         WriteByte (MSG_ONE, SVC_SMALLKICK);

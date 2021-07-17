@@ -82,7 +82,7 @@ class item_armor_c : item_c
         this.model = "";
         if (deathmatch != 2)
             this.nextthink = time + 20;
-        this.think = SUB_regen;
+        this.think = this.Regen;
 
         sprint(other, PRINT_LOW, "You got armor\n");
         // armor touch sound

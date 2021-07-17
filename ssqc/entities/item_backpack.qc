@@ -49,7 +49,8 @@ class item_backpack_c : entity
         other.ammo_rockets = other.ammo_rockets + this.ammo_rockets;
         other.ammo_cells = other.ammo_cells + this.ammo_cells;
         
-        bound_other_ammo ();
+        player_c player = (player_c)other;
+        player.CheckMaxAmmo();
 
         sprint(other, PRINT_LOW, "You get ");
 

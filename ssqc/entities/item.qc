@@ -27,4 +27,12 @@ class item_c : entity
     {
 
     };
+
+    virtual void () Regen =
+    {
+        self.model = self.mdl;          // restore original model
+        self.solid = SOLID_TRIGGER;     // allow it to be touched again
+        sound(self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);    // play respawn sound
+        setorigin(self, self.origin);
+    };
 };

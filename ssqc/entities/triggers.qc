@@ -499,66 +499,6 @@ void() trigger_teleport =
 	}
 };
 
-/*
-==============================================================================
-
-trigger_setskill
-
-==============================================================================
-*/
-
-/*QUAKED trigger_setskill (.5 .5 .5) ?
-sets skill level to the value of "message".
-Only used on start map.
-*/
-void() trigger_setskill =
-{
-	remove (self);
-};
-
-
-/*
-==============================================================================
-
-ONLY REGISTERED TRIGGERS
-
-==============================================================================
-*/
-
-void() trigger_onlyregistered_touch =
-{
-	if (other.classname != "player")
-		return;
-	if (self.attack_finished > time)
-		return;
-
-	self.attack_finished = time + 2;
-	if (cvar("registered"))
-	{
-		self.message = "";
-		SUB_UseTargets ();
-		remove (self);
-	}
-	else
-	{
-		if (self.message != "")
-		{
-			centerprint (other, self.message);
-			sound (other, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
-		}
-	}
-};
-
-/*QUAKED trigger_onlyregistered (.5 .5 .5) ?
-Only fires if playing the registered version, otherwise prints the message
-*/
-void() trigger_onlyregistered =
-{
-	precache_sound ("misc/talk.wav");
-	InitTrigger ();
-	self.touch = trigger_onlyregistered_touch;
-};
-
 //============================================================================
 
 void() hurt_on =

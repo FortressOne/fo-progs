@@ -47,48 +47,6 @@ float() crandom =
 	return 2*(random() - 0.5);
 };
 
-/*
-================
-W_FireAxe
-================
-*/
-void() W_FireAxe =
-{
-	local   vector  source;
-	local   vector  org;
-
-	makevectors (self.v_angle);
-	source = self.origin + '0 0 16';
-	traceline (source, source + v_forward*64, FALSE, self);
-	if (trace_fraction == 1.0)
-		return;
-	
-	org = trace_endpos - v_forward*4;
-
-	if (trace_ent.takedamage)
-	{
-		trace_ent.axhitme = 1;
-		SpawnBlood (org, 20);
-		if (deathmatch > 3)
-			T_Damage (trace_ent, self, self, 75);
-		else
-			T_Damage (trace_ent, self, self, 20);
-	}
-	else
-	{       // hit wall
-		sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
-
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_GUNSHOT);
-		WriteByte (MSG_MULTICAST, 3);
-		WriteCoord (MSG_MULTICAST, org_x);
-		WriteCoord (MSG_MULTICAST, org_y);
-		WriteCoord (MSG_MULTICAST, org_z);
-		multicast (org, MULTICAST_PVS);
-	}
-};
-
-
 //============================================================================
 
 
@@ -102,37 +60,6 @@ vector() wall_velocity =
 	vel = vel * 200;
 	
 	return vel;
-};
-
-
-/*
-================
-SpawnMeatSpray
-================
-*/
-void(vector org, vector vel) SpawnMeatSpray =
-{
-	local   entity missile;
-
-	missile = spawn ();
-	missile.owner = self;
-	missile.movetype = MOVETYPE_BOUNCE;
-	missile.solid = SOLID_NOT;
-
-	makevectors (self.angles);
-
-	missile.velocity = vel;
-	missile.velocity_z = missile.velocity_z + 250 + 50*random();
-
-	missile.avelocity = '3000 1000 2000';
-	
-// set missile duration
-	missile.nextthink = time + 1;
-	missile.think = SUB_Remove;
-
-	setmodel (missile, "progs/zom_gib.mdl");
-	setsize (missile, '0 0 0', '0 0 0');            
-	setorigin (missile, org);
 };
 
 /*
@@ -176,23 +103,6 @@ ROCKETS
 void() T_MissileTouch =
 {
 	local float     damg;
-
-//	if (deathmatch == 4)
-//	{
-//	if ( ((other.weapon == 32) || (other.weapon == 16)))
-//		{	
-//			if (random() < 0.1)
-//			{
-//				if (other != world)
-//				{
-//	//				bprint( "Got here\n");
-//					other.deathtype = "blaze";
-//					T_Damage (other, self, self.owner, 1000 );
-//					T_RadiusDamage (self, self.owner, 1000, other);
-//				}
-//			}
-//		}	
-//	}
 
 	if (other == self.owner)
 		return;         // don't explode on owner
@@ -247,34 +157,15 @@ void() W_FireRocket =
 	if (deathmatch != 4)
 		self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
-	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
 	msg_entity = self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
 
-	newmis = spawn ();
-	newmis.owner = self;
-	newmis.movetype = MOVETYPE_FLYMISSILE;
-	newmis.solid = SOLID_BBOX;
-		
-// set newmis speed     
-
-	makevectors (self.v_angle);
-	newmis.velocity = aim(self, 1000);
-	newmis.velocity = newmis.velocity * 1000;
-	newmis.angles = vectoangles(newmis.velocity);
-	
-	newmis.touch = T_MissileTouch;
-	newmis.voided = 0;
-	
-// set newmis duration
-	newmis.nextthink = time + 5;
-	newmis.think = SUB_Remove;
-	newmis.classname = "rocket";
-
-	setmodel (newmis, "progs/missile.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');             
-	setorigin (newmis, self.origin + v_forward*8 + '0 0 16');
+	makevectors(self.v_angle);
+	proj_rocket_c ent = spawn(proj_rocket_c);
+	ent.Setup(self.origin + v_forward*8 + '0 0 16', aim(self, 1000), self);
+	ent.touch = T_MissileTouch;
 };
 
 /*
@@ -440,96 +331,19 @@ void() W_FireGrenade =
 
 //=============================================================================
 
-void() spike_touch;
-void() superspike_touch;
-
-
-/*
-===============
-launch_spike
-
-Used for both the player and the ogre
-===============
-*/
-void(vector org, vector dir) launch_spike =
-{
-	newmis = spawn ();
-	newmis.voided=0;
-	newmis.owner = self;
-	newmis.movetype = MOVETYPE_FLYMISSILE;
-	newmis.solid = SOLID_BBOX;
-
-	newmis.angles = vectoangles(dir);
-	
-	newmis.touch = spike_touch;
-	newmis.classname = "spike";
-	newmis.think = SUB_Remove;
-	newmis.nextthink = time + 6;
-	setmodel (newmis, "progs/spike.mdl");
-	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);               
-	setorigin (newmis, org);
-
-	newmis.velocity = dir * 1000;
-};
-
 void() W_FireSuperSpikes = {
-	vector dir;
-	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
 	if (deathmatch != 4) 
 		self.currentammo = self.ammo_nails = self.ammo_nails - 2;
-	dir = aim (self, 1000);
-	launch_spike (self.origin + '0 0 16', dir);
-	newmis.touch = superspike_touch;
-	setmodel (newmis, "progs/s_spike.mdl");
-	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);               
+	vector dir = aim (self, 1000);
+	proj_spike_c ent = spawn(proj_spike_c);
+	ent.Setup(self.origin + '0 0 16', dir, self);
+	ent.touch = superspike_touch;
+	setmodel(ent, "progs/s_spike.mdl");
+	setsize(ent, VEC_ORIGIN, VEC_ORIGIN);
 	msg_entity = self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
-};
-
-void() spike_touch = {
-	if (other == self.owner)
-		return;
-
-	if (self.voided) {
-		return;
-	}
-	self.voided = 1;
-
-	if (other.solid == SOLID_TRIGGER)
-		return; // trigger field, do nothing
-
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
-		return;
-	}
-	
-// hit something that bleeds
-	if (other.takedamage)
-	{
-		spawn_touchblood (9);
-		other.deathtype = "nail";
-		T_Damage (other, self, self.owner, 9);
-	}
-	else
-	{
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		if (self.classname == "wizspike")
-			WriteByte (MSG_MULTICAST, TE_WIZSPIKE);
-		else if (self.classname == "knightspike")
-			WriteByte (MSG_MULTICAST, TE_KNIGHTSPIKE);
-		else
-			WriteByte (MSG_MULTICAST, TE_SPIKE);
-		WriteCoord (MSG_MULTICAST, self.origin_x);
-		WriteCoord (MSG_MULTICAST, self.origin_y);
-		WriteCoord (MSG_MULTICAST, self.origin_z);
-		multicast (self.origin, MULTICAST_PHS);
-	}
-
-	remove(self);
-
 };
 
 void() superspike_touch = {
@@ -583,26 +397,3 @@ void() ServerflagsCommand =
 {
 	serverflags = serverflags * 2 + 1;
 };
-
-
-/*
-========
-SuperDamageSound
-
-Plays sound if needed
-========
-*/
-void() SuperDamageSound =
-{
-	if (self.super_damage_finished > time)
-	{
-		if (self.super_sound < time)
-		{
-			self.super_sound = time + 1;
-			sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
-		}
-	}
-	return;
-};
-
-

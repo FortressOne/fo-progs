@@ -25,15 +25,32 @@ enum WEAPON
     MEDIKIT
 };
 
+enum GRENADE
+{
+    FLASH,
+    CONCUSSION
+};
+
+enum SEASON
+{
+    FO = 0,
+    ONE,
+    TF28
+};
+
+enumflags ATTRIBUTE
+{
+    SCAN,
+    DOUBLEJUMP,
+    DISARM
+};
+
 class player_c;
 class gamemanager_c;
 gamemanager_c GameManager;
 
 // random globals from qw code
-//entity stemp, otemp, s, old;
-
-
-
+entity  lastspawn;
 float   modelindex_eyes, modelindex_player;
 .float hit_z; // FIXME - is this used by engine?
 .float  dmgtime;
@@ -41,14 +58,9 @@ float   H_ROTTEN = 1;
 float   H_MEGA = 2;
 .float  healamount, healtype;
 float WEAPON_BIG2 = 1;
-//entity  multi_ent;
-//float   multi_damage;
-
-//vector  blood_org;
-//float   blood_count;
-
-//vector  puff_org;
-//float   puff_count;
+float START_OFF = 1;
+float SPAWNFLAG_SUPERSPIKE      = 1;
+float SPAWNFLAG_LASER = 2;
 
 float DOOR_START_OPEN = 1;
 float DOOR_DONT_LINK = 4;
@@ -63,3 +75,9 @@ float WEAPON_SHOTGUN = 1;
 float WEAPON_ROCKET = 2;
 float WEAPON_SPIKES = 4;
 float WEAPON_BIG = 8;
+
+float SECRET_OPEN_ONCE = 1;             // stays open
+float SECRET_1ST_LEFT = 2;              // 1st move is left of arrow
+float SECRET_1ST_DOWN = 4;              // 1st move is down from arrow
+float SECRET_NO_SHOOT = 8;              // only opened by trigger
+float SECRET_YES_SHOOT = 16;    // shootable even if targeted

@@ -586,32 +586,6 @@
 
 // Classes
 #define PC_SCOUT_NAME               "scout"
-#define PC_SCOUT_PLAYERCLASS        1
-#define PC_SCOUT_MAXHEALTH          75
-#define PC_SCOUT_MAXHEALTH_FO       100
-#define PC_SCOUT_MAXARMOR           50
-#define PC_SCOUT_MAXARMOR_FO        25
-#define PC_SCOUT_MAXSPEED		    450	// Maximum movement speed
-#define PC_SCOUT_MAXSTRAFESPEED		450	// Maximum strafing movement speed
-#define PC_SCOUT_MAXARMORTYPE		0.3	// Maximum level of Armor absorption
-#define PC_SCOUT_INITARMORTYPE		0.3	// Absorption Level of armor when respawned
-#define PC_SCOUT_INITARMORCLASS		0 	// Armorclass worn when respawned
-#define PC_SCOUT_WEAPONS		WEAP_AXE | WEAP_SHOTGUN | WEAP_NAILGUN
-#define PC_SCOUT_MAXAMMO_SHOT		50 	// Maximum amount of shot ammo this class can carry
-#define PC_SCOUT_MAXAMMO_NAIL		200	// Maximum amount of nail ammo this class can carry
-#define PC_SCOUT_MAXAMMO_CELL		100	// Maximum amount of cell ammo this class can carry
-#define PC_SCOUT_MAXAMMO_ROCKET		25 	// Maximum amount of rocket ammo this class can carry
-#define PC_SCOUT_INITAMMO_SHOT		25 	// Amount of shot ammo this class has when respawned
-#define PC_SCOUT_INITAMMO_NAIL		100	// Amount of nail ammo this class has when respawned
-#define PC_SCOUT_INITAMMO_CELL		50 	// Amount of cell ammo this class has when respawned
-#define PC_SCOUT_INITAMMO_ROCKET	0 	// Amount of rocket ammo this class has when respawned
-#define PC_SCOUT_GRENADE_TYPE_1		GR_TYPE_FLASH		//    <- 1st Type of Grenade this class has
-#define PC_SCOUT_GRENADE_TYPE_2		GR_TYPE_CONCUSSION	//    <- 2nd Type of Grenade this class has
-#define PC_SCOUT_GRENADE_INIT_1		2 	// Number of grenades of Type 1 this class has when respawned
-#define PC_SCOUT_GRENADE_INIT_2		3 	// Number of grenades of Type 2 this class has when respawned
-#define PC_SCOUT_GRENADE_MAX_1		3
-#define PC_SCOUT_GRENADE_MAX_2		4
-#define PC_SCOUT_TF_ITEMS		NIT_SCANNER  // <- TeamFortress Items this class has
 
 // Seasons
 #define SEASON_TF28 2.8
