@@ -307,10 +307,11 @@ void() spikeshooter_use =
 	else
 	{
 		sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
-		launch_spike (self.origin, self.movedir);
-		newmis.velocity = self.movedir * 500;
+		proj_spike_c ent = spawn(proj_spike_c);
+		ent.Setup(self.origin, self.movedir, self);
+		ent.velocity = self.movedir * 500;
 		if (self.spawnflags & SPAWNFLAG_SUPERSPIKE)
-			newmis.touch = superspike_touch;
+			ent.touch = superspike_touch;
 	}
 };
 
@@ -320,7 +321,6 @@ void() shooter_think =
 	self.nextthink = time + self.wait;
 	newmis.velocity = self.movedir * 500;
 };
-
 
 /*QUAKED trap_spikeshooter (0 .5 .8) (-8 -8 -8) (8 8 8) superspike laser
 When triggered, fires a spike in the direction set in QuakeEd.

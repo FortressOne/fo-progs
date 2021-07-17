@@ -26,6 +26,10 @@ weapons/incendiarycannon.qc
 weapons/assaultcannon.qc
 weapons/rocketlauncher.qc
 weapons/railgun.qc
+weapons/proj.qc
+weapons/proj_rocket.qc
+weapons/proj_spike.qc
+
 classes/class.qc
 entities/trigger_changelevel.qc
 entities/item.qc
