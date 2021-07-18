@@ -12,8 +12,8 @@ class railgun_c : weapon_c
         ammo_per_shot = 1;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
+        return super::Attack();
     };
 };

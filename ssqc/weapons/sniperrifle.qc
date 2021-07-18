@@ -15,8 +15,8 @@ class sniperrifle_c : weapon_c
         clip_size = 1;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
+        return super::Attack();
     };
 };

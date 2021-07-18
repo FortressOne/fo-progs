@@ -26,20 +26,24 @@ class proj_c : entity
 
     float duration;
 
-    virtual void (vector org, vector dir, entity own) Setup =
+    static proj_c (vector org, vector dir, entity own, string cname, string model, float durat) spawn =
     {
-        this.think = this.FieldCheck; // accessors don't work
-        this.nextthink = time + .02;
-        this.movetype = MOVETYPE_FLYMISSILE;
-        this.solid = SOLID_BBOX;
-        this.owner = own;
-        this.origin = org;
-        this.direction = dir;
-        newmis.angles = vectoangles(this.direction);
-        newmis.velocity = this.direction * 1000;
-        setmodel (newmis, this.model);
-        setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);
-        setorigin (newmis, origin);
+        proj_c ent = ::spawn(proj_c);
+        ent.duration = durat;
+        ent.classname = cname;
+        ent.think = ent.FieldCheck; // accessors don't work
+        ent.nextthink = time + .02;
+        ent.movetype = MOVETYPE_FLYMISSILE;
+        ent.solid = SOLID_BBOX;
+        ent.owner = own;
+        ent.origin = org;
+        ent.direction = dir;
+        ent.angles = vectoangles(ent.direction);
+        ent.velocity = ent.direction * 1000;
+        setmodel (ent, model);
+        setsize (ent, VEC_ORIGIN, VEC_ORIGIN);
+        setorigin (ent, origin);
+        return ent;
     };
 
     nonvirtual void () FieldCheck =

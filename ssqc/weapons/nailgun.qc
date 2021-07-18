@@ -12,48 +12,35 @@ class nailgun_c : weapon_c
         ammo_per_shot = 1;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
-        NailAttack();
-    };
-
-    nonvirtual void () NailAttack =
-    {
         if (!this.owner.button0 || GameManager.intermission_running)
         {
             player_run();
-            return;
+            return FALSE;
         }
 
+        if (!super::Attack())
+            return FALSE;
+
         muzzleflash();
-        this.owner.weaponframe = this.owner.weaponframe + 1;
+        this.owner.weaponframe++;
         if (this.owner.weaponframe == 9)
             this.owner.weaponframe = 1;
+        
         item_artifact_super_damage_c::ShootSound((player_c)this.owner);
-        this.FireSpikes(4);
 
-        player_nail1();
-        NailAttack2();
-    };
-
-    nonvirtual void () NailAttack2 =
-    {
-        if (!this.owner.button0 || GameManager.intermission_running)
+        if (this.owner.weaponframe % 2 == 0)
         {
-            player_run();
-            return;
+            this.FireSpikes(4);
+            player_nail1();
         }
-
-        muzzleflash();
-        this.owner.weaponframe = this.owner.weaponframe + 1;
-        if (this.owner.weaponframe == 9)
-            this.owner.weaponframe = 1;
-        item_artifact_super_damage_c::ShootSound((player_c)this.owner);
-        this.FireSpikes(-4);
-
-        player_nail2();
-        NailAttack();
+        else
+        {
+            this.FireSpikes(-4);
+            player_nail2();
+        }
+        return this.Attack(); // this will always return false...
     };
 
     nonvirtual void (float offset) FireSpikes =
@@ -79,8 +66,7 @@ class nailgun_c : weapon_c
             this.owner.currentammo = this.owner.ammo_nails = this.owner.ammo_nails - this.ammo_per_shot;
 
         vector dir = aim (this.owner, 1000);
-        proj_spike_c ent = spawn(proj_spike_c);
-		ent.Setup(this.owner.origin + '0 0 16' + v_right*offset, dir, self);
+        proj_spike_c ent = proj_spike_c::spawn(this.owner.origin + '0 0 16' + v_right*offset, dir, self);
 
         msg_entity = this.owner;
         WriteByte (MSG_ONE, SVC_SMALLKICK);

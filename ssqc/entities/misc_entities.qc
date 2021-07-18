@@ -307,8 +307,8 @@ void() spikeshooter_use =
 	else
 	{
 		sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
-		proj_spike_c ent = spawn(proj_spike_c);
-		ent.Setup(self.origin, self.movedir, self);
+		
+		proj_spike_c ent = proj_spike_c::spawn(self.origin, self.movedir, self);
 		ent.velocity = self.movedir * 500;
 		if (self.spawnflags & SPAWNFLAG_SUPERSPIKE)
 			ent.touch = superspike_touch;

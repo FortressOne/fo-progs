@@ -12,7 +12,7 @@ class axe_c : weapon_c
         ammo_per_shot = 0;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {
         float r = random();
         if (r < 0.25)
@@ -24,7 +24,7 @@ class axe_c : weapon_c
         else
             this.animation_func = player_axed1;
             
-        super::Attack();
+        return super::Attack();
     };
 
     nonvirtual void () Swing =

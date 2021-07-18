@@ -42,13 +42,13 @@ class weapon_c : entity
         return FALSE;
     };
 
-    virtual void () Attack = 
+    virtual float () Attack = 
     {
         player_c player = (player_c)this.owner;
         if (!this.HasAmmo())
         {
             player.current_weapon = player.GetBestWeapon();
-            return;
+            return FALSE;
         }
             
         makevectors(player.v_angle);                 // calculate forward angle for velocity
@@ -58,6 +58,27 @@ class weapon_c : entity
             
         player.attack_finished = time + this.attack_finish_delay;
         sound(this.owner, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
+
+        if (deathmatch != 4)
+        {
+            switch (this.ammo_type)
+            {
+                case IT_SHELLS:
+                    this.owner.currentammo = this.owner.ammo_shells = this.owner.ammo_shells - this.ammo_per_shot;
+                    break;
+                case IT_NAILS:
+                    this.owner.currentammo = this.owner.ammo_nails = this.owner.ammo_nails - this.ammo_per_shot;
+                    break;
+                case IT_ROCKETS:
+                    this.owner.currentammo = this.owner.ammo_rockets = this.owner.ammo_rockets - this.ammo_per_shot;
+                    break;
+                case IT_CELLS:
+                    this.owner.currentammo = this.owner.ammo_cells = this.owner.ammo_cells - this.ammo_per_shot;
+                    break;
+            }
+        }
+
+        return TRUE;
     };
 
     nonvirtual void(float damage, vector dir) TraceAttack =

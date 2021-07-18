@@ -13,8 +13,8 @@ class rocketlauncher_c : weapon_c
         clip_size = 4;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
+        return super::Attack();
     };
 };
