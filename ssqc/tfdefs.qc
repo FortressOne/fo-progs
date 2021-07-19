@@ -8,7 +8,8 @@ typedef void () void_f;
 
 enum CLASS
 {
-    SCOUT
+    NONE = 0,
+    SCOUT = 1
 };
 
 // TF 

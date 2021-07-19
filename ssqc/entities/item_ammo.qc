@@ -61,6 +61,7 @@ class item_ammo_c : item_c
 
     virtual void () Process =
     {
+    bprint(PRINT_HIGH, "processing item_ammo_c\n");
         if (deathmatch == 4)
 		    return;
 
@@ -154,6 +155,7 @@ class item_shells_c : item_ammo_c
 {
     virtual void () Process =
     {
+        bprint(PRINT_HIGH, "processing item_shells_c\n");
         big_model = "maps/b_shell1.bsp";
         small_model = "maps/b_shell0.bsp";
         big_amount = 40;
