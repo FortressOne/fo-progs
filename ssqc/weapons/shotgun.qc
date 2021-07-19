@@ -28,9 +28,10 @@ class shotgun_c : weapon_c
         clip_size = 8;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {
-        super::Attack();
+        if (!super::Attack())
+            return FALSE;
 
         msg_entity = this.owner;
         WriteByte(MSG_ONE, SVC_SMALLKICK);
@@ -40,5 +41,7 @@ class shotgun_c : weapon_c
 
         vector dir = aim(this.owner, 100000);
         this.FireBullets(shot_count, dir, spread);
+
+        return TRUE;
     };
 };

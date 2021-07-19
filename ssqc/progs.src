@@ -3,9 +3,14 @@
 #define QUAKEWORLD
 ../share/fteextensions.qc
 defs.qc
-tfdefs.qc
-gamemanager.qc
 
+tfdefs.qc
+classes/class.qc
+gamemanager.qc
+menumanager.qc
+csqcmanager.qc
+
+team.qc
 subs.qc
 combat.qc
 weapons/weapons.qc
@@ -30,7 +35,7 @@ weapons/proj.qc
 weapons/proj_rocket.qc
 weapons/proj_spike.qc
 
-classes/class.qc
+
 entities/trigger_changelevel.qc
 entities/item.qc
 entities/item_weapon.qc
@@ -48,6 +53,9 @@ entities/func_button.qc
 entities/func_door.qc
 entities/func_door_secret.qc
 entities/triggers.qc
+entities/info_player_teamspawn.qc
+entities/tf_entity.qc
+entities/info_tfdetect.qc
 
 world.qc
 client.qc

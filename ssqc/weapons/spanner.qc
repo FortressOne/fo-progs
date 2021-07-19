@@ -12,8 +12,8 @@ class spanner_c : weapon_c
         ammo_per_shot = 0;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
+        return super::Attack();
     };
 };

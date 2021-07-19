@@ -102,47 +102,7 @@ ROCKETS
 
 void() T_MissileTouch =
 {
-	local float     damg;
-
-	if (other == self.owner)
-		return;         // don't explode on owner
-
-	if (self.voided) {
-		return;
-	}
-	self.voided = 1;
-
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
-		return;
-	}
-
-	damg = 100 + random()*20;
 	
-	if (other.health)
-	{
-		other.deathtype = "rocket";
-		T_Damage (other, self, self.owner, damg );
-	}
-
-	// don't do radius damage to the other, because all the damage
-	// was done in the impact
-
-
-	T_RadiusDamage (self, self.owner, 120, other, "rocket");
-
-//  sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	self.origin = self.origin - 8 * normalize(self.velocity);
-
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, self.origin_x);
-	WriteCoord (MSG_MULTICAST, self.origin_y);
-	WriteCoord (MSG_MULTICAST, self.origin_z);
-	multicast (self.origin, MULTICAST_PHS);
-
-	remove(self);
 };
 
 
@@ -163,9 +123,7 @@ void() W_FireRocket =
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
 
 	makevectors(self.v_angle);
-	proj_rocket_c ent = spawn(proj_rocket_c);
-	ent.Setup(self.origin + v_forward*8 + '0 0 16', aim(self, 1000), self);
-	ent.touch = T_MissileTouch;
+	proj_rocket_c ent = proj_rocket_c::spawn(self.origin + v_forward*8 + '0 0 16', aim(self, 1000), self);
 };
 
 /*
@@ -337,8 +295,7 @@ void() W_FireSuperSpikes = {
 	if (deathmatch != 4) 
 		self.currentammo = self.ammo_nails = self.ammo_nails - 2;
 	vector dir = aim (self, 1000);
-	proj_spike_c ent = spawn(proj_spike_c);
-	ent.Setup(self.origin + '0 0 16', dir, self);
+	proj_spike_c ent = proj_spike_c::spawn(self.origin + '0 0 16', dir, self);
 	ent.touch = superspike_touch;
 	setmodel(ent, "progs/s_spike.mdl");
 	setsize(ent, VEC_ORIGIN, VEC_ORIGIN);

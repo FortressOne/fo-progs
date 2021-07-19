@@ -1,7 +1,34 @@
-class class_c : entity 
+enum WEAPON
 {
-    string class_name;
-    float class_number;
+    AXE,
+    SPANNER,
+    SNIPERRIFLE,
+    TRANQUILISER,
+    SUPERSHOTGUN,
+    NAILGUN,
+    SUPERNAILGUN,
+    GRENADELAUNCHER,
+    FLAMETHROWER,
+    INCENDIARYCANNON,
+    ASSAULTCANNON,
+    ROCKETLAUNCHER,
+    RAILGUN,
+    KNIFE,
+    SHOTGUN,
+    MEDIKIT
+};
+
+enum GRENADE
+{
+    FLASH,
+    CONCUSSION
+};
+
+// TODO: pre-initialised struct members are not implemented yet (FTE issue)
+typedef struct
+{
+    string classname;
+    CLASS class;
     float max_health;
     float init_armor;
     float max_armor;
@@ -30,7 +57,8 @@ class class_c : entity
     float type_gren2;
     int tf_attributes;
     float illegal_bit;
-};
+} class_t;
+class_t *Classes;
 
 enum SCOUT
 {
@@ -67,7 +95,7 @@ enum SCOUT
     INIT_GREN1 = 2,
     INIT_GREN2 = 3,
 };
-
+/*
 class scout_c : class_c
 {
     void () scout_c =
@@ -148,4 +176,4 @@ class scout_c : class_c
                 break;
         }
     };
-};
+};*/

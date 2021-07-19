@@ -12,8 +12,8 @@ class incendiarycannon_c : weapon_c
         ammo_per_shot = 3;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
+        return super::Attack();
     };
 };

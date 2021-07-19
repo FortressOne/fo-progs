@@ -20,7 +20,7 @@ class supershotgun_c : shotgun_c
         clip_size = 16;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {
         if (this.owner.currentammo == 1)
         {
@@ -30,12 +30,14 @@ class supershotgun_c : shotgun_c
             spread = SHOTGUN_SPREAD;
             //shot_count = shotgun_c::SHOT_COUNT_STATIC;
             shot_count = SHOTGUN_SHOT_COUNT;
+            ammo_per_shot = 1;
             shotgun_c::Attack();
             SetDefaults();
-            return;
+            return TRUE;
         }
 
-        super::Attack();
+        if(!super::Attack())
+            return FALSE;
 
         msg_entity = this.owner;
         WriteByte(MSG_ONE, SVC_BIGKICK);
@@ -44,5 +46,7 @@ class supershotgun_c : shotgun_c
             this.owner.currentammo = this.owner.ammo_shells = this.owner.ammo_shells - 2;
         vector dir = aim(this.owner, 100000);
         FireBullets(shot_count, dir, spread);
+
+        return TRUE;
     };
 };

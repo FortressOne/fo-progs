@@ -12,8 +12,8 @@ class supernailgun_c : weapon_c
         ammo_per_shot = 2;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        nailgun_c::Attack();
+        return nailgun_c::Attack();
     };
 };

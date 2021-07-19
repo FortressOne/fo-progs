@@ -257,7 +257,6 @@ void(float num_bubbles) DeathBubbles;
 void()  player_pain1 =  [       $pain1, player_pain2    ] {
 	player_c player = (player_c)self;
 	player.PainSound();
-	self.weaponframe=0;
 };
 void()  player_pain2 =  [       $pain2, player_pain3    ] {};
 void()  player_pain3 =  [       $pain3, player_pain4    ] {};
@@ -268,7 +267,6 @@ void()  player_pain6 =  [       $pain6, player_run      ] {};
 void()  player_axpain1 =        [       $axpain1,       player_axpain2  ] {
 	player_c player = (player_c)self;
 	player.PainSound();
-	self.weaponframe=0;
 };
 void()  player_axpain2 =        [       $axpain2,       player_axpain3  ] {};
 void()  player_axpain3 =        [       $axpain3,       player_axpain4  ] {};
@@ -276,8 +274,85 @@ void()  player_axpain4 =        [       $axpain4,       player_axpain5  ] {};
 void()  player_axpain5 =        [       $axpain5,       player_axpain6  ] {};
 void()  player_axpain6 =        [       $axpain6,       player_run      ] {};
 
+
+void()  player_diea1    =       [       $deatha1,       player_diea2    ] {};
+void()  player_diea2    =       [       $deatha2,       player_diea3    ] {};
+void()  player_diea3    =       [       $deatha3,       player_diea4    ] {};
+void()  player_diea4    =       [       $deatha4,       player_diea5    ] {};
+void()  player_diea5    =       [       $deatha5,       player_diea6    ] {};
+void()  player_diea6    =       [       $deatha6,       player_diea7    ] {};
+void()  player_diea7    =       [       $deatha7,       player_diea8    ] {};
+void()  player_diea8    =       [       $deatha8,       player_diea9    ] {};
+void()  player_diea9    =       [       $deatha9,       player_diea10   ] {};
+void()  player_diea10   =       [       $deatha10,      player_diea11   ] {};
+void()  player_diea11   =       [       $deatha11,      player_diea11 ] {player_c player = (player_c)self; player.Dead();};
+
+void()  player_dieb1    =       [       $deathb1,       player_dieb2    ] {};
+void()  player_dieb2    =       [       $deathb2,       player_dieb3    ] {};
+void()  player_dieb3    =       [       $deathb3,       player_dieb4    ] {};
+void()  player_dieb4    =       [       $deathb4,       player_dieb5    ] {};
+void()  player_dieb5    =       [       $deathb5,       player_dieb6    ] {};
+void()  player_dieb6    =       [       $deathb6,       player_dieb7    ] {};
+void()  player_dieb7    =       [       $deathb7,       player_dieb8    ] {};
+void()  player_dieb8    =       [       $deathb8,       player_dieb9    ] {};
+void()  player_dieb9    =       [       $deathb9,       player_dieb9    ] {player_c player = (player_c)self; player.Dead();};
+
+void()  player_diec1    =       [       $deathc1,       player_diec2    ] {};
+void()  player_diec2    =       [       $deathc2,       player_diec3    ] {};
+void()  player_diec3    =       [       $deathc3,       player_diec4    ] {};
+void()  player_diec4    =       [       $deathc4,       player_diec5    ] {};
+void()  player_diec5    =       [       $deathc5,       player_diec6    ] {};
+void()  player_diec6    =       [       $deathc6,       player_diec7    ] {};
+void()  player_diec7    =       [       $deathc7,       player_diec8    ] {};
+void()  player_diec8    =       [       $deathc8,       player_diec9    ] {};
+void()  player_diec9    =       [       $deathc9,       player_diec10   ] {};
+void()  player_diec10   =       [       $deathc10,      player_diec11   ] {};
+void()  player_diec11   =       [       $deathc11,      player_diec12   ] {};
+void()  player_diec12   =       [       $deathc12,      player_diec13   ] {};
+void()  player_diec13   =       [       $deathc13,      player_diec14   ] {};
+void()  player_diec14   =       [       $deathc14,      player_diec15   ] {};
+void()  player_diec15   =       [       $deathc15,      player_diec15 ] {player_c player = (player_c)self; player.Dead();};
+
+void()  player_died1    =       [       $deathd1,       player_died2    ] {};
+void()  player_died2    =       [       $deathd2,       player_died3    ] {};
+void()  player_died3    =       [       $deathd3,       player_died4    ] {};
+void()  player_died4    =       [       $deathd4,       player_died5    ] {};
+void()  player_died5    =       [       $deathd5,       player_died6    ] {};
+void()  player_died6    =       [       $deathd6,       player_died7    ] {};
+void()  player_died7    =       [       $deathd7,       player_died8    ] {};
+void()  player_died8    =       [       $deathd8,       player_died9    ] {};
+void()  player_died9    =       [       $deathd9,       player_died9    ] {player_c player = (player_c)self; player.Dead();};
+
+void()  player_diee1    =       [       $deathe1,       player_diee2    ] {};
+void()  player_diee2    =       [       $deathe2,       player_diee3    ] {};
+void()  player_diee3    =       [       $deathe3,       player_diee4    ] {};
+void()  player_diee4    =       [       $deathe4,       player_diee5    ] {};
+void()  player_diee5    =       [       $deathe5,       player_diee6    ] {};
+void()  player_diee6    =       [       $deathe6,       player_diee7    ] {};
+void()  player_diee7    =       [       $deathe7,       player_diee8    ] {};
+void()  player_diee8    =       [       $deathe8,       player_diee9    ] {};
+void()  player_diee9    =       [       $deathe9,       player_diee9    ] {player_c player = (player_c)self; player.Dead();};
+
+void()  player_die_ax1  =       [       $axdeth1,       player_die_ax2  ] {};
+void()  player_die_ax2  =       [       $axdeth2,       player_die_ax3  ] {};
+void()  player_die_ax3  =       [       $axdeth3,       player_die_ax4  ] {};
+void()  player_die_ax4  =       [       $axdeth4,       player_die_ax5  ] {};
+void()  player_die_ax5  =       [       $axdeth5,       player_die_ax6  ] {};
+void()  player_die_ax6  =       [       $axdeth6,       player_die_ax7  ] {};
+void()  player_die_ax7  =       [       $axdeth7,       player_die_ax8  ] {};
+void()  player_die_ax8  =       [       $axdeth8,       player_die_ax9  ] {};
+void()  player_die_ax9  =       [       $axdeth9,       player_die_ax9  ] {player_c player = (player_c)self; player.Dead();};
+
 class player_c : entity 
 {
+	team_c tfteam;
+	class_t *class;
+	float menu;
+	string status_string;
+	float status_string_lines;
+	float status_string_refresh_time;
+	float status_string_time;
+
 	weapon_c _current_weapon; // private
 	set weapon_c current_weapon =
 	{
@@ -305,6 +380,86 @@ class player_c : entity
 
 	// sniper, hwguy
 	float is_aiming;
+
+	nonvirtual void (float teamnum) SetTeam = 
+	{
+		string teamName = Teams[teamnum-1].name;
+		
+		if (teamnum == this.tfteam.team_no)
+		{
+			sprint(this, PRINT_HIGH, "You are already on the ", teamName, " team!\n");
+			return;
+		}
+
+		if (teamnum > GameSettings.number_of_teams)
+		{
+			sprint(this, PRINT_HIGH, "This team doesn't exist!\n");
+			return;
+		}
+
+		this.tfteam = Teams[teamnum-1];
+		this.Suicide();
+
+		bprint(PRINT_HIGH, this.netname, " has joined the ", teamName, " team!\n");
+
+		this.SetTeamName();
+	};
+
+	nonvirtual void () SetTeamName =
+	{
+		stuffcmd(this, strcat("team ", this.tfteam.scoreboard_name, "\n"));
+	};
+
+	nonvirtual void (float choice) SetClass = {
+		this.class = &Classes[choice-1];
+		sprint(this, PRINT_HIGH, strcat("You will return as a ", this.class.classname, "\n"));
+	};
+
+	nonvirtual float (float choice) CanChooseClass =
+	{
+		if (this.classname == "observer")
+		{
+			sprint(this, PRINT_HIGH, "You can't choose a class whilst spectating! Join the game first.\n");
+			return FALSE;
+		}
+
+		if (!GameSettings.override_mapclasses)
+		{
+			// TODO - check map restrictions
+			class_t *class = &Classes[choice-1];
+			if (this.tfteam.illegal_classes & class.illegal_bit)
+			{
+				return FALSE;
+			}
+		}
+
+		// check server restrictions
+		float max = GameSettings.max_classes[choice-1];
+
+		if (max > 0)
+		{
+			player_c p = (player_c)find(world, ::classname, "player");
+			float numPlaying = 0;
+			while (p)
+			{
+				if (p.tfteam.team_no == this.tfteam.team_no)
+				{
+					if (p.playerclass == choice)
+					{
+						numPlaying++;
+					}
+				}
+				p = (player_c)find(world, ::classname, "player");
+			}
+
+			if (numPlaying >= max)
+			{
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+	};
 
 	nonvirtual float () CanInteract =
 	{
@@ -500,9 +655,7 @@ class player_c : entity
 	// super damage
 		if (self.super_damage_finished)
 		{
-
 	// sound and screen flash when items starts to run out
-
 			if (self.super_damage_finished < time + 3)
 			{
 				if (self.super_time == 1)
@@ -552,7 +705,6 @@ class player_c : entity
 		if (self.radsuit_finished)
 		{
 			self.air_finished = time + 12;          // don't drown
-
 	// sound and screen flash when items starts to run out
 			if (self.radsuit_finished < time + 3)
 			{
@@ -1117,6 +1269,7 @@ class player_c : entity
 
 	nonvirtual void () PainSound =
 	{
+		self.weaponframe=0;
 		if (self.health < 0)
 			return;
 
@@ -1185,6 +1338,13 @@ class player_c : entity
 
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	};
+
+	nonvirtual void () Dead =
+	{
+		self.nextthink = -1;
+		// allow respawn after a certain time
+		self.deadflag = DEAD_DEAD;
+	};
 };
 
 void() DeathBubblesSpawn =
@@ -1225,13 +1385,6 @@ void(float num_bubbles) DeathBubbles =
 	bubble_spawner.owner = self;
 	bubble_spawner.bubble_count = num_bubbles;
 	return;
-};
-
-void() PlayerDead =
-{
-	self.nextthink = -1;
-	// allow respawn after a certain time
-	self.deadflag = DEAD_DEAD;
 };
 
 vector(float dm) VelocityForDamage =
@@ -1306,71 +1459,3 @@ void(string gibname, float dm) ThrowHead =
 
 
 
-
-void()  player_diea1    =       [       $deatha1,       player_diea2    ] {};
-void()  player_diea2    =       [       $deatha2,       player_diea3    ] {};
-void()  player_diea3    =       [       $deatha3,       player_diea4    ] {};
-void()  player_diea4    =       [       $deatha4,       player_diea5    ] {};
-void()  player_diea5    =       [       $deatha5,       player_diea6    ] {};
-void()  player_diea6    =       [       $deatha6,       player_diea7    ] {};
-void()  player_diea7    =       [       $deatha7,       player_diea8    ] {};
-void()  player_diea8    =       [       $deatha8,       player_diea9    ] {};
-void()  player_diea9    =       [       $deatha9,       player_diea10   ] {};
-void()  player_diea10   =       [       $deatha10,      player_diea11   ] {};
-void()  player_diea11   =       [       $deatha11,      player_diea11 ] {PlayerDead();};
-
-void()  player_dieb1    =       [       $deathb1,       player_dieb2    ] {};
-void()  player_dieb2    =       [       $deathb2,       player_dieb3    ] {};
-void()  player_dieb3    =       [       $deathb3,       player_dieb4    ] {};
-void()  player_dieb4    =       [       $deathb4,       player_dieb5    ] {};
-void()  player_dieb5    =       [       $deathb5,       player_dieb6    ] {};
-void()  player_dieb6    =       [       $deathb6,       player_dieb7    ] {};
-void()  player_dieb7    =       [       $deathb7,       player_dieb8    ] {};
-void()  player_dieb8    =       [       $deathb8,       player_dieb9    ] {};
-void()  player_dieb9    =       [       $deathb9,       player_dieb9    ] {PlayerDead();};
-
-void()  player_diec1    =       [       $deathc1,       player_diec2    ] {};
-void()  player_diec2    =       [       $deathc2,       player_diec3    ] {};
-void()  player_diec3    =       [       $deathc3,       player_diec4    ] {};
-void()  player_diec4    =       [       $deathc4,       player_diec5    ] {};
-void()  player_diec5    =       [       $deathc5,       player_diec6    ] {};
-void()  player_diec6    =       [       $deathc6,       player_diec7    ] {};
-void()  player_diec7    =       [       $deathc7,       player_diec8    ] {};
-void()  player_diec8    =       [       $deathc8,       player_diec9    ] {};
-void()  player_diec9    =       [       $deathc9,       player_diec10   ] {};
-void()  player_diec10   =       [       $deathc10,      player_diec11   ] {};
-void()  player_diec11   =       [       $deathc11,      player_diec12   ] {};
-void()  player_diec12   =       [       $deathc12,      player_diec13   ] {};
-void()  player_diec13   =       [       $deathc13,      player_diec14   ] {};
-void()  player_diec14   =       [       $deathc14,      player_diec15   ] {};
-void()  player_diec15   =       [       $deathc15,      player_diec15 ] {PlayerDead();};
-
-void()  player_died1    =       [       $deathd1,       player_died2    ] {};
-void()  player_died2    =       [       $deathd2,       player_died3    ] {};
-void()  player_died3    =       [       $deathd3,       player_died4    ] {};
-void()  player_died4    =       [       $deathd4,       player_died5    ] {};
-void()  player_died5    =       [       $deathd5,       player_died6    ] {};
-void()  player_died6    =       [       $deathd6,       player_died7    ] {};
-void()  player_died7    =       [       $deathd7,       player_died8    ] {};
-void()  player_died8    =       [       $deathd8,       player_died9    ] {};
-void()  player_died9    =       [       $deathd9,       player_died9    ] {PlayerDead();};
-
-void()  player_diee1    =       [       $deathe1,       player_diee2    ] {};
-void()  player_diee2    =       [       $deathe2,       player_diee3    ] {};
-void()  player_diee3    =       [       $deathe3,       player_diee4    ] {};
-void()  player_diee4    =       [       $deathe4,       player_diee5    ] {};
-void()  player_diee5    =       [       $deathe5,       player_diee6    ] {};
-void()  player_diee6    =       [       $deathe6,       player_diee7    ] {};
-void()  player_diee7    =       [       $deathe7,       player_diee8    ] {};
-void()  player_diee8    =       [       $deathe8,       player_diee9    ] {};
-void()  player_diee9    =       [       $deathe9,       player_diee9    ] {PlayerDead();};
-
-void()  player_die_ax1  =       [       $axdeth1,       player_die_ax2  ] {};
-void()  player_die_ax2  =       [       $axdeth2,       player_die_ax3  ] {};
-void()  player_die_ax3  =       [       $axdeth3,       player_die_ax4  ] {};
-void()  player_die_ax4  =       [       $axdeth4,       player_die_ax5  ] {};
-void()  player_die_ax5  =       [       $axdeth5,       player_die_ax6  ] {};
-void()  player_die_ax6  =       [       $axdeth6,       player_die_ax7  ] {};
-void()  player_die_ax7  =       [       $axdeth7,       player_die_ax8  ] {};
-void()  player_die_ax8  =       [       $axdeth8,       player_die_ax9  ] {};
-void()  player_die_ax9  =       [       $axdeth9,       player_die_ax9  ] {PlayerDead();};

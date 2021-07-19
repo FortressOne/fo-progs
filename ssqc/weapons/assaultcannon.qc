@@ -13,8 +13,8 @@ class assaultcannon_c : shotgun_c
         shot_count = 8;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
+        return super::Attack();
     };
 };

@@ -13,8 +13,8 @@ class grenadelauncher_c : weapon_c
         clip_size = 6;
     };
 
-    virtual void () Attack =
+    virtual float () Attack =
     {           
-        super::Attack();
+        return super::Attack();
     };
 };
