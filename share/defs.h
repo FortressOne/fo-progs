@@ -479,24 +479,6 @@
 // unused                       255
 
 /*======================================================*/
-/*	Colors						*/
-/*======================================================*/
-#define WHITE 		1
-#define BROWN 		2
-#define BLUE 		3
-#define GREEN   	4
-#define RED 		5
-#define TAN     	6
-#define PINK    	7
-#define ORANGE  	8
-#define PURPLE  	9
-#define DARKPURPLE 	10
-#define GREY    	11
-#define DARKGREEN  	12
-#define YELLOW 		13
-#define DARKBLUE   	14
-
-/*======================================================*/
 /* New Weapon Defines					*/
 /*======================================================*/
 
@@ -565,12 +547,7 @@
 #define DMSG_GREN_FLASH			35
 #define DMSG_TRIGGER			36
 
-// TF 
-#define TEAM_NONE 0
-#define TEAM_BLUE 1
-#define TEAM_RED 2
-#define TEAM_YELLOW 3
-#define TEAM_GREEN 4
+
 
 // Legal Playerclass Handling
 #define TF_ILL_SCOUT 		1

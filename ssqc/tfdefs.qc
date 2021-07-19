@@ -5,36 +5,26 @@
 
 typedef void () void_f;
 
-enum WEAPON
+
+enum CLASS
 {
-    AXE,
-    SPANNER,
-    SNIPERRIFLE,
-    TRANQUILISER,
-    SUPERSHOTGUN,
-    NAILGUN,
-    SUPERNAILGUN,
-    GRENADELAUNCHER,
-    FLAMETHROWER,
-    INCENDIARYCANNON,
-    ASSAULTCANNON,
-    ROCKETLAUNCHER,
-    RAILGUN,
-    KNIFE,
-    SHOTGUN,
-    MEDIKIT
+    SCOUT
 };
 
-enum GRENADE
+// TF 
+enum TEAM
 {
-    FLASH,
-    CONCUSSION
+    NONE = 0,
+    BLUE = 1,
+    RED = 2,
+    YELLOW = 3,
+    GREEN = 4
 };
 
 enum SEASON
 {
     FO = 0,
-    ONE,
+    ONE, // lordytf
     TF28
 };
 
@@ -48,6 +38,75 @@ enumflags ATTRIBUTE
 class player_c;
 class gamemanager_c;
 gamemanager_c GameManager;
+class team_c;
+team_c *Teams;
+
+
+
+// old tf entity field support, unless we manually process ents raw with __fullspawndata
+.float team_no;
+.float goal_activation;
+.float g_a;
+.float g_e;
+.float goal_effects;
+.float h_i_g;
+.float has_item_from_group;
+.float hasnt_item_from_group;
+.float hn_i_g;
+.float r_i_g;
+.float remove_item_group;
+.float a_s;
+.float a_n;
+.float a_r;
+.float a_c;
+.float rv_s_h;
+.float remove_spawngroup;
+.float rs_s_h;
+.float restore_spawngroup;
+.float rv_gr;
+.float remove_group_no;
+.float rs_gr;
+.float restore_group_no;
+.float rv_g;
+.float remove_goal_no;
+.float rs_g;
+.float restore_goal_no;
+.string t_s_h;
+.string team_str_home;
+.string t_s_m;
+.string team_str_moved;
+.string t_s_c;
+.string team_str_carried;
+.string n_s_h;
+.string non_team_str_home;
+.string n_s_m;
+.string non_team_str_moved;
+.string n_s_c;
+.string non_team_str_carried;
+.string b_b;
+.string broadcast;
+.string b_t;
+.string team_broadcast;
+.string b_n;
+.string non_team_broadcast;
+.string b_o;
+.string owners_team_broadcast;
+.string n_b;
+.string netname_broadcast;
+.string n_t;
+.string netname_team_broadcast;
+.string n_n;
+.string netname_non_team_broadcast;
+.string n_o;
+.string netname_owners_team_broadcast;
+.string d_t;
+.string team_drop;
+.string d_n;
+.string non_team_drop;
+.string d_n_t;
+.string netname_team_drop;
+.string d_n_n;
+.string netname_non_team_drop;
 
 // random globals from qw code
 entity  lastspawn;
