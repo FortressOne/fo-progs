@@ -1,52 +1,13 @@
-/*QUAKED item_artifact_invulnerability (0 .5 .8) (-16 -16 -24) (16 16 32)
-Player is invulnerable for 30 seconds
-*/
-void() item_artifact_invulnerability =
-{
-	item_artifact_invulnerability_c ent = (item_artifact_invulnerability_c)self;
-    ent.Process();
-};
-
-/*QUAKED item_artifact_envirosuit (0 .5 .8) (-16 -16 -24) (16 16 32)
-Player takes no damage from water or slime for 30 seconds
-*/
-void() item_artifact_envirosuit =
-{
-	item_artifact_envirosuit_c ent = (item_artifact_envirosuit_c)self;
-    ent.Process();
-};
-
-/*QUAKED item_artifact_invisibility (0 .5 .8) (-16 -16 -24) (16 16 32)
-Player is invisible for 30 seconds
-*/
-void() item_artifact_invisibility =
-{
-    item_artifact_invisibility_c ent = (item_artifact_invisibility_c)self;
-    ent.Process();
-};
-
-/*QUAKED item_artifact_super_damage (0 .5 .8) (-16 -16 -24) (16 16 32)
-The next attack from the player will do 4x damage
-*/
-void() item_artifact_super_damage =
-{
-	item_artifact_super_damage_c ent = (item_artifact_super_damage_c)self;
-    ent.Process();
-};
-
-
 class item_powerup_c : item_c
 {
     float regen_time;
 
-    virtual void () Process =
+    void () item_powerup_c =
     {
         precache_model(this.model);
         setmodel(this, this.model);
         setsize (self, '-16 -16 -24', '16 16 32');
         this.cnt = 30;
-        
-        item_c::Process();
     };
 
     virtual void () touch =
@@ -74,9 +35,9 @@ class item_powerup_c : item_c
     };
 };
 
-class item_artifact_invulnerability_c : item_powerup_c
+class item_artifact_invulnerability : item_powerup_c
 {
-    virtual void () Process =
+    void () item_artifact_invulnerability =
     {
         precache_sound ("items/protect.wav");
         precache_sound ("items/protect2.wav");
@@ -87,7 +48,6 @@ class item_artifact_invulnerability_c : item_powerup_c
         netname = "Pentagram of Protection";
         effects = self.effects | EF_RED;
         this.regen_time = 60*5;
-        item_powerup_c::Process();
     };
 
     virtual void () touch =
@@ -99,9 +59,9 @@ class item_artifact_invulnerability_c : item_powerup_c
     };
 };
 
-class item_artifact_envirosuit_c : item_powerup_c
+class item_artifact_envirosuit : item_powerup_c
 {
-    virtual void () Process =
+    void () item_artifact_envirosuit =
     {
         precache_sound ("items/suit.wav");
 	    precache_sound ("items/suit2.wav");
@@ -110,8 +70,6 @@ class item_artifact_envirosuit_c : item_powerup_c
         noise = "items/suit.wav";
         netname = "Biosuit";
         this.regen_time = 60;
-
-        item_powerup_c::Process();
     };
 
     virtual void () touch =
@@ -123,9 +81,9 @@ class item_artifact_envirosuit_c : item_powerup_c
     };
 };
 
-class item_artifact_invisibility_c : item_powerup_c
+class item_artifact_invisibility : item_powerup_c
 {
-    virtual void () Process =
+    void () item_artifact_invisibility =
     {
         precache_sound ("items/inv1.wav");
 	    precache_sound ("items/inv2.wav");
@@ -135,8 +93,6 @@ class item_artifact_invisibility_c : item_powerup_c
         noise = "items/inv1.wav";
         netname = "Ring of Shadows";
         this.regen_time = 60*5;
-
-        item_powerup_c::Process();
     };
 
     nonvirtual void (player_c player) Drop =
@@ -199,9 +155,9 @@ class item_artifact_invisibility_c : item_powerup_c
 
 #define QUAD_SHOOT_SOUND "items/damage3.wav"
 
-class item_artifact_super_damage_c : item_powerup_c
+class item_artifact_super_damage : item_powerup_c
 {
-    virtual void () Process =
+    void () item_artifact_super_damage =
     {
         precache_sound ("items/damage.wav");
 	    precache_sound ("items/damage2.wav");
@@ -215,8 +171,6 @@ class item_artifact_super_damage_c : item_powerup_c
             this.netname = "Quad Damage";
         this.effects = this.effects | EF_BLUE;
         this.regen_time = 60;
-
-        item_powerup_c::Process();
     };
 
     // this sucks but statics don't work on classes

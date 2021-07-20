@@ -5,17 +5,10 @@ megahealth will add 100 health, then
 rot you down to your maximum health limit, 
 one point per second.
 */
-void() item_health =
-{      
-	item_health_c item = (item_health_c)self;
-	item.Process();
-};
-
-class item_health_c : item_c
+class item_health : item_c
 {
-    virtual void () Process =
+    void () item_health =
     {
-        super::Process();
         if (this.spawnflags & H_ROTTEN)
         {
             precache_model("maps/b_bh10.bsp");

@@ -1,39 +1,3 @@
-void() weapon_supershotgun =
-{
-	item_supershotgun_c ent = (item_supershotgun_c)self;
-	ent.Process();	
-};
-
-void() weapon_nailgun =
-{
-	item_nailgun_c ent = (item_nailgun_c)self;
-	ent.Process();
-};
-
-void() weapon_supernailgun =
-{
-    item_supernailgun_c ent = (item_supernailgun_c)self;
-	ent.Process();
-};
-
-void() weapon_grenadelauncher =
-{
-    item_grenadelauncher_c ent = (item_grenadelauncher_c)self;
-	ent.Process();
-};
-
-void() weapon_rocketlauncher =
-{
-    item_rocketlauncher_c ent = (item_rocketlauncher_c)self;
-	ent.Process();
-};
-
-void() weapon_lightning =
-{
-    item_lightning_c ent = (item_lightning_c)self;
-	ent.Process();
-};
-
 class item_weapon_c : item_c
 {
     virtual void () touch =
@@ -127,13 +91,12 @@ class item_weapon_c : item_c
     };
 };
 
-class item_supershotgun_c : item_weapon_c
+class weapon_supershotgun : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_supershotgun =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             this.model = "progs/g_shot.mdl";
             precache_model(this.model);
             setmodel(this, this.model);
@@ -144,13 +107,12 @@ class item_supershotgun_c : item_weapon_c
     };
 };
 
-class item_nailgun_c : item_weapon_c
+class weapon_nailgun : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_nailgun =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model("progs/g_nail.mdl");
             setmodel(self, "progs/g_nail.mdl");
             self.weapon = IT_NAILGUN;
@@ -160,13 +122,12 @@ class item_nailgun_c : item_weapon_c
     };
 };
 
-class item_supernailgun_c : item_weapon_c
+class weapon_supernailgun : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_supernailgun =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model("progs/g_nail2.mdl");
             setmodel(self, "progs/g_nail2.mdl");
             self.weapon = IT_SUPER_NAILGUN;
@@ -176,13 +137,12 @@ class item_supernailgun_c : item_weapon_c
     };
 };
 
-class item_grenadelauncher_c : item_weapon_c
+class weapon_grenadelauncher : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_grenadelauncher =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model("progs/g_rock.mdl");
             setmodel(self, "progs/g_rock.mdl");
             self.weapon = IT_GRENADE_LAUNCHER;
@@ -192,13 +152,12 @@ class item_grenadelauncher_c : item_weapon_c
     };
 };
 
-class item_rocketlauncher_c : item_weapon_c
+class weapon_rocketlauncher : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_rocketlauncher =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model ("progs/g_rock2.mdl");
             setmodel (self, "progs/g_rock2.mdl");
             self.weapon = IT_ROCKET_LAUNCHER;
@@ -208,13 +167,12 @@ class item_rocketlauncher_c : item_weapon_c
     };
 };
 
-class item_lightning_c : item_weapon_c
+class weapon_lightning : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_lightning =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model ("progs/g_light.mdl");
             setmodel (self, "progs/g_light.mdl");
             self.weapon = IT_LIGHTNING;

@@ -1,57 +1,3 @@
-/*QUAKED item_shells (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-void() item_shells =
-{
-	item_shells_c ent = (item_shells_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_spikes (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-
-void() item_spikes =
-{
-	item_spikes_c ent = (item_spikes_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_rockets (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-
-void() item_rockets =
-{
-	item_rockets_c ent = (item_rockets_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_cells (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-
-void() item_cells =
-{
-	item_cells_c ent = (item_cells_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_weapon (0 .5 .8) (0 0 0) (32 32 32) shotgun rocket spikes big
-DO NOT USE THIS!!!! IT WILL BE REMOVED!
-*/
-void() item_weapon =
-{
-    if (self.spawnflags & WEAPON_SHOTGUN)
-    {
-        item_shells();
-    }
-    else if (self.spawnflags & WEAPON_SPIKES)
-    {
-        item_spikes();
-    }
-    else if (self.spawnflags & WEAPON_ROCKET)
-    {
-        item_rockets();
-    }
-};
-
 class item_ammo_c : item_c
 {
     string big_model;
@@ -59,9 +5,8 @@ class item_ammo_c : item_c
     float big_amount;
     float small_amount;
 
-    virtual void () Process =
+    void () item_ammo_c =
     {
-    bprint(PRINT_HIGH, "processing item_ammo_c\n");
         if (deathmatch == 4)
 		    return;
 
@@ -73,12 +18,11 @@ class item_ammo_c : item_c
         }
         else
         {
-            precache_model("maps/b_shell0.bsp");
-            setmodel(self, "maps/b_shell0.bsp");
+            precache_model(small_model);
+            setmodel(self, small_model);
             this.aflag = small_amount;
         }
         setsize (self, '0 0 0', '32 32 56');
-        item_c::Process();
     };
 
     virtual void () touch =
@@ -151,24 +95,22 @@ class item_ammo_c : item_c
     };
 };
 
-class item_shells_c : item_ammo_c
+class item_shells : item_ammo_c
 {
-    virtual void () Process =
+    void () item_shells =
     {
-        bprint(PRINT_HIGH, "processing item_shells_c\n");
         big_model = "maps/b_shell1.bsp";
         small_model = "maps/b_shell0.bsp";
         big_amount = 40;
         small_amount = 20;
         netname = "shells";
         weapon = 1;
-        item_ammo_c::Process();
     };
 };
 
-class item_spikes_c : item_ammo_c
+class item_spikes : item_ammo_c
 {
-    virtual void () Process =
+    void () item_spikes =
     {
         big_model = "maps/b_nail1.bsp";
         small_model = "maps/b_nail0.bsp";
@@ -176,13 +118,12 @@ class item_spikes_c : item_ammo_c
         small_amount = 25;
         netname = "nails";
         weapon = 2;
-        item_ammo_c::Process();
     };
 };
 
-class item_rockets_c : item_ammo_c
+class item_rockets : item_ammo_c
 {
-    virtual void () Process =
+    void () item_rockets =
     {
         big_model = "maps/b_rock1.bsp";
         small_model = "maps/b_rock0.bsp";
@@ -190,13 +131,12 @@ class item_rockets_c : item_ammo_c
         small_amount = 5;
         netname = "rockets";
         weapon = 3;
-        item_ammo_c::Process();
     };
 };
 
-class item_cells_c : item_ammo_c
+class item_cells : item_ammo_c
 {
-    virtual void () Process =
+    void () item_cells =
     {
         big_model = "maps/b_batt1.bsp";
         small_model = "maps/b_batt0.bsp";
@@ -204,6 +144,5 @@ class item_cells_c : item_ammo_c
         small_amount = 6;
         netname = "cells";
         weapon = 4;
-        item_ammo_c::Process();
     };
 };

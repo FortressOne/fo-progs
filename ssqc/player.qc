@@ -222,7 +222,7 @@ void() player_light1   =[$light1, player_light2  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
-	item_artifact_super_damage_c::ShootSound((player_c)self);
+	item_artifact_super_damage::ShootSound((player_c)self);
 	//W_FireLightning();
 	self.attack_finished = time + 0.2;
 };
@@ -235,7 +235,7 @@ void() player_light2   =[$light2, player_light1  ]
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
-	item_artifact_super_damage_c::ShootSound((player_c)self);
+	item_artifact_super_damage::ShootSound((player_c)self);
 	//W_FireLightning();
 	self.attack_finished = time + 0.2;
 };
@@ -894,7 +894,7 @@ class player_c : entity
         // check for attack
         if (this.button0)
         {
-            item_artifact_super_damage_c::ShootSound(this);
+            item_artifact_super_damage::ShootSound(this);
             this.current_weapon.Attack();
         }
     };
@@ -1096,7 +1096,7 @@ class player_c : entity
 		{
 			if (self.super_damage_finished > 0)
 			{
-				item_artifact_super_damage_c::Drop(this);
+				item_artifact_super_damage::Drop(this);
 			}
 		}
 
@@ -1104,7 +1104,7 @@ class player_c : entity
 		{
 			if (self.invisible_finished > 0)
 			{
-				item_artifact_invisibility_c::Drop(this);
+				item_artifact_invisibility::Drop(this);
 			}
 		}
 

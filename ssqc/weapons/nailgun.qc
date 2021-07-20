@@ -28,7 +28,7 @@ class nailgun_c : weapon_c
         if (this.owner.weaponframe == 9)
             this.owner.weaponframe = 1;
         
-        item_artifact_super_damage_c::ShootSound((player_c)this.owner);
+        item_artifact_super_damage::ShootSound((player_c)this.owner);
 
         if (this.owner.weaponframe % 2 == 0)
         {

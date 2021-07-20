@@ -1,8 +1,7 @@
 class item_c : entity
 {
-    virtual void () Process =
+    void () item_c =
     {
-    bprint(PRINT_HIGH, "processing item_c\n");
         this.nextthink = time + .2; // items start after other solids
     };
     
