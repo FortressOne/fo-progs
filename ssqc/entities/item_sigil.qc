@@ -43,7 +43,7 @@ class item_sigil : item_c
         if (other.health <= 0)
             return;
 
-        centerprint (other, "You got the rune!");
+        MenuManager.CenterPrint((player_c)other, "You got the rune!");
 
         sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
         stuffcmd(other, "bf\n");
