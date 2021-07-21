@@ -144,7 +144,6 @@ void() secret_touch =
 	}
 };
 
-
 /*QUAKED func_door_secret (0 .5 .8) ? open_once 1st_left 1st_down no_shoot always_shoot
 Basic secret door. Slides back, then to the side. Angle determines direction.
 wait  = # of seconds before coming back

@@ -2,6 +2,7 @@ class nailgun_c : weapon_c
 {
     void () nailgun_c = 
     {
+        classname = "player_nailgun";
         shoot_sound = "weapons/rocket1i.wav";
         weapon = IT_NAILGUN; // hud
         weapon_type = WEAPON::NAILGUN;

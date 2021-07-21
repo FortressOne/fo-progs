@@ -12,6 +12,7 @@ class shotgun_c : weapon_c
     
     void () shotgun_c = 
     {
+        classname = "player_shotgun";
         //shoot_sound = shotgun_c::SHOOT_SOUND_STATIC; // or something
         shoot_sound = SHOTGUN_SHOOT_SOUND;
         //spread = shotgun_c::SPREAD_STATIC;

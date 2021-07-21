@@ -352,10 +352,16 @@ class player_c : entity
 	float status_string_lines;
 	float status_string_refresh_time;
 	float status_string_time;
+	float tf_attributes;
+	float ammo_gren1;
+	float ammo_gren2;
+	float type_gren1;
+	float type_gren2;
 
 	weapon_c _current_weapon; // private
 	set weapon_c current_weapon =
 	{
+		bprint(PRINT_HIGH, "current_weapon: ", value.classname, "\n");
 		this.items = this.items - ( this.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
 		_current_weapon = value;
 		player_run();          // get out of any weapon firing states
@@ -410,7 +416,8 @@ class player_c : entity
 		stuffcmd(this, strcat("team ", this.tfteam.scoreboard_name, "\n"));
 	};
 
-	nonvirtual void (float choice) SetClass = {
+	nonvirtual void (float choice) SetClass = 
+	{
 		this.class = &Classes[choice-1];
 		sprint(this, PRINT_HIGH, strcat("You will return as a ", this.class.classname, "\n"));
 	};
@@ -512,6 +519,9 @@ class player_c : entity
 
 		if (time > this.attack_finished && this.currentammo == 0 && this.weapon != IT_AXE)
 		{
+			bprint(PRINT_HIGH, "prethink\n");
+			bprint(PRINT_HIGH, "currentammo: ", ftos(this.currentammo), "\n");
+			bprint(PRINT_HIGH, "weapon: ", ftos(this.weapon), "\n");
 			this.current_weapon = this.GetBestWeapon();
 		}
 	};
@@ -580,7 +590,6 @@ class player_c : entity
 				sound (self, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
 				self.invisible_sound = time + ((random() * 3) + 1);
 			}
-
 
 			if (self.invisible_finished < time + 3)
 			{
@@ -730,7 +739,6 @@ class player_c : entity
 				self.radsuit_finished = 0;
 			}
 		}       
-
 	};
 
 	nonvirtual void () WaterMove =
@@ -904,7 +912,7 @@ class player_c : entity
 		if (this.is_reloading)
 			return;
 
-		if (this.attack_finished <= time)
+		if (this.attack_finished >= time)
 			return;
 
 		weapon_c weap = __NULL__;
@@ -972,6 +980,41 @@ class player_c : entity
 		return this.weapon4;
     };
 
+	nonvirtual void () SetupClass =
+	{
+		// for now let's force scout
+		this.class = &Classes[0];
+
+		this.health = this.class.max_health;
+		this.armorvalue = this.class.init_armor;
+		this.armortype = this.class.init_armor_type;
+		this.ammo_shells = this.class.init_shells;
+		this.ammo_nails = this.class.init_nails;
+		this.ammo_rockets = this.class.init_rockets;
+		this.ammo_cells = this.class.init_cells;
+		this.ammo_gren1 = this.class.init_gren1;
+		this.ammo_gren2 = this.class.init_gren2;
+		this.type_gren1 = this.class.type_gren1;
+		this.type_gren2 = this.class.type_gren2;
+		this.tf_attributes = this.class.tf_attributes;
+
+		if (this.weapon1)
+			remove(this.weapon1);
+		this.weapon1 = weapon_c::spawn(this.class.weapon1, this);
+		
+		if (this.weapon2)
+			remove(this.weapon2);
+		this.weapon2 = weapon_c::spawn(this.class.weapon2, this);
+
+		if (this.weapon3)
+			remove(this.weapon3);
+		this.weapon3 = weapon_c::spawn(this.class.weapon3, this);
+
+		if (this.weapon4)
+			remove(this.weapon4);
+		this.weapon4 = weapon_c::spawn(this.class.weapon4, this);
+	};
+
 	nonvirtual void(float spawnBody) Respawn =
 	{
 		// make a copy of the dead body for appearances sake
@@ -995,7 +1038,7 @@ class player_c : entity
 		this.effects = 0;
 		this.invincible_time = 0;
 
-		DecodeLevelParms();
+		this.SetupClass();
 		
 		this.current_weapon = this.GetBestWeapon();
 

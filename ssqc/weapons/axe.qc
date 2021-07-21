@@ -2,8 +2,9 @@ class axe_c : weapon_c
 {
     void () axe_c = 
     {
+        classname = "player_axe";
         shoot_sound = "weapons/ax1.wav";
-        weapon = 0; // hud
+        weapon = IT_AXE; // hud
         weapon_type = WEAPON::AXE;
         ammo_type = 0;
         weaponmodel = "progs/v_axe.mdl";

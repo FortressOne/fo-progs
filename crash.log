@@ -89,3 +89,42 @@ Binary: 2020-05-02T10:55:23.027221Z
 /home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2b2ec2)[0x5647aeab2ec2]
 /home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2c93d4)[0x5647aeac93d4]
 
+Time: 2021-07-20 23:06:09
+Ver: 1.07
+Revision: 5692
+Binary: 2020-05-02T10:55:23.027221Z
+/lib/x86_64-linux-gnu/libc.so.6(gsignal+0xcb)[0x7f0071dea8cb]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0x116)[0x7f0071dcf864]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2cc093)[0x5575daacc093]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(Host_Error+0x0)[0x5575da993dbe]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(ShowStep+0x496)[0x5575daaa5a65]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(PR_HandleFault+0x11c)[0x5575daaa5c47]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2b2ec2)[0x5575daab2ec2]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2c93d4)[0x5575daac93d4]
+
+Time: 2021-07-20 23:33:56
+Ver: 1.07
+Revision: 5692
+Binary: 2020-05-02T10:55:23.027221Z
+/lib/x86_64-linux-gnu/libc.so.6(gsignal+0xcb)[0x7fa901dfa8cb]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0x116)[0x7fa901ddf864]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2cc093)[0x55c655ccc093]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(Host_Error+0x0)[0x55c655b93dbe]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(ShowStep+0x496)[0x55c655ca5a65]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(PR_HandleFault+0x11c)[0x55c655ca5c47]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2b2ec2)[0x55c655cb2ec2]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2c93d4)[0x55c655cc93d4]
+
+Time: 2021-07-21 00:27:02
+Ver: 1.07
+Revision: 5692
+Binary: 2020-05-02T10:55:23.027221Z
+/lib/x86_64-linux-gnu/libc.so.6(gsignal+0xcb)[0x7fc9d5ea38cb]
+/lib/x86_64-linux-gnu/libc.so.6(abort+0x116)[0x7fc9d5e88864]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2cc093)[0x55bc946cc093]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(Host_Error+0x0)[0x55bc94593dbe]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(ShowStep+0x496)[0x55bc946a5a65]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(PR_HandleFault+0x11c)[0x55bc946a5c47]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2b2ec2)[0x55bc946b2ec2]
+/home/lordy/Games/quake-team-fortress-server/fteqw-sv64(+0x2c93d4)[0x55bc946c93d4]
+

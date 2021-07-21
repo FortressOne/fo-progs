@@ -69,24 +69,6 @@ void() SetNewParms =
 	parm9 = 0;
 };
 
-void() DecodeLevelParms =
-{
-	if (serverflags)
-	{
-		if (world.model == "maps/start.bsp")
-			SetNewParms ();         // take away all stuff on starting new episode
-	}
-	
-	self.items = parm1;
-	self.health = parm2;
-	self.armorvalue = parm3;
-	self.ammo_shells = parm4;
-	self.ammo_nails = parm5;
-	self.ammo_rockets = parm6;
-	self.ammo_cells = parm7;
-	self.weapon = parm8;
-	self.armortype = parm9 * 0.01;
-};
 
 /*
 =============================================================================
@@ -189,6 +171,7 @@ called each time a player enters a new level
 ============
 */
 void() PutClientInServer = {
+	spawnfunc_player_c();
 	player_c player = (player_c)self;
 	player.Respawn(FALSE);
 };

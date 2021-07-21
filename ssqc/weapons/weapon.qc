@@ -32,7 +32,25 @@ class weapon_c : entity
                 return this.owner.ammo_cells;
         }
         return 0;
-    };   
+    };
+
+    static weapon_c (WEAPON weap, entity player) spawn =
+    {
+        weapon_c ret = __NULL__;
+        switch (weap)
+        {
+            case WEAPON::NAILGUN:
+                ret = ::spawn(nailgun_c, owner: player);
+                break;
+            case WEAPON::SHOTGUN:
+                ret = ::spawn(shotgun_c, owner: player);
+                break;
+            case WEAPON::AXE:
+                ret = ::spawn(axe_c, owner: player);
+                break;
+        }
+        return ret;
+    };
 
     nonvirtual float() HasAmmo =
     {
