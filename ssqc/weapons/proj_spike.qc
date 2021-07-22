@@ -1,13 +1,10 @@
-#define PROJ_SPIKE_CLASSNAME "spike"
-#define PROJ_SPIKE_MODEL "progs/spike.mdl"
-#define PROJ_SPIKE_DURATION 6
-
 class proj_spike_c : proj_c
 {
-    static proj_spike_c (vector org, vector dir, entity own) spawn =
+    void () proj_spike_c =
     {
-        proj_spike_c ent = (proj_spike_c)super::spawn(org, dir, own, PROJ_SPIKE_CLASSNAME, PROJ_SPIKE_MODEL, PROJ_SPIKE_DURATION);
-        return ent;
+        classname = "spike";
+        model = "progs/spike.mdl";
+        duration = 6;
     };
 
     virtual void () touch =

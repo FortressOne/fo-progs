@@ -42,8 +42,6 @@ class supershotgun_c : shotgun_c
         msg_entity = this.owner;
         WriteByte(MSG_ONE, SVC_BIGKICK);
         
-        if (deathmatch != 4)
-            this.owner.currentammo = this.owner.ammo_shells = this.owner.ammo_shells - 2;
         vector dir = aim(this.owner, 100000);
         FireBullets(shot_count, dir, spread);
 

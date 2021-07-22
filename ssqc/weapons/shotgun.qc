@@ -36,9 +36,6 @@ class shotgun_c : weapon_c
 
         msg_entity = this.owner;
         WriteByte(MSG_ONE, SVC_SMALLKICK);
-        
-        if (deathmatch != 4)
-            this.owner.currentammo = this.owner.ammo_shells = this.owner.ammo_shells - 1;
 
         vector dir = aim(this.owner, 100000);
         this.FireBullets(shot_count, dir, spread);

@@ -231,12 +231,6 @@ class item_artifact_super_damage : item_powerup_c
         self.solid = SOLID_NOT;
         other.items = other.items | IT_QUAD;
         self.model = "";
-            if (deathmatch == 4)
-            {
-                other.armortype = 0;
-                other.armorvalue = 0 * 0.01;
-                other.ammo_cells = 0;
-            }
 
     // do the apropriate action
         other.super_time = 1;
@@ -258,12 +252,6 @@ class item_artifact_super_damage : item_powerup_c
 
     virtual void () touch =
     {
-        if (deathmatch == 4)
-        {
-            other.armortype = 0;
-            other.armorvalue = 0 * 0.01;
-            other.ammo_cells = 0;
-        }
         other.super_time = TRUE;
         other.super_damage_finished = this.cnt;
 

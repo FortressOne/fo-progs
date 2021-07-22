@@ -214,17 +214,6 @@ class gamemanager_c : entity
         Classes[class-1].max_armor = tmax_armor;
         Classes[class-1].max_gren1 = tmax_gren1;
         Classes[class-1].max_gren2 = tmax_gren2;
-        Classes[class-1].max_shells = tmax_shells;
-        Classes[class-1].max_nails = tmax_nails;
-        Classes[class-1].max_rockets = tmax_rockets;
-        Classes[class-1].max_cells = tmax_cells;
-        Classes[class-1].init_armor = tinit_armor;
-        Classes[class-1].init_shells = tinit_shells;
-        Classes[class-1].init_nails = tinit_nails;
-        Classes[class-1].init_rockets = tinit_rockets;
-        Classes[class-1].init_cells = tinit_cells;
-        Classes[class-1].init_gren1 = tinit_gren1;
-        Classes[class-1].init_gren2 = tinit_gren2;
     };
 
     nonvirtual void () PopulateTeams =

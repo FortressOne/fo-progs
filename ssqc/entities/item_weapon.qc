@@ -25,42 +25,42 @@ class item_weapon_c : item_c
             if (leave && (player.items & IT_NAILGUN) )
                 return;
             new = IT_NAILGUN;
-            player.ammo_nails = player.ammo_nails + 30;
+            player.ammunition_nails = player.ammunition_nails + 30;
         }
         else if (self.classname == "weapon_supernailgun")
         {
             if (leave && (player.items & IT_SUPER_NAILGUN) )
                 return;
             new = IT_SUPER_NAILGUN;
-            player.ammo_nails = player.ammo_nails + 30;
+            player.ammunition_nails = player.ammunition_nails + 30;
         }
         else if (self.classname == "weapon_supershotgun")
         {
             if (leave && (player.items & IT_SUPER_SHOTGUN) )
                 return;
             new = IT_SUPER_SHOTGUN;
-            player.ammo_shells = player.ammo_shells + 5;
+            player.ammunition_shells = player.ammunition_shells + 5;
         }
         else if (self.classname == "weapon_rocketlauncher")
         {
             if (leave && (player.items & IT_ROCKET_LAUNCHER) )
                 return;
             new = IT_ROCKET_LAUNCHER;
-            player.ammo_rockets = player.ammo_rockets + 5;
+            player.ammunition_rockets = player.ammunition_rockets + 5;
         }
         else if (self.classname == "weapon_grenadelauncher")
         {
             if (leave && (player.items & IT_GRENADE_LAUNCHER) )
                 return;
             new = IT_GRENADE_LAUNCHER;
-            player.ammo_rockets = player.ammo_rockets + 5;
+            player.ammunition_rockets = player.ammunition_rockets + 5;
         }
         else if (self.classname == "weapon_lightning")
         {
             if (leave && (player.items & IT_LIGHTNING))
                 return;
             new = IT_LIGHTNING;
-            player.ammo_cells = player.ammo_cells + 15;
+            player.ammunition_cells = player.ammunition_cells + 15;
         }
         else
             objerror ("weapon_touch: unknown classname");
@@ -69,8 +69,6 @@ class item_weapon_c : item_c
     // weapon touch sound
         sound (player, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
         stuffcmd (player, "bf\n");
-
-        player.CheckMaxAmmo();
 
         player.items = player.items | new;
 

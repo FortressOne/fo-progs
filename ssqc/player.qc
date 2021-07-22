@@ -353,10 +353,44 @@ class player_c : entity
 	float status_string_refresh_time;
 	float status_string_time;
 	float tf_attributes;
-	float ammo_gren1;
-	float ammo_gren2;
+	float ammunition_gren1;
+	float ammunition_gren2;
 	float type_gren1;
 	float type_gren2;
+
+	get float ammunition_shells =
+	{
+		return ammo_shells;
+	};
+	set float ammunition_shells =
+	{
+		ammo_shells = value > this.class.max_shells ? this.class.max_shells : value;
+	};
+	get float ammunition_nails =
+	{
+		return ammo_nails;
+	};
+	set float ammunition_nails =
+	{
+		ammo_nails = value > this.class.max_nails ? this.class.max_nails : value;
+	};
+	get float ammunition_rockets =
+	{
+		return ammo_rockets;
+	};
+	set float ammunition_rockets =
+	{
+		ammo_rockets = value > this.class.max_rockets ? this.class.max_rockets : value;
+	};
+	get float ammunition_cells =
+	{
+		return ammo_cells;
+	};
+	set float ammunition_cells =
+	{
+		ammo_cells = value > this.class.max_cells ? this.class.max_cells : value;
+	};
+
 
 	weapon_c _current_weapon; // private
 	set weapon_c current_weapon =
@@ -688,13 +722,6 @@ class player_c : entity
 			if (self.super_damage_finished < time)
 			{       // just stopped
 				self.items = self.items - IT_QUAD;
-				if (deathmatch == 4)
-				{
-					self.ammo_cells = 255;
-					self.armorvalue = 1;
-					self.armortype = 0.8;
-					self.health = 100;
-				}
 				self.super_damage_finished = 0;
 				self.super_time = 0;
 			}
@@ -900,7 +927,7 @@ class player_c : entity
         this.ImpulseCommands();
         
         // check for attack
-        if (this.button0)
+        if (this.button0 && this.current_weapon.IsReady())
         {
             item_artifact_super_damage::ShootSound(this);
             this.current_weapon.Attack();
@@ -988,12 +1015,12 @@ class player_c : entity
 		this.health = this.class.max_health;
 		this.armorvalue = this.class.init_armor;
 		this.armortype = this.class.init_armor_type;
-		this.ammo_shells = this.class.init_shells;
-		this.ammo_nails = this.class.init_nails;
-		this.ammo_rockets = this.class.init_rockets;
-		this.ammo_cells = this.class.init_cells;
-		this.ammo_gren1 = this.class.init_gren1;
-		this.ammo_gren2 = this.class.init_gren2;
+		this.ammunition_shells = this.class.init_shells;
+		this.ammunition_nails = this.class.init_nails;
+		this.ammunition_rockets = this.class.init_rockets;
+		this.ammunition_cells = this.class.init_cells;
+		this.ammunition_gren1 = this.class.init_gren1;
+		this.ammunition_gren2 = this.class.init_gren2;
 		this.type_gren1 = this.class.type_gren1;
 		this.type_gren2 = this.class.type_gren2;
 		this.tf_attributes = this.class.tf_attributes;
@@ -1084,51 +1111,6 @@ class player_c : entity
 		{                
 			rj = stof(infokey(world, "rj"));
 		}
-
-		if (deathmatch == 4)
-		{
-			this.ammo_shells = 0;
-			if (stof(infokey(world, "axe")) == 0)
-			{
-				this.ammo_nails = 255;
-				this.ammo_shells = 255;
-				this.ammo_rockets = 255;
-				this.ammo_cells = 255;
-				this.items = this.items | IT_NAILGUN;
-				this.items = this.items | IT_SUPER_NAILGUN;
-				this.items = this.items | IT_SUPER_SHOTGUN;
-				this.items = this.items | IT_ROCKET_LAUNCHER;
-				this.items = this.items | IT_LIGHTNING;
-			}
-			this.items = this.items - (this.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
-			this.armorvalue = 200;
-			this.armortype = 0.8;
-			this.health = 250;
-			this.items = this.items | IT_INVULNERABILITY;
-			this.invincible_time = 1;
-			this.invincible_finished = time + 3;
-		}
-
-		if (deathmatch == 5)
-		{
-			this.ammo_nails = 80;
-			this.ammo_shells = 30;
-			this.ammo_rockets = 10;
-			this.ammo_cells = 30;
-			this.items = this.items | IT_NAILGUN;
-			this.items = this.items | IT_SUPER_NAILGUN;
-			this.items = this.items | IT_SUPER_SHOTGUN;
-			this.items = this.items | IT_ROCKET_LAUNCHER;
-			this.items = this.items | IT_GRENADE_LAUNCHER;
-			this.items = this.items | IT_LIGHTNING;
-			this.items = this.items - (this.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
-			this.armorvalue = 200;
-			this.armortype = 0.8;
-			this.health = 200;
-			this.items = this.items | IT_INVULNERABILITY;
-			this.invincible_time = 1;
-			this.invincible_finished = time + 3;
-		}
 	};
 
 	nonvirtual void () Die =
@@ -1197,18 +1179,6 @@ class player_c : entity
 			player_died1();
 		else
 			player_diee1();
-	};
-
-	nonvirtual void () CheckMaxAmmo =
-	{
-		if (this.ammo_shells > 100)
-			this.ammo_shells = 100;
-		if (this.ammo_nails > 200)
-			this.ammo_nails = 200;
-		if (this.ammo_rockets > 100)
-			this.ammo_rockets = 100;               
-		if (this.ammo_cells > 100)
-			this.ammo_cells = 100;
 	};
 
 	nonvirtual void () DropBackpack =

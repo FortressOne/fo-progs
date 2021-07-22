@@ -37,43 +37,40 @@ class item_ammo_c : item_c
         // shotgun
         if (self.weapon == 1)
         {
-            if (other.ammo_shells >= 100)
+            if (player.ammunition_shells >= player.class.max_shells)
                 return;
-            other.ammo_shells = other.ammo_shells + self.aflag;
+            player.ammunition_shells = player.ammunition_shells + self.aflag;
         }
 
         // spikes
         if (self.weapon == 2)
         {
-            if (other.ammo_nails >= 200)
+            if (player.ammunition_nails >= player.class.max_nails)
                 return;
-            other.ammo_nails = other.ammo_nails + self.aflag;
+            player.ammunition_nails = player.ammunition_nails + self.aflag;
         }
 
         //      rockets
         if (self.weapon == 3)
         {
-            if (other.ammo_rockets >= 100)
+            if (player.ammunition_rockets >= player.class.max_rockets)
                 return;
-            other.ammo_rockets = other.ammo_rockets + self.aflag;
+            player.ammunition_rockets = player.ammunition_rockets + self.aflag;
         }
 
         //      cells
         if (self.weapon == 4)
         {
-            if (other.ammo_cells >= 100)
+            if (player.ammunition_cells >= player.class.max_cells)
                 return;
-            other.ammo_cells = other.ammo_cells + self.aflag;
+            player.ammunition_cells = player.ammunition_cells + self.aflag;
         }
-
-        
-        player.CheckMaxAmmo();
-        
-        sprint(other, PRINT_LOW, "You got the ", self.netname, "\n");
+       
+        sprint(player, PRINT_LOW, "You got the ", self.netname, "\n");
 
         // ammo touch sound
-        sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
-        stuffcmd (other, "bf\n");
+        sound(player, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
+        stuffcmd(player, "bf\n");
 
         // change to a better weapon if appropriate
         player.current_weapon = player.GetBestWeapon();
