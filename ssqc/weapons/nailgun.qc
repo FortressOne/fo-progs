@@ -2,13 +2,14 @@ class nailgun_c : weapon_c
 {
     void () nailgun_c = 
     {
+        classname = "player_nailgun";
         shoot_sound = "weapons/rocket1i.wav";
         weapon = IT_NAILGUN; // hud
         weapon_type = WEAPON::NAILGUN;
         ammo_type = IT_NAILS;
         weaponmodel = "progs/v_nail.mdl";
         attack_finish_delay = .2;
-        animation_func = __NULL__;
+        animation_func = player_nail1;
         ammo_per_shot = 1;
     };
 
@@ -19,28 +20,36 @@ class nailgun_c : weapon_c
             player_run();
             return FALSE;
         }
+        float offset = 4;
+        if (this.weaponframe % 2 == 0)
+        {
+            this.animation_func = player_nail1;
+            offset = 4;
+        }
+        else
+        {
+            this.animation_func = player_nail2;
+            offset = -4;
+        }
 
         if (!super::Attack())
             return FALSE;
 
         muzzleflash();
+
+        this.weaponframe++;
+        if (this.weaponframe == 9)
+            this.weaponframe = 1;
+
         this.owner.weaponframe++;
         if (this.owner.weaponframe == 9)
             this.owner.weaponframe = 1;
         
-        item_artifact_super_damage_c::ShootSound((player_c)this.owner);
-
-        if (this.owner.weaponframe % 2 == 0)
-        {
-            this.FireSpikes(4);
-            player_nail1();
-        }
-        else
-        {
-            this.FireSpikes(-4);
-            player_nail2();
-        }
-        return this.Attack(); // this will always return false...
+        
+        item_artifact_super_damage::ShootSound((player_c)this.owner);
+        this.FireSpikes(offset);
+        
+        return TRUE;
     };
 
     nonvirtual void (float offset) FireSpikes =
@@ -52,23 +61,22 @@ class nailgun_c : weapon_c
             W_FireSuperSpikes();
             return;
         }
+        player_c player = (player_c)this.owner;
 
-        if (this.owner.ammo_nails < 1)
+        if (player.ammunition_nails < 1)
         {
-            player_c player = (player_c)self.owner;
             player.current_weapon = player.GetBestWeapon();
             return;
         }
 
-        sound(this.owner, CHAN_WEAPON, this.shoot_sound, 1, ATTN_NORM);
-        this.owner.attack_finished = time + this.attack_finish_delay;
-        if (deathmatch != 4)
-            this.owner.currentammo = this.owner.ammo_nails = this.owner.ammo_nails - this.ammo_per_shot;
+        sound(player, CHAN_WEAPON, this.shoot_sound, 1, ATTN_NORM);
+        player.attack_finished = time + this.attack_finish_delay;
 
-        vector dir = aim (this.owner, 1000);
-        proj_spike_c ent = proj_spike_c::spawn(this.owner.origin + '0 0 16' + v_right*offset, dir, self);
-
-        msg_entity = this.owner;
+        vector dir = aim (player, 1000);
+        vector org = player.origin + '0 0 16' + v_right*offset;
+        proj_spike_c ent = ::spawn(proj_spike_c, origin: org, direction: dir, owner: this.owner);
+        
+        msg_entity = player;
         WriteByte (MSG_ONE, SVC_SMALLKICK);
     };
 };

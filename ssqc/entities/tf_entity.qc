@@ -1,6 +1,11 @@
 class tf_entity : entity
 {
     float is_processed;
+    float ammunition_shells;
+    float ammunition_nails;
+    float ammunition_rockets;
+    float ammunition_cells;
+    
     nonvirtual void () ProcessFieldAbbreviations =
     {
         // because way back when we got real desperate to save some memory
@@ -11,10 +16,10 @@ class tf_entity : entity
             this.has_item_from_group = (!this.has_item_from_group) ? this.h_i_g : this.has_item_from_group;
             this.hasnt_item_from_group = (!this.hasnt_item_from_group) ? this.hn_i_g : this.hasnt_item_from_group;
             this.remove_item_group = (!this.remove_item_group) ? this.r_i_g : this.remove_item_group;
-            this.ammo_shells = (!this.ammo_shells) ? this.a_s : this.ammo_shells;
-            this.ammo_nails = (!this.ammo_nails) ? this.a_n : this.ammo_nails;
-            this.ammo_rockets = (!this.ammo_rockets) ? this.a_r : this.ammo_rockets;
-            this.ammo_cells = (!this.ammo_cells) ? this.a_c : this.ammo_cells;
+            this.ammunition_shells = (!this.ammo_shells) ? this.a_s : this.ammo_shells;
+            this.ammunition_nails = (!this.ammo_nails) ? this.a_n : this.ammo_nails;
+            this.ammunition_rockets = (!this.ammo_rockets) ? this.a_r : this.ammo_rockets;
+            this.ammunition_cells = (!this.ammo_cells) ? this.a_c : this.ammo_cells;
             this.remove_spawngroup = (!this.remove_spawngroup) ? this.rv_s_h : this.remove_spawngroup;
             this.restore_spawngroup = (!this.restore_spawngroup) ? this.rs_s_h : this.restore_spawngroup;
             this.remove_group_no = (!this.remove_group_no) ? this.rv_gr : this.remove_group_no;

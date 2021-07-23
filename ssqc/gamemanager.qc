@@ -35,6 +35,8 @@ class gamemanager_c : entity
         this.PopulateGameSettings();
         this.PopulateTeams();
         this.PopulateClasses();
+
+        this.PopulatePostClassesSettings(); // we need classes generated, we could rewrite it...
     };
 
     nonvirtual void () PopulateGameSettings = 
@@ -46,9 +48,13 @@ class gamemanager_c : entity
         GameSettings.team_frags = this.GetSetting(world, "t", "teamfrags", "off");
         GameSettings.full_team_score = this.GetSetting(world, "fts", "fullteamscore", "off");
         GameSettings.override_mapclasses = GameManager.GetSetting(world, "omc", "override_mapclasses", "off");
+    };
+
+    nonvirtual void () PopulatePostClassesSettings = 
+    {
         for(float i = 0; i <= GameSettings.number_of_classes; i++)
         {
-            string setting = strcat("cr_", Classes[i].classname); 
+            string setting = strcat("cr_", Classes[i].classname);
             float val = GameManager.GetSetting(world, setting, setting, 0);
             GameSettings.max_classes[i] = val;
         }
@@ -78,21 +84,16 @@ class gamemanager_c : entity
         }
     };
 
-    
-
     nonvirtual void () PopulateClasses =
     {
-        Classes = memalloc(sizeof(*Classes)*GameSettings.number_of_classes);
-        class_t *c = this.ProcessClass(CLASS::SCOUT);
-        Classes[0] = *c;
+        Classes = memalloc(sizeof(*Classes)*(GameSettings.number_of_classes+1));
+        this.ProcessClass(CLASS::SCOUT);
     };
 
-    nonvirtual class_t* (CLASS class) ProcessClass =
+    nonvirtual void (CLASS class) ProcessClass =
     {
-        class_t *c = memalloc(sizeof(*c));
-
         // imagine if default values on structs was a thing!
-        string tclassname = "";
+        string tclassname = "bloop";
         float tmax_speed = 0, tmax_strafe_speed = 0, tmax_armor_type = 0, tinit_armor_type = 0;
         float tinit_armor_classes = 0, tillegal_bit = 0, tweapon1 = 0, tweapon2 = 0, tweapon3 = 0;
         float ttf_attributes = 0, tmax_shells = 0, tinit_shells = 0, tmax_nails = 0, tinit_nails = 0;
@@ -102,6 +103,8 @@ class gamemanager_c : entity
 
         switch (class)
         {
+            case CLASS::NONE:
+                break;
             case CLASS::SCOUT:
                 tclassname = PC_SCOUT_NAME;
                 tmax_speed = SCOUT::MAXSPEED;
@@ -185,45 +188,32 @@ class gamemanager_c : entity
                 break;
         }
 
-        c.class = class;
-        c.classname = tclassname;
-        c.max_speed = tmax_speed;
-        c.max_strafe_speed = tmax_strafe_speed;
-        c.max_armor_type = tmax_armor_type;
-        c.init_armor_type = tinit_armor_type;
-        c.init_armor_classes = tinit_armor_classes;
-        c.illegal_bit = tillegal_bit;
-        c.weapon1 = tweapon1;
-        c.weapon2 = tweapon2;
-        c.weapon3 = tweapon3;
-        c.tf_attributes = ttf_attributes;
-        c.max_shells = tmax_shells;
-        c.init_shells = tinit_shells;
-        c.max_nails = tmax_nails;
-        c.init_nails = tinit_nails;
-        c.max_rockets = tmax_rockets;
-        c.init_rockets = tinit_rockets;
-        c.max_cells = tmax_cells;
-        c.init_cells = tinit_cells;
-        c.type_gren1 = ttype_gren1;
-        c.type_gren2 = ttype_gren2;
-        c.max_health = tmax_health;
-        c.max_armor = tmax_armor;
-        c.max_gren1 = tmax_gren1;
-        c.max_gren2 = tmax_gren2;
-        c.max_shells = tmax_shells;
-        c.max_nails = tmax_nails;
-        c.max_rockets = tmax_rockets;
-        c.max_cells = tmax_cells;
-        c.init_armor = tinit_armor;
-        c.init_shells = tinit_shells;
-        c.init_nails = tinit_nails;
-        c.init_rockets = tinit_rockets;
-        c.init_cells = tinit_cells;
-        c.init_gren1 = tinit_gren1;
-        c.init_gren2 = tinit_gren2;
-
-        return &c;
+        Classes[class-1].class = class;
+        Classes[class-1].classname = tclassname;
+        Classes[class-1].max_speed = tmax_speed;
+        Classes[class-1].max_strafe_speed = tmax_strafe_speed;
+        Classes[class-1].max_armor_type = tmax_armor_type;
+        Classes[class-1].init_armor_type = tinit_armor_type;
+        Classes[class-1].init_armor_classes = tinit_armor_classes;
+        Classes[class-1].illegal_bit = tillegal_bit;
+        Classes[class-1].weapon1 = tweapon1;
+        Classes[class-1].weapon2 = tweapon2;
+        Classes[class-1].weapon3 = tweapon3;
+        Classes[class-1].tf_attributes = ttf_attributes;
+        Classes[class-1].max_shells = tmax_shells;
+        Classes[class-1].init_shells = tinit_shells;
+        Classes[class-1].max_nails = tmax_nails;
+        Classes[class-1].init_nails = tinit_nails;
+        Classes[class-1].max_rockets = tmax_rockets;
+        Classes[class-1].init_rockets = tinit_rockets;
+        Classes[class-1].max_cells = tmax_cells;
+        Classes[class-1].init_cells = tinit_cells;
+        Classes[class-1].type_gren1 = ttype_gren1;
+        Classes[class-1].type_gren2 = ttype_gren2;
+        Classes[class-1].max_health = tmax_health;
+        Classes[class-1].max_armor = tmax_armor;
+        Classes[class-1].max_gren1 = tmax_gren1;
+        Classes[class-1].max_gren2 = tmax_gren2;
     };
 
     nonvirtual void () PopulateTeams =

@@ -139,11 +139,10 @@ void() secret_touch =
 	
 	if (self.message)
 	{
-		centerprint (other, self.message);
+		MenuManager.CenterPrint((player_c)other, self.message);
 		sound (other, CHAN_BODY, "misc/talk.wav", 1, ATTN_NORM);
 	}
 };
-
 
 /*QUAKED func_door_secret (0 .5 .8) ? open_once 1st_left 1st_down no_shoot always_shoot
 Basic secret door. Slides back, then to the side. Angle determines direction.

@@ -5,5 +5,3 @@ W_BestWeapon = player_c -> GetBestWeapon
 
 W_SetCurrentAmmo = player_c -> setter on current_weapon
 W_ChangeWeapon = player_c -> ChangeWeapon
-
-bound_other_ammo = player_c -> CheckMaxAmmo

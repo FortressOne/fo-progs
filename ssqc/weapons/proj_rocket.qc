@@ -4,10 +4,11 @@
 
 class proj_rocket_c : proj_c
 {
-    static proj_rocket_c (vector org, vector dir, entity own) spawn =
+    void () proj_rocket_c =
     {
-        proj_rocket_c ent = (proj_rocket_c)super::spawn(org, dir, own, PROJ_ROCKET_CLASSNAME, PROJ_ROCKET_MODEL, PROJ_ROCKET_DURATION);
-        return ent;
+        classname = "rocket";
+        model = "progs/missile.mdl";
+        duration = 5;
     };
 
     virtual void () touch =

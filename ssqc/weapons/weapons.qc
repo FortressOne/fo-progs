@@ -113,17 +113,15 @@ W_FireRocket
 ================
 */
 void() W_FireRocket =
-{
-	if (deathmatch != 4)
-		self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-	
+{	
 	sound(self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
 	msg_entity = self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
 
 	makevectors(self.v_angle);
-	proj_rocket_c ent = proj_rocket_c::spawn(self.origin + v_forward*8 + '0 0 16', aim(self, 1000), self);
+	vector org = self.origin + v_forward*8 + '0 0 16';
+	proj_rocket_c ent = spawn(proj_rocket_c, origin: org, direction: aim(self, 1000), owner: self);
 };
 
 /*
@@ -233,10 +231,7 @@ W_FireGrenade
 ================
 */
 void() W_FireGrenade =
-{       
-	if (deathmatch != 4)
-		self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-	
+{       	
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
 	msg_entity = self;
@@ -292,10 +287,9 @@ void() W_FireGrenade =
 void() W_FireSuperSpikes = {
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
-	if (deathmatch != 4) 
-		self.currentammo = self.ammo_nails = self.ammo_nails - 2;
 	vector dir = aim (self, 1000);
-	proj_spike_c ent = proj_spike_c::spawn(self.origin + '0 0 16', dir, self);
+	vector org = self.origin + '0 0 16';
+	proj_spike_c ent = spawn(proj_spike_c, origin: org, direction: dir, owner: self);
 	ent.touch = superspike_touch;
 	setmodel(ent, "progs/s_spike.mdl");
 	setsize(ent, VEC_ORIGIN, VEC_ORIGIN);

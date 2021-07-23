@@ -1,57 +1,3 @@
-/*QUAKED item_shells (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-void() item_shells =
-{
-	item_shells_c ent = (item_shells_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_spikes (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-
-void() item_spikes =
-{
-	item_spikes_c ent = (item_spikes_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_rockets (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-
-void() item_rockets =
-{
-	item_rockets_c ent = (item_rockets_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_cells (0 .5 .8) (0 0 0) (32 32 32) big
-*/
-
-void() item_cells =
-{
-	item_cells_c ent = (item_cells_c)self;
-	ent.Process();
-};
-
-/*QUAKED item_weapon (0 .5 .8) (0 0 0) (32 32 32) shotgun rocket spikes big
-DO NOT USE THIS!!!! IT WILL BE REMOVED!
-*/
-void() item_weapon =
-{
-    if (self.spawnflags & WEAPON_SHOTGUN)
-    {
-        item_shells();
-    }
-    else if (self.spawnflags & WEAPON_SPIKES)
-    {
-        item_spikes();
-    }
-    else if (self.spawnflags & WEAPON_ROCKET)
-    {
-        item_rockets();
-    }
-};
-
 class item_ammo_c : item_c
 {
     string big_model;
@@ -59,7 +5,7 @@ class item_ammo_c : item_c
     float big_amount;
     float small_amount;
 
-    virtual void () Process =
+    void () item_ammo_c =
     {
         if (deathmatch == 4)
 		    return;
@@ -72,12 +18,11 @@ class item_ammo_c : item_c
         }
         else
         {
-            precache_model("maps/b_shell0.bsp");
-            setmodel(self, "maps/b_shell0.bsp");
+            precache_model(small_model);
+            setmodel(self, small_model);
             this.aflag = small_amount;
         }
         setsize (self, '0 0 0', '32 32 56');
-        item_c::Process();
     };
 
     virtual void () touch =
@@ -92,43 +37,40 @@ class item_ammo_c : item_c
         // shotgun
         if (self.weapon == 1)
         {
-            if (other.ammo_shells >= 100)
+            if (player.ammunition_shells >= player.class.max_shells)
                 return;
-            other.ammo_shells = other.ammo_shells + self.aflag;
+            player.ammunition_shells = player.ammunition_shells + self.aflag;
         }
 
         // spikes
         if (self.weapon == 2)
         {
-            if (other.ammo_nails >= 200)
+            if (player.ammunition_nails >= player.class.max_nails)
                 return;
-            other.ammo_nails = other.ammo_nails + self.aflag;
+            player.ammunition_nails = player.ammunition_nails + self.aflag;
         }
 
         //      rockets
         if (self.weapon == 3)
         {
-            if (other.ammo_rockets >= 100)
+            if (player.ammunition_rockets >= player.class.max_rockets)
                 return;
-            other.ammo_rockets = other.ammo_rockets + self.aflag;
+            player.ammunition_rockets = player.ammunition_rockets + self.aflag;
         }
 
         //      cells
         if (self.weapon == 4)
         {
-            if (other.ammo_cells >= 100)
+            if (player.ammunition_cells >= player.class.max_cells)
                 return;
-            other.ammo_cells = other.ammo_cells + self.aflag;
+            player.ammunition_cells = player.ammunition_cells + self.aflag;
         }
-
-        
-        player.CheckMaxAmmo();
-        
-        sprint(other, PRINT_LOW, "You got the ", self.netname, "\n");
+       
+        sprint(player, PRINT_LOW, "You got the ", self.netname, "\n");
 
         // ammo touch sound
-        sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
-        stuffcmd (other, "bf\n");
+        sound(player, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
+        stuffcmd(player, "bf\n");
 
         // change to a better weapon if appropriate
         player.current_weapon = player.GetBestWeapon();
@@ -150,9 +92,9 @@ class item_ammo_c : item_c
     };
 };
 
-class item_shells_c : item_ammo_c
+class item_shells : item_ammo_c
 {
-    virtual void () Process =
+    void () item_shells =
     {
         big_model = "maps/b_shell1.bsp";
         small_model = "maps/b_shell0.bsp";
@@ -160,13 +102,12 @@ class item_shells_c : item_ammo_c
         small_amount = 20;
         netname = "shells";
         weapon = 1;
-        item_ammo_c::Process();
     };
 };
 
-class item_spikes_c : item_ammo_c
+class item_spikes : item_ammo_c
 {
-    virtual void () Process =
+    void () item_spikes =
     {
         big_model = "maps/b_nail1.bsp";
         small_model = "maps/b_nail0.bsp";
@@ -174,13 +115,12 @@ class item_spikes_c : item_ammo_c
         small_amount = 25;
         netname = "nails";
         weapon = 2;
-        item_ammo_c::Process();
     };
 };
 
-class item_rockets_c : item_ammo_c
+class item_rockets : item_ammo_c
 {
-    virtual void () Process =
+    void () item_rockets =
     {
         big_model = "maps/b_rock1.bsp";
         small_model = "maps/b_rock0.bsp";
@@ -188,13 +128,12 @@ class item_rockets_c : item_ammo_c
         small_amount = 5;
         netname = "rockets";
         weapon = 3;
-        item_ammo_c::Process();
     };
 };
 
-class item_cells_c : item_ammo_c
+class item_cells : item_ammo_c
 {
-    virtual void () Process =
+    void () item_cells =
     {
         big_model = "maps/b_batt1.bsp";
         small_model = "maps/b_batt0.bsp";
@@ -202,6 +141,5 @@ class item_cells_c : item_ammo_c
         small_amount = 6;
         netname = "cells";
         weapon = 4;
-        item_ammo_c::Process();
     };
 };

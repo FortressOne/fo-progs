@@ -8,25 +8,10 @@ following:
 1: metal
 2: base
 */
-
-void () item_key1 =
-{
-    item_key1_c ent = (item_key1_c)self;
-    ent.Process();
-};
-
-void () item_key2 =
-{
-    item_key2_c ent = (item_key2_c)self;
-    ent.Process();
-};
-
 class item_key_c : item_c
 {
     virtual void () Process =
     {
-        item_c::Process();
-        string nn = "";
         precache_model(model);
         setmodel(self, model);
         switch (world.worldtype)
@@ -69,9 +54,9 @@ class item_key_c : item_c
     };
 };
 
-class item_key1_c : item_key_c
+class item_key1 : item_key_c
 {
-    virtual void () Process =
+    void () item_key1 =
     {
         switch (world.worldtype)
         {
@@ -94,9 +79,9 @@ class item_key1_c : item_key_c
     };
 };
 
-class item_key2_c : item_key_c
+class item_key2 : item_key_c
 {
-    virtual void () Process =
+    void () item_key2 =
     {
         switch (world.worldtype)
         {

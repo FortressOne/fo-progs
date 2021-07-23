@@ -1,6 +1,6 @@
 class item_c : entity
 {
-    virtual void () Process =
+    void () item_c =
     {
         this.nextthink = time + .2; // items start after other solids
     };

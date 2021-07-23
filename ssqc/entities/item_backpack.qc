@@ -1,6 +1,11 @@
 class item_backpack_c : entity 
 {
     weapon_c held_weapon;
+    float ammunition_shells;
+    float ammunition_nails;
+    float ammunition_rockets;
+    float ammunition_cells;
+
     // owner needs to be set
     void () item_backpack_c =
     {
@@ -12,16 +17,16 @@ class item_backpack_c : entity
             
         player_c player = (player_c)this.owner;
 
-        if (!(player.ammo_shells + player.ammo_nails + player.ammo_rockets + player.ammo_cells))
+        if (!(player.ammunition_shells + player.ammunition_nails + player.ammunition_rockets + player.ammunition_cells))
             return; // nothing in it
         
         this.origin = player.origin - '0 0 24';
 
 
-        this.ammo_shells = player.ammo_shells;
-        this.ammo_nails = player.ammo_nails;
-        this.ammo_rockets = player.ammo_rockets;
-        this.ammo_cells = player.ammo_cells;
+        this.ammunition_shells = player.ammunition_shells;
+        this.ammunition_nails = player.ammunition_nails;
+        this.ammunition_rockets = player.ammunition_rockets;
+        this.ammunition_cells = player.ammunition_cells;
 
         this.velocity_z = 300;
         this.velocity_x = -100 + (random() * 200);
@@ -44,43 +49,40 @@ class item_backpack_c : entity
         if (other.health <= 0)
             return;
 
-        other.ammo_shells = other.ammo_shells + this.ammo_shells;
-        other.ammo_nails = other.ammo_nails + this.ammo_nails;
-        other.ammo_rockets = other.ammo_rockets + this.ammo_rockets;
-        other.ammo_cells = other.ammo_cells + this.ammo_cells;
-        
         player_c player = (player_c)other;
-        player.CheckMaxAmmo();
+
+        player.ammunition_shells = player.ammunition_shells + this.ammunition_shells;
+        player.ammunition_nails = player.ammunition_nails + this.ammunition_nails;
+        player.ammunition_rockets = player.ammunition_rockets + this.ammunition_rockets;
+        player.ammunition_cells = player.ammunition_cells + this.ammunition_cells;
 
         sprint(other, PRINT_LOW, "You get ");
 
         float hasOther = FALSE;
-        if (this.ammo_shells)
+        if (this.ammunition_shells)
         {
-            sprint (other, PRINT_LOW, ftos(this.ammo_shells), " shells");
+            sprint (other, PRINT_LOW, ftos(this.ammunition_shells), " shells");
             hasOther = TRUE;
         }
-
-        if (this.ammo_nails)
+        if (this.ammunition_nails)
         {
             if (hasOther)
                 sprint(other, PRINT_LOW, ", ");
-            sprint (other, PRINT_LOW, ftos(this.ammo_nails), " nails");
+            sprint (other, PRINT_LOW, ftos(this.ammunition_nails), " nails");
             hasOther = TRUE;
         }
-        if (this.ammo_rockets)
+        if (this.ammunition_rockets)
         {
             if (hasOther)
                 sprint(other, PRINT_LOW, ", ");
-            sprint (other, PRINT_LOW, ftos(this.ammo_rockets), " rockets");
+            sprint (other, PRINT_LOW, ftos(this.ammunition_rockets), " rockets");
             hasOther = TRUE;
         }
-        if (this.ammo_cells)
+        if (this.ammunition_cells)
         {
             if (hasOther)
                 sprint(other, PRINT_LOW, ", ");
-            sprint (other, PRINT_LOW, ftos(this.ammo_cells), " cells");
-            hasOther = TRUE;
+            sprint (other, PRINT_LOW, ftos(this.ammunition_cells), " cells");
         }
 
         sprint(other, PRINT_LOW, "\n");

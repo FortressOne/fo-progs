@@ -20,26 +20,57 @@ class weapon_c : entity
 
     get float ammo_count =
     {
+        player_c player = (player_c)owner;
         switch (this.ammo_type)
         {
             case IT_SHELLS:
-                return this.owner.ammo_shells;
+                return player.ammunition_shells;
             case IT_NAILS:
-                return this.owner.ammo_nails;
+                return player.ammunition_nails;
             case IT_ROCKETS:
-                return this.owner.ammo_rockets;
+                return player.ammunition_rockets;
             case IT_CELLS:
-                return this.owner.ammo_cells;
+                return player.ammunition_cells;
         }
         return 0;
-    };   
+    };
 
-    nonvirtual float() HasAmmo =
+    static weapon_c (WEAPON weap, entity player) spawn =
+    {
+        weapon_c ret = __NULL__;
+        switch (weap)
+        {
+            case WEAPON::NAILGUN:
+                ret = ::spawn(nailgun_c, owner: player);
+                break;
+            case WEAPON::SHOTGUN:
+                ret = ::spawn(shotgun_c, owner: player);
+                break;
+            case WEAPON::AXE:
+                ret = ::spawn(axe_c, owner: player);
+                break;
+        }
+        return ret;
+    };
+
+    nonvirtual float () HasAmmo =
     {
         if (this.ammo_count >= this.ammo_per_shot)
             return TRUE;
         
         return FALSE;
+    };
+
+    nonvirtual float () IsReady =
+    {
+        player_c player = (player_c)this.owner;
+        if (player.attack_finished > time)
+            return FALSE;
+
+        if (player.is_reloading)
+            return FALSE;
+
+        return TRUE;
     };
 
     virtual float () Attack = 
@@ -55,25 +86,27 @@ class weapon_c : entity
         player.show_hostile = time + 1;   // wake monsters up
         if (this.animation_func)
             this.animation_func();
+        else
+            bprint(PRINT_HIGH, "animation func not set\n");
             
         player.attack_finished = time + this.attack_finish_delay;
-        sound(this.owner, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
+        sound(player, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
 
         if (deathmatch != 4)
         {
             switch (this.ammo_type)
             {
                 case IT_SHELLS:
-                    this.owner.currentammo = this.owner.ammo_shells = this.owner.ammo_shells - this.ammo_per_shot;
+                    player.currentammo = player.ammunition_shells = player.ammunition_shells - this.ammo_per_shot;
                     break;
                 case IT_NAILS:
-                    this.owner.currentammo = this.owner.ammo_nails = this.owner.ammo_nails - this.ammo_per_shot;
+                    player.currentammo = player.ammunition_nails = player.ammunition_nails - this.ammo_per_shot;
                     break;
                 case IT_ROCKETS:
-                    this.owner.currentammo = this.owner.ammo_rockets = this.owner.ammo_rockets - this.ammo_per_shot;
+                    player.currentammo = player.ammunition_rockets = player.ammunition_rockets - this.ammo_per_shot;
                     break;
                 case IT_CELLS:
-                    this.owner.currentammo = this.owner.ammo_cells = this.owner.ammo_cells - this.ammo_per_shot;
+                    player.currentammo = player.ammunition_cells = player.ammunition_cells - this.ammo_per_shot;
                     break;
             }
         }

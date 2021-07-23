@@ -1,39 +1,3 @@
-void() weapon_supershotgun =
-{
-	item_supershotgun_c ent = (item_supershotgun_c)self;
-	ent.Process();	
-};
-
-void() weapon_nailgun =
-{
-	item_nailgun_c ent = (item_nailgun_c)self;
-	ent.Process();
-};
-
-void() weapon_supernailgun =
-{
-    item_supernailgun_c ent = (item_supernailgun_c)self;
-	ent.Process();
-};
-
-void() weapon_grenadelauncher =
-{
-    item_grenadelauncher_c ent = (item_grenadelauncher_c)self;
-	ent.Process();
-};
-
-void() weapon_rocketlauncher =
-{
-    item_rocketlauncher_c ent = (item_rocketlauncher_c)self;
-	ent.Process();
-};
-
-void() weapon_lightning =
-{
-    item_lightning_c ent = (item_lightning_c)self;
-	ent.Process();
-};
-
 class item_weapon_c : item_c
 {
     virtual void () touch =
@@ -61,42 +25,42 @@ class item_weapon_c : item_c
             if (leave && (player.items & IT_NAILGUN) )
                 return;
             new = IT_NAILGUN;
-            player.ammo_nails = player.ammo_nails + 30;
+            player.ammunition_nails = player.ammunition_nails + 30;
         }
         else if (self.classname == "weapon_supernailgun")
         {
             if (leave && (player.items & IT_SUPER_NAILGUN) )
                 return;
             new = IT_SUPER_NAILGUN;
-            player.ammo_nails = player.ammo_nails + 30;
+            player.ammunition_nails = player.ammunition_nails + 30;
         }
         else if (self.classname == "weapon_supershotgun")
         {
             if (leave && (player.items & IT_SUPER_SHOTGUN) )
                 return;
             new = IT_SUPER_SHOTGUN;
-            player.ammo_shells = player.ammo_shells + 5;
+            player.ammunition_shells = player.ammunition_shells + 5;
         }
         else if (self.classname == "weapon_rocketlauncher")
         {
             if (leave && (player.items & IT_ROCKET_LAUNCHER) )
                 return;
             new = IT_ROCKET_LAUNCHER;
-            player.ammo_rockets = player.ammo_rockets + 5;
+            player.ammunition_rockets = player.ammunition_rockets + 5;
         }
         else if (self.classname == "weapon_grenadelauncher")
         {
             if (leave && (player.items & IT_GRENADE_LAUNCHER) )
                 return;
             new = IT_GRENADE_LAUNCHER;
-            player.ammo_rockets = player.ammo_rockets + 5;
+            player.ammunition_rockets = player.ammunition_rockets + 5;
         }
         else if (self.classname == "weapon_lightning")
         {
             if (leave && (player.items & IT_LIGHTNING))
                 return;
             new = IT_LIGHTNING;
-            player.ammo_cells = player.ammo_cells + 15;
+            player.ammunition_cells = player.ammunition_cells + 15;
         }
         else
             objerror ("weapon_touch: unknown classname");
@@ -105,8 +69,6 @@ class item_weapon_c : item_c
     // weapon touch sound
         sound (player, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
         stuffcmd (player, "bf\n");
-
-        player.CheckMaxAmmo();
 
         player.items = player.items | new;
 
@@ -127,13 +89,12 @@ class item_weapon_c : item_c
     };
 };
 
-class item_supershotgun_c : item_weapon_c
+class weapon_supershotgun : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_supershotgun =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             this.model = "progs/g_shot.mdl";
             precache_model(this.model);
             setmodel(this, this.model);
@@ -144,13 +105,12 @@ class item_supershotgun_c : item_weapon_c
     };
 };
 
-class item_nailgun_c : item_weapon_c
+class weapon_nailgun : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_nailgun =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model("progs/g_nail.mdl");
             setmodel(self, "progs/g_nail.mdl");
             self.weapon = IT_NAILGUN;
@@ -160,13 +120,12 @@ class item_nailgun_c : item_weapon_c
     };
 };
 
-class item_supernailgun_c : item_weapon_c
+class weapon_supernailgun : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_supernailgun =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model("progs/g_nail2.mdl");
             setmodel(self, "progs/g_nail2.mdl");
             self.weapon = IT_SUPER_NAILGUN;
@@ -176,13 +135,12 @@ class item_supernailgun_c : item_weapon_c
     };
 };
 
-class item_grenadelauncher_c : item_weapon_c
+class weapon_grenadelauncher : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_grenadelauncher =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model("progs/g_rock.mdl");
             setmodel(self, "progs/g_rock.mdl");
             self.weapon = IT_GRENADE_LAUNCHER;
@@ -192,13 +150,12 @@ class item_grenadelauncher_c : item_weapon_c
     };
 };
 
-class item_rocketlauncher_c : item_weapon_c
+class weapon_rocketlauncher : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_rocketlauncher =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model ("progs/g_rock2.mdl");
             setmodel (self, "progs/g_rock2.mdl");
             self.weapon = IT_ROCKET_LAUNCHER;
@@ -208,13 +165,12 @@ class item_rocketlauncher_c : item_weapon_c
     };
 };
 
-class item_lightning_c : item_weapon_c
+class weapon_lightning : item_weapon_c
 {
-    virtual void () Process =
+    void () weapon_lightning =
     {
         if (deathmatch <= 3)
         {
-            super::Process();
             precache_model ("progs/g_light.mdl");
             setmodel (self, "progs/g_light.mdl");
             self.weapon = IT_LIGHTNING;

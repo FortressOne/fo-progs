@@ -2,21 +2,12 @@
 /*QUAKED item_sigil (0 .5 .8) (-16 -16 -24) (16 16 32) E1 E2 E3 E4
 End of level sigil, pick up to end episode and return to jrstart.
 */
-
-void() item_sigil =
+class item_sigil : item_c
 {
-	item_sigil_c ent = (item_sigil_c)self;
-    ent.Process();
-};
-
-class item_sigil_c : item_c
-{
-    virtual void () Process =
+    void () item_sigil =
     {
         if (!self.spawnflags)
 		    objerror ("no spawnflags");
-
-        item_c::Process();
 
         precache_sound ("misc/runekey.wav");
         self.noise = "misc/runekey.wav";
@@ -52,7 +43,7 @@ class item_sigil_c : item_c
         if (other.health <= 0)
             return;
 
-        centerprint (other, "You got the rune!");
+        MenuManager.CenterPrint((player_c)other, "You got the rune!");
 
         sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
         stuffcmd(other, "bf\n");

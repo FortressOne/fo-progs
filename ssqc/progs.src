@@ -13,6 +13,9 @@ csqcmanager.qc
 team.qc
 subs.qc
 combat.qc
+weapons/proj.qc
+weapons/proj_rocket.qc
+weapons/proj_spike.qc
 weapons/weapons.qc
 weapons/weapon.qc
 weapons/axe.qc
@@ -31,9 +34,7 @@ weapons/incendiarycannon.qc
 weapons/assaultcannon.qc
 weapons/rocketlauncher.qc
 weapons/railgun.qc
-weapons/proj.qc
-weapons/proj_rocket.qc
-weapons/proj_spike.qc
+
 
 
 entities/trigger_changelevel.qc
