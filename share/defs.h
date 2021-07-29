@@ -672,3 +672,11 @@
 #define MSG_VOTE_UPDATE     19
 #define MSG_VOTE_MAP_ADD    20
 #define MSG_VOTE_MAP_DELETE 21
+
+
+// impulses
+#define TF_DASH                 41  // Scout: Initialize a forward bunnyhop
+#define TF_SCAN                 42  // Scout: Toggle Scanner on/off
+#define TF_SCAN_ENEMY           43  // Scout: Toggle scanning of enemies
+#define TF_SCAN_FRIENDLY        44  // Scout: Toggle scanning of friendlies
+#define TF_SCAN_SOUND           45  // Scout: Toggle scanner sound

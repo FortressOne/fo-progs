@@ -9,59 +9,59 @@ class nailgun_c : weapon_c
         ammo_type = IT_NAILS;
         weaponmodel = "progs/v_nail.mdl";
         attack_finish_delay = .2;
-        animation_func = player_nail1;
+        animation_func = __NULL__;
         ammo_per_shot = 1;
     };
 
     virtual float () Attack =
-    {           
-        if (!this.owner.button0 || GameManager.intermission_running)
-        {
-            player_run();
-            return FALSE;
-        }
-        float offset = 4;
-        if (this.weaponframe % 2 == 0)
-        {
-            this.animation_func = player_nail1;
-            offset = 4;
-        }
-        else
-        {
-            this.animation_func = player_nail2;
-            offset = -4;
-        }
+    {
+        player_c player = (player_c)this.owner;
+        this.animation_func = player.Anim_Nail1;
 
         if (!super::Attack())
             return FALSE;
 
-        muzzleflash();
-
-        this.weaponframe++;
-        if (this.weaponframe == 9)
-            this.weaponframe = 1;
-
-        this.owner.weaponframe++;
-        if (this.owner.weaponframe == 9)
-            this.owner.weaponframe = 1;
-        
-        
-        item_artifact_super_damage::ShootSound((player_c)this.owner);
-        this.FireSpikes(offset);
-        
         return TRUE;
     };
 
-    nonvirtual void (float offset) FireSpikes =
+    
+	static float (entity weap) NailLogic =
+	{
+		if (!weap.owner.button0 || GameManager.intermission_running)
+        {
+			weap.owner.weaponframe = 0;
+            player_run();
+            return FALSE;
+        }
+
+		muzzleflash();
+
+		weap.owner.weaponframe++;
+		if (weap.owner.weaponframe == 9)
+			weap.owner.weaponframe = 1;
+
+		float offset = 4;
+		if (weap.owner.weaponframe % 2 == 1)
+		{
+			offset = -4;
+		}
+
+        item_artifact_super_damage::ShootSound((player_c)weap.owner);
+		nailgun_c::FireSpikes(self, (player_c)weap.owner, offset);
+
+		return TRUE;
+	};
+
+    nonvirtual void (entity weap, player_c player, float offset) FireSpikes =
     {
-        makevectors(this.owner.v_angle);
+        nailgun_c ng = (nailgun_c)weap;
+        makevectors(player.v_angle);
         
-        if (this.HasAmmo() && this.weapon == IT_SUPER_NAILGUN)
+        if (ng.HasAmmo() && ng.weapon == IT_SUPER_NAILGUN)
         {
             W_FireSuperSpikes();
             return;
         }
-        player_c player = (player_c)this.owner;
 
         if (player.ammunition_nails < 1)
         {
@@ -69,12 +69,13 @@ class nailgun_c : weapon_c
             return;
         }
 
-        sound(player, CHAN_WEAPON, this.shoot_sound, 1, ATTN_NORM);
-        player.attack_finished = time + this.attack_finish_delay;
+        weapon_c::AdjustAmmo(player, ng);
+        sound(player, CHAN_WEAPON, ng.shoot_sound, 1, ATTN_NORM);
+        player.attack_finished = time + ng.attack_finish_delay;
 
         vector dir = aim (player, 1000);
         vector org = player.origin + '0 0 16' + v_right*offset;
-        proj_spike_c ent = ::spawn(proj_spike_c, origin: org, direction: dir, owner: this.owner);
+        proj_spike_c ent = ::spawn(proj_spike_c, origin: org, direction: dir, owner: player);
         
         msg_entity = player;
         WriteByte (MSG_ONE, SVC_SMALLKICK);

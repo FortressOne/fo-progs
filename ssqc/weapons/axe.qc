@@ -30,9 +30,9 @@ class axe_c : weapon_c
 
     nonvirtual void () Swing =
     {
-        makevectors (self.v_angle);
-        vector source = self.origin + '0 0 16';
-        traceline (source, source + v_forward*64, FALSE, self);
+        makevectors (self.owner.v_angle);
+        vector source = self.owner.origin + '0 0 16';
+        traceline (source, source + v_forward*64, FALSE, self.owner);
         if (trace_fraction == 1.0)
             return;
         
@@ -43,13 +43,13 @@ class axe_c : weapon_c
             trace_ent.axhitme = 1;
             SpawnBlood (org, 20);
             if (deathmatch > 3)
-                T_Damage (trace_ent, self, self, 75);
+                T_Damage (trace_ent, self.owner, self.owner, 75);
             else
-                T_Damage (trace_ent, self, self, 20);
+                T_Damage (trace_ent, self.owner, self.owner, 20);
         }
         else
         {       // hit wall
-            sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+            sound (self.owner, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
 
             WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
             WriteByte (MSG_MULTICAST, TE_GUNSHOT);

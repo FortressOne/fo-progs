@@ -89,29 +89,34 @@ class weapon_c : entity
         else
             bprint(PRINT_HIGH, "animation func not set\n");
             
-        player.attack_finished = time + this.attack_finish_delay;
         sound(player, CHAN_WEAPON, shoot_sound, 1, ATTN_NORM); 
 
-        if (deathmatch != 4)
-        {
-            switch (this.ammo_type)
-            {
-                case IT_SHELLS:
-                    player.currentammo = player.ammunition_shells = player.ammunition_shells - this.ammo_per_shot;
-                    break;
-                case IT_NAILS:
-                    player.currentammo = player.ammunition_nails = player.ammunition_nails - this.ammo_per_shot;
-                    break;
-                case IT_ROCKETS:
-                    player.currentammo = player.ammunition_rockets = player.ammunition_rockets - this.ammo_per_shot;
-                    break;
-                case IT_CELLS:
-                    player.currentammo = player.ammunition_cells = player.ammunition_cells - this.ammo_per_shot;
-                    break;
-            }
-        }
-
+        weapon_c::AdjustAmmo(player, this);
+        player.attack_finished = time + this.attack_finish_delay;
+        
         return TRUE;
+    };
+
+    static void (entity p, entity w) AdjustAmmo =
+    {
+        player_c player = (player_c)p;
+        weapon_c weapon = (weapon_c)w;
+
+        switch (weapon.ammo_type)
+        {
+            case IT_SHELLS:
+                player.currentammo = player.ammunition_shells = player.ammunition_shells - weapon.ammo_per_shot;
+                break;
+            case IT_NAILS:
+                player.currentammo = player.ammunition_nails = player.ammunition_nails - weapon.ammo_per_shot;
+                break;
+            case IT_ROCKETS:
+                player.currentammo = player.ammunition_rockets = player.ammunition_rockets - weapon.ammo_per_shot;
+                break;
+            case IT_CELLS:
+                player.currentammo = player.ammunition_cells = player.ammunition_cells - weapon.ammo_per_shot;
+                break;
+        }
     };
 
     nonvirtual void(float damage, vector dir) TraceAttack =

@@ -114,7 +114,6 @@ PLAYER
 
 void()  player_stand1 =[        $axstnd1,       player_stand1   ]
 {
-	self.weaponframe=0;
 	if (self.velocity_x || self.velocity_y)
 	{
 		self.walkframe=0;
@@ -139,10 +138,12 @@ void()  player_stand1 =[        $axstnd1,       player_stand1   ]
 
 void()  player_run =[   $rockrun1,      player_run      ]
 {
-	self.weaponframe=0;
+	if (self.classname != "player")
+		self = self.owner;
+
 	if (!self.velocity_x && !self.velocity_y)
 	{
-		self.walkframe=0;
+		self.walkframe = 0;
 		player_stand1();
 		return;
 	}
@@ -152,6 +153,8 @@ void()  player_run =[   $rockrun1,      player_run      ]
 		if (self.walkframe == 6)
 			self.walkframe = 0;
 		self.frame = $axrun1 + self.walkframe;
+		if (self.weaponframe == 4)
+			self.weaponframe = 0;
 	}
 	else
 	{
@@ -170,46 +173,61 @@ void() muzzleflash =
 };
 
 
-void()  player_shot1 =  [$shotatt1, player_shot2        ] {self.weaponframe=1;muzzleflash();};
-void()  player_shot2 =  [$shotatt2, player_shot3        ] {self.weaponframe=2;};
-void()  player_shot3 =  [$shotatt3, player_shot4        ] {self.weaponframe=3;};
-void()  player_shot4 =  [$shotatt4, player_shot5        ] {self.weaponframe=4;};
-void()  player_shot5 =  [$shotatt5, player_shot6        ] {self.weaponframe=5;};
-void()  player_shot6 =  [$shotatt6, player_run  ] {self.weaponframe=6;};
+void()  player_shot1 =  [$shotatt1, player_shot2        ] {
+	self.owner.weaponframe=1;
+	muzzleflash();
+};
+void()  player_shot2 =  [$shotatt2, player_shot3        ] {self.owner.weaponframe=2;};
+void()  player_shot3 =  [$shotatt3, player_shot4        ] {self.owner.weaponframe=3;};
+void()  player_shot4 =  [$shotatt4, player_shot5        ] {self.owner.weaponframe=4;};
+void()  player_shot5 =  [$shotatt5, player_shot6        ] {self.owner.weaponframe=5;};
+void()  player_shot6 =  [$shotatt6, player_run  ] {self.owner.weaponframe=6;};
 
-void()  player_axe1 =   [$axatt1, player_axe2   ] {self.weaponframe=1;};
-void()  player_axe2 =   [$axatt2, player_axe3   ] {self.weaponframe=2;};
-void()  player_axe3 =   [$axatt3, player_axe4   ] {self.weaponframe=3;axe_c::Swing();};
-void()  player_axe4 =   [$axatt4, player_run    ] {self.weaponframe=4;};
+void()  player_axe1 =   [$axatt1, player_axe2   ] {self.owner.weaponframe=1;};
+void()  player_axe2 =   [$axatt2, player_axe3   ] {self.owner.weaponframe=2;};
+void()  player_axe3 =   [$axatt3, player_axe4   ] 
+{
+	self.owner.weaponframe=3;
+	axe_c weap = (axe_c)self;
+	weap.Swing();
+};
+void()  player_axe4 =   [$axatt4, player_run    ] {self.owner.weaponframe=4;};
 
-void()  player_axeb1 =  [$axattb1, player_axeb2 ] {self.weaponframe=5;};
-void()  player_axeb2 =  [$axattb2, player_axeb3 ] {self.weaponframe=6;};
-void()  player_axeb3 =  [$axattb3, player_axeb4 ] {self.weaponframe=7;axe_c::Swing();};
-void()  player_axeb4 =  [$axattb4, player_run   ] {self.weaponframe=8;};
+void()  player_axeb1 =  [$axattb1, player_axeb2 ] {self.owner.weaponframe=5;};
+void()  player_axeb2 =  [$axattb2, player_axeb3 ] {self.owner.weaponframe=6;};
+void()  player_axeb3 =  [$axattb3, player_axeb4 ] 
+{
+	self.owner.weaponframe=7;
+	axe_c weap = (axe_c)self;
+	weap.Swing();
+};
+void()  player_axeb4 =  [$axattb4, player_run   ] {self.owner.weaponframe=8;};
 
-void()  player_axec1 =  [$axattc1, player_axec2 ] {self.weaponframe=1;};
-void()  player_axec2 =  [$axattc2, player_axec3 ] {self.weaponframe=2;};
-void()  player_axec3 =  [$axattc3, player_axec4 ] {self.weaponframe=3;axe_c::Swing();};
-void()  player_axec4 =  [$axattc4, player_run   ] {self.weaponframe=4;};
+void()  player_axec1 =  [$axattc1, player_axec2 ] {self.owner.weaponframe=1;};
+void()  player_axec2 =  [$axattc2, player_axec3 ] {self.owner.weaponframe=2;};
+void()  player_axec3 =  [$axattc3, player_axec4 ] 
+{
+	self.owner.weaponframe=3;
+	axe_c weap = (axe_c)self;
+	weap.Swing();
+};
+void()  player_axec4 =  [$axattc4, player_run   ] {self.owner.weaponframe=4;};
 
-void()  player_axed1 =  [$axattd1, player_axed2 ] {self.weaponframe=5;};
-void()  player_axed2 =  [$axattd2, player_axed3 ] {self.weaponframe=6;};
-void()  player_axed3 =  [$axattd3, player_axed4 ] {self.weaponframe=7;axe_c::Swing();};
-void()  player_axed4 =  [$axattd4, player_run   ] {self.weaponframe=8;};
+void()  player_axed1 =  [$axattd1, player_axed2 ] {self.owner.weaponframe=5;};
+void()  player_axed2 =  [$axattd2, player_axed3 ] {self.owner.weaponframe=6;};
+void()  player_axed3 =  [$axattd3, player_axed4 ] 
+{
+	self.owner.weaponframe=7;
+	axe_c weap = (axe_c)self;
+	weap.Swing();
+};
+void()  player_axed4 =  [$axattd4, player_run   ] {self.owner.weaponframe=8;};
 
 
 //============================================================================
 
 
-void() player_nail1   =[$nailatt1, player_nail1] 
-{
-	return;
-};
 
-void() player_nail2   =[$nailatt2, player_nail2] 
-{
-	return;
-};
 
 //============================================================================
 
@@ -250,9 +268,6 @@ void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.weaponframe=3;};
 void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.weaponframe=4;};
 void() player_rocket5   =[$rockatt5, player_rocket6  ] {self.weaponframe=5;};
 void() player_rocket6   =[$rockatt6, player_run  ] {self.weaponframe=6;};
-void(float num_bubbles) DeathBubbles;
-
-
 
 void()  player_pain1 =  [       $pain1, player_pain2    ] {
 	player_c player = (player_c)self;
@@ -358,6 +373,11 @@ class player_c : entity
 	float type_gren1;
 	float type_gren2;
 
+	// scout
+	float dash_cooldown;
+	float is_scanning;
+	float scan_mode;
+
 	get float ammunition_shells =
 	{
 		return ammo_shells;
@@ -391,11 +411,9 @@ class player_c : entity
 		ammo_cells = value > this.class.max_cells ? this.class.max_cells : value;
 	};
 
-
 	weapon_c _current_weapon; // private
 	set weapon_c current_weapon =
 	{
-		bprint(PRINT_HIGH, "current_weapon: ", value.classname, "\n");
 		this.items = this.items - ( this.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
 		_current_weapon = value;
 		player_run();          // get out of any weapon firing states
@@ -980,9 +998,32 @@ class player_c : entity
 
 	nonvirtual void () ImpulseCommands =
 	{
+		if (this.impulse == 0)
+			return;
+
+		bprint(PRINT_HIGH, "impulse: ", ftos(this.impulse), "\n");
 		if (this.impulse <= 8 && this.impulse >= 1)
 		{
 			this.ChangeWeapon(this.impulse);
+		}
+
+		switch (this.impulse)
+		{
+			case TF_DASH:
+				Scout::Dash(this);
+				break;
+			case TF_SCAN:
+				scan_c::ToggleScan(this);
+				break;
+			case TF_SCAN_FRIENDLY:
+				scan_c::ToggleMode(this, SCAN::FRIENDLY);
+				break;
+			case TF_SCAN_ENEMY:
+				scan_c::ToggleMode(this, SCAN::ENEMY);
+				break;
+			case TF_SCAN_SOUND:
+				scan_c::ToggleMode(this, SCAN::SOUND);
+				break;
 		}
 
 		self.impulse = 0;
@@ -1357,6 +1398,19 @@ class player_c : entity
 		self.nextthink = -1;
 		// allow respawn after a certain time
 		self.deadflag = DEAD_DEAD;
+	};
+
+	// weapon ents call these, self is set to weapon ent
+	static void () Anim_Nail1 = [$nailatt1, player_c::Anim_Nail2]
+	{
+		if (!nailgun_c::NailLogic(this))
+			return;
+	};
+
+	static void () Anim_Nail2 = [$nailatt2, player_c::Anim_Nail1]
+	{
+		if (!nailgun_c::NailLogic(this))
+			return;
 	};
 };
 

@@ -32,8 +32,9 @@ enum SEASON
 enumflags ATTRIBUTE
 {
     SCAN,
-    DOUBLEJUMP,
-    DISARM
+    DASH,
+    DISARM,
+    
 };
 
 class player_c;
