@@ -59,39 +59,3 @@ typedef struct
     float illegal_bit;
 } class_t;
 class_t *Classes;
-
-enum SCOUT
-{
-    CLASS = 1,
-    MAXSPEED = 450,
-    MAXSTRAFESPEED = 450,
-    MAXARMORTYPE = .3,
-    INITARMORTYPE = .3,
-    INITARMORCLASS = 0,
-    MAXAMMO_SHOT = 50,
-    MAXAMMO_NAIL = 200,
-    MAXAMMO_CELL = 100,
-    MAXAMMO_ROCKET = 25,
-    INITAMMO_SHOT = 25,
-    INITAMMO_NAIL = 100,
-    INITAMMO_CELL = 50,
-    INITAMMO_ROCKET = 0,
-    INITAMMO_GREN1 = 2,
-    INITAMMO_GREN2 = 3,
-    MAXAMMO_GREN1 = 3,
-    MAXAMMO_GREN2 = 4,
-    WEAPON1 = WEAPON::NAILGUN,
-    WEAPON2 = WEAPON::SHOTGUN,
-    WEAPON3 = WEAPON::AXE,
-    TYPE_GREN1 = GRENADE::FLASH,
-    TYPE_GREN2 = GRENADE::CONCUSSION,
-    ILLEGALBIT = 1, // Legal Playerclass Handling
-    MAXHEALTH = 75,
-    MAXHEALTH_FO = 100,
-    MAXARMOR_FO = 50,
-    MAXARMOR = 25,
-    MAX_GREN1 = 3,
-    MAX_GREN2 = 4,
-    INIT_GREN1 = 2,
-    INIT_GREN2 = 3,
-};

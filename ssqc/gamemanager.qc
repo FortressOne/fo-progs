@@ -12,6 +12,7 @@ typedef struct
     float full_team_score; // every team member carry the total frags for the team
     float override_mapclasses; // ignore directions from maps that ban or limit classes
     float max_classes[NUMBER_OF_CLASSES+1];
+    float scout_dash;
 
 } gamesettings_t;
 gamesettings_t GameSettings;
@@ -47,7 +48,8 @@ class gamemanager_c : entity
         GameSettings.spawn_full = this.GetSetting(world, "sf", "spawnfull", "on");
         GameSettings.team_frags = this.GetSetting(world, "t", "teamfrags", "off");
         GameSettings.full_team_score = this.GetSetting(world, "fts", "fullteamscore", "off");
-        GameSettings.override_mapclasses = GameManager.GetSetting(world, "omc", "override_mapclasses", "off");
+        GameSettings.override_mapclasses = this.GetSetting(world, "omc", "override_mapclasses", "off");
+        GameSettings.scout_dash = this.GetSetting(world, "sd", "scoutdash", "on");
     };
 
     nonvirtual void () PopulatePostClassesSettings = 
@@ -66,9 +68,10 @@ class gamemanager_c : entity
         string st;
 
         st = infokey(ent, ps_short);
-        if (st != "") {
+        if (st == string_null) 
+        {
             st = infokey(ent, ps_setting);
-            if (st != "") {
+            if (st == string_null) {
                 st = ps_default;
             }
         }
@@ -116,7 +119,7 @@ class gamemanager_c : entity
                 tweapon1 = WEAPON::NAILGUN;
                 tweapon2 = WEAPON::SHOTGUN;
                 tweapon3 = WEAPON::AXE;
-                ttf_attributes = ATTRIBUTE::SCAN | ATTRIBUTE::DOUBLEJUMP | ATTRIBUTE::DISARM;
+                ttf_attributes = ATTRIBUTE::SCAN | ATTRIBUTE::DASH | ATTRIBUTE::DISARM;
                 tmax_shells = SCOUT::MAXAMMO_SHOT;
                 tinit_shells = SCOUT::INITAMMO_SHOT;
                 tmax_nails = SCOUT::MAXAMMO_NAIL;
