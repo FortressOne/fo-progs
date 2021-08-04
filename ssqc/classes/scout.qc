@@ -193,6 +193,7 @@ class scan_c : entity
             ent = ent.chain;
         }
 
+        this.scanned_ent = world;
         return FALSE;
     };
 
