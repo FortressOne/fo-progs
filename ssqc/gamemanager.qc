@@ -29,6 +29,12 @@ class gamemanager_c : entity
         this.think = this.FirstFrame;
     };
 
+    static void () Precache_Sounds =
+    {
+        precache_sound(SCOUTSOUNDS::DASH);
+        precache_sound(SCOUTSOUNDS::SCAN);
+    };
+
     nonvirtual void () FirstFrame =
     {
         CSQCManager = spawn(csqcmanager_c);

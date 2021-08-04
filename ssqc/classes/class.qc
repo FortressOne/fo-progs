@@ -28,7 +28,7 @@ enum GRENADE
 typedef struct
 {
     string classname;
-    CLASS class;
+    CLASS class; // dumb
     float max_health;
     float init_armor;
     float max_armor;

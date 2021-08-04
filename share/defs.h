@@ -168,11 +168,6 @@
 #define CHAN_BODY	4
 #define CHAN_NO_PHS_ADD	8
 
-#define ATTN_NONE	0
-#define ATTN_NORM	1
-#define ATTN_IDLE	2
-#define ATTN_STATIC	3
-
 // update types
 
 #define UPDATE_GENERAL	0

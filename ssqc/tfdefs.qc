@@ -9,7 +9,8 @@ typedef void () void_f;
 enum CLASS
 {
     NONE = 0,
-    SCOUT = 1
+    SCOUT = 1,
+    SPY = 8,
 };
 
 // TF 
@@ -34,7 +35,12 @@ enumflags ATTRIBUTE
     SCAN,
     DASH,
     DISARM,
-    
+};
+
+enum SCOUTSOUNDS : string
+{
+    DASH = "dash.wav",
+    SCAN = "misc/basekey.wav",
 };
 
 class player_c;

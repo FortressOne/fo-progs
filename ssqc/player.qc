@@ -373,11 +373,6 @@ class player_c : entity
 	float type_gren1;
 	float type_gren2;
 
-	// scout
-	float dash_cooldown;
-	float is_scanning;
-	float scan_mode;
-
 	get float ammunition_shells =
 	{
 		return ammo_shells;
@@ -433,7 +428,29 @@ class player_c : entity
 	float is_reloading;
 	float is_using_old_impulses;
 
+
+	// scout
+	float dash_cooldown;
+	float is_scanning;
+	float scan_mode;
+
 	// spy
+	float is_disguised; // TODO - maybe not needed due to gets/sets
+	float _disguised_team_no;
+	get float disguised_team_no =
+	{
+		return _disguised_team_no == 0 ? this.tfteam.team_no : _disguised_team_no;
+	};
+	set float disguised_team_no =
+	{
+		if (this.tfteam.team_no != value)
+			is_disguised = TRUE;
+		else
+			is_disguised = FALSE;
+
+		_disguised_team_no = value;
+	};
+
 	float is_feigning;
 
 	// sniper, hwguy
