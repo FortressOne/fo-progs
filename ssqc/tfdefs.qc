@@ -10,6 +10,7 @@ enum CLASS
 {
     NONE = 0,
     SCOUT = 1,
+    MEDIC = 5,
     SPY = 8,
 };
 
@@ -21,6 +22,12 @@ enum TEAM
     RED = 2,
     YELLOW = 3,
     GREEN = 4
+};
+
+enum DIMENSION
+{
+    FLASH = 1, // when flash, dimension see is set to this
+    ALL = 256, // see everything
 };
 
 enum SEASON
@@ -37,10 +44,33 @@ enumflags ATTRIBUTE
     DISARM,
 };
 
-enum SCOUTSOUNDS : string
+enum SOUNDS : string
 {
     DASH = "dash.wav",
     SCAN = "misc/basekey.wav",
+    FLASH = "weapons/flashgrenburst.wav",
+};
+
+enum MODELS : string
+{
+    FLASH = "progs/flashgren.mdl",
+    HANDGRENADE = "progs/hgren2.mdl",
+    BUBBLE = "progs/s_bubble.spr",
+};
+
+enum IMPULSE
+{
+    PRIME_GREN1 = 14,
+    PRIME_GREN2 = 15,
+    THROW_GREN = 16,
+    PRIMETHROW_GREN1 = 17, // Prime and throw grenade type 1 (two clicks)
+    PRIMETHROW_GREN2 = 18, // Prime and throw grenade type 2 (two clicks)
+    SWITCH_GREN_TYPE = 19, // Switch grenade mode 1/2
+    DASH = 41,
+    SCAN = 42,
+    SCAN_ENEMY = 43,
+    SCAN_FRIENDLY = 44,
+    SCAN_SOUND = 45,
 };
 
 class player_c;
@@ -48,8 +78,6 @@ class gamemanager_c;
 gamemanager_c GameManager;
 class team_c;
 team_c *Teams;
-
-
 
 // old tf entity field support, unless we manually process ents raw with __fullspawndata
 .float team_no;

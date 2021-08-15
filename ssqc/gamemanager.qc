@@ -13,6 +13,9 @@ typedef struct
     float override_mapclasses; // ignore directions from maps that ban or limit classes
     float max_classes[NUMBER_OF_CLASSES+1];
     float scout_dash;
+    float flash_time;
+    float medic_no_cuss;
+    float concussion_length;
 
 } gamesettings_t;
 gamesettings_t GameSettings;
@@ -23,6 +26,19 @@ class gamemanager_c : entity
     float intermission_exittime;
     string nextmap;
 
+    float _flash_dimension;
+    get float flash_dimension =
+    {
+        return _flash_dimension;
+    };
+    set float flash_dimension =
+    {
+        if (value == 8)
+            _flash_dimension = DIMENSION::FLASH;
+        else
+            _flash_dimension = value;
+    };
+
     void () gamemanager_c =
     {
         this.nextthink = time + 0.01;
@@ -31,8 +47,9 @@ class gamemanager_c : entity
 
     static void () Precache_Sounds =
     {
-        precache_sound(SCOUTSOUNDS::DASH);
-        precache_sound(SCOUTSOUNDS::SCAN);
+        precache_sound(SOUNDS::DASH);
+        precache_sound(SOUNDS::SCAN);
+        precache_sound(SOUNDS::FLASH);
     };
 
     nonvirtual void () FirstFrame =
@@ -56,6 +73,9 @@ class gamemanager_c : entity
         GameSettings.full_team_score = this.GetSetting(world, "fts", "fullteamscore", "off");
         GameSettings.override_mapclasses = this.GetSetting(world, "omc", "override_mapclasses", "off");
         GameSettings.scout_dash = this.GetSetting(world, "sd", "scoutdash", "on");
+        GameSettings.flash_time = this.GetSetting(world, "ff", "fo_flashtime", "2");
+        GameSettings.medic_no_cuss = this.GetSetting(world, "mnc", "medicnocuss", "on");
+        GameSettings.concussion_length = this.GetSetting(world, "cgt", "cussgrentime", "on"); // bad naming
     };
 
     nonvirtual void () PopulatePostClassesSettings = 

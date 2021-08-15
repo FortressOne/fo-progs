@@ -288,7 +288,6 @@ void() worldspawn =
 	precache_model ("progs/gib2.mdl");
 	precache_model ("progs/gib3.mdl");
 
-	precache_model ("progs/s_bubble.spr");  // drowning bubbles
 	precache_model ("progs/s_explod.spr");  // sprite explosion
 
 	precache_model ("progs/v_axe.mdl");
@@ -421,3 +420,18 @@ void(entity ent) CopyToBodyQue =
 };
 
 
+
+// this is used for spawning world objects on map load.. not player, projectiles etc - also disables the engine's conditional spawning based on spawnflags, you're expected to do that part yourself
+void(void() fnc)CheckSpawn = {
+    if(fnc)
+    {
+		// ensure doors etc can be seen whilst flashed
+        self.dimension_seen = DMN_NOFLASH | DMN_FLASH;
+        //bprint(PRINT_HIGH, strcat("spawning: ", self.classname, "\n"));
+        fnc();
+    }
+    else 
+    {
+        remove(self);
+    }
+};

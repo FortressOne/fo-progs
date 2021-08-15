@@ -52,8 +52,9 @@ class item_artifact_invulnerability : item_powerup_c
 
     virtual void () touch =
     {
-        other.invincible_time = TRUE;
-        other.invincible_finished = this.cnt;
+        player_c player = (player_c)other;
+        player.is_invincible = TRUE;
+        player.invincible_finished = this.cnt;
 
         item_powerup_c::touch();
     };

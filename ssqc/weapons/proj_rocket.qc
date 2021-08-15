@@ -37,7 +37,7 @@ class proj_rocket_c : proj_c
 
         // don't do radius damage to the other, because all the damage
         // was done in the impact
-        T_RadiusDamage (this, this.owner, 120, other, "rocket");
+        T_RadiusDamage (this, this.owner, 120, other);
 
         this.origin = this.origin - 8 * normalize(this.velocity);
 

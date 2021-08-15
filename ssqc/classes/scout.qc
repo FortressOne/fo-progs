@@ -1,7 +1,7 @@
 
 enum SCOUT
 {
-    CLASS = 1,
+    CLASS = CLASS::SCOUT,
     MAXSPEED = 450,
     MAXSTRAFESPEED = 450,
     MAXARMORTYPE = .3,
@@ -52,7 +52,7 @@ class Scout : entity
         makevectors(player.angles);
         player.velocity = v_forward * 540;
         player.velocity_z = 181;
-        sound(player, CHAN_BODY, SCOUTSOUNDS::DASH, 1, ATTN_NORM);
+        sound(player, CHAN_BODY, SOUNDS::DASH, 1, ATTN_NORM);
     };
 };
 
@@ -79,7 +79,7 @@ class scan_c : entity
 
         scan_cost = 2;
         scan_range = 2500;
-        scan_sound = SCOUTSOUNDS::SCAN;
+        scan_sound = SOUNDS::SCAN;
     };
 
     nonvirtual void (float silent) StopScanning =
@@ -124,6 +124,8 @@ class scan_c : entity
             else
                 break;
         }
+
+        MenuManager.RefreshScreen((player_c)this.owner);
     };
 
     nonvirtual float (float scan_radius) Scan =

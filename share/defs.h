@@ -230,12 +230,6 @@
 #define TF_WEAPNEXT             11  // Selects the next weapon slot
 #define TF_WEAPPREV             12  // Selects the previous weapon slot
 #define TF_WEAPLAST             13  // Selects the last used weapon slot
-#define IMP_USESKILLONE         14  
-#define IMP_USESKILLTWO         15  
-#define IMP_USESKILL            16  // Use active skill
-#define IMP_USESTART            17  // +use
-#define IMP_USEEND              18  // -use
-#define IMP_READY               19  // ready
 #define TF_QUICKSLOT1           20  // Fire weapon slot 1 and then switch back to current weapon
 #define TF_QUICKSLOT2           21  // Fire weapon slot 2 and then switch back to current weapon
 #define TF_QUICKSLOT3           22  // Fire weapon slot 3 and then switch back to current weapon
@@ -257,11 +251,6 @@
 #define TF_ID                   38  // Identify player/object in front of player
 #define TF_ID_TEAM              39  // Identify team player/object in front of player
 #define TF_ID_ENEMY             40  // Identify enemy player/object in front of player
-#define TF_DASH                 41  // Scout: Initialize a forward bunnyhop
-#define TF_SCAN                 42  // Scout: Toggle Scanner on/off
-#define TF_SCAN_ENEMY           43  // Scout: Toggle scanning of enemies
-#define TF_SCAN_FRIENDLY        44  // Scout: Toggle scanning of friendlies
-#define TF_SCAN_SOUND           45  // Scout: Toggle scanner sound
 #define TF_ZOOMTOGGLE           46  // Sniper: Toggle zoom mode on/off
 #define TF_ZOOMIN               47  // Sniper: Zoom in (while zoom mode is on)
 #define TF_ZOOMOUT              48  // Sniper: Zoom out (while zoom mode is on)
@@ -667,11 +656,3 @@
 #define MSG_VOTE_UPDATE     19
 #define MSG_VOTE_MAP_ADD    20
 #define MSG_VOTE_MAP_DELETE 21
-
-
-// impulses
-#define TF_DASH                 41  // Scout: Initialize a forward bunnyhop
-#define TF_SCAN                 42  // Scout: Toggle Scanner on/off
-#define TF_SCAN_ENEMY           43  // Scout: Toggle scanning of enemies
-#define TF_SCAN_FRIENDLY        44  // Scout: Toggle scanning of friendlies
-#define TF_SCAN_SOUND           45  // Scout: Toggle scanner sound
