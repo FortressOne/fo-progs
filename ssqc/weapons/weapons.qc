@@ -199,7 +199,7 @@ void() GrenadeExplode =
 	}
 	self.voided = 1;
 
-	T_RadiusDamage (self, self.owner, 120, world, "grenade");
+	T_RadiusDamage (self, self.owner, 120, world);
 
 	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
 	WriteByte (MSG_MULTICAST, TE_EXPLOSION);

@@ -59,6 +59,7 @@ class menumanager_c : entity {
         player.impulse = 0;
     };
 
+// TODO - force update of status bar
     nonvirtual void (player_c player) RefreshScreen = {
         if (player.status_string_refresh_time > time)
         {

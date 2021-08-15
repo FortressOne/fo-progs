@@ -1,7 +1,7 @@
 
 enum SCOUT
 {
-    CLASS = 1,
+    CLASS = CLASS::SCOUT,
     MAXSPEED = 450,
     MAXSTRAFESPEED = 450,
     MAXARMORTYPE = .3,
@@ -52,10 +52,8 @@ class Scout : entity
         makevectors(player.angles);
         player.velocity = v_forward * 540;
         player.velocity_z = 181;
-        sound(player, CHAN_BODY, "dash.wav", 1, ATTN_NORM);
+        sound(player, CHAN_BODY, SOUNDS::DASH, 1, ATTN_NORM);
     };
-
-    
 };
 
 enumflags SCAN
@@ -63,13 +61,16 @@ enumflags SCAN
     FRIENDLY,
     ENEMY,
     SOUND,
-    
 };
 
 class scan_c : entity
 {
     float scan_cost;
     float scan_range;
+    entity scanned_ent; // TODO - for status bar etc
+    string scan_sound;
+    float scan_mode;
+
     void () scan_c =
     {
         ((player_c)owner).is_scanning = TRUE;
@@ -77,7 +78,8 @@ class scan_c : entity
         nextthink = time + 2;
 
         scan_cost = 2;
-        scan_range = 2000;
+        scan_range = 2500;
+        scan_sound = SOUNDS::SCAN;
     };
 
     nonvirtual void (float silent) StopScanning =
@@ -90,7 +92,14 @@ class scan_c : entity
 
     virtual void () think =
     {
+        this.nextthink = time + 2;
         player_c player = (player_c)this.owner;
+
+        if (!(player.scan_mode & SCAN::FRIENDLY) && !(player.scan_mode & SCAN::ENEMY))
+        {
+            sprint(player, PRINT_HIGH, "No target specified\n");
+            player.is_scanning = FALSE;
+        }
 
         if (!player.is_scanning)
         {
@@ -103,10 +112,91 @@ class scan_c : entity
             remove(this);
             return;
         }
+        
+        // ents returned in order of entity number, so we fake distance ordering by increasing radius
+        float scan_radius = 0;
+        while (scan_radius <= this.scan_range)
+        {
+            if (!this.Scan(scan_radius))
+            {
+                scan_radius += 100;
+            }
+            else
+                break;
+        }
 
-tofinish
+        MenuManager.RefreshScreen((player_c)this.owner);
+    };
 
-        this.nextthink = time + 2;
+    nonvirtual float (float scan_radius) Scan =
+    {
+        entity ent = findradius(this.owner.origin, scan_radius);
+        while (ent)
+        {
+            if (ent != this)
+            {
+                player_c own = (player_c)this.owner;
+                float tno = 0;
+                switch (ent.classname)
+                {
+                    case "item_tfgoal":
+                        // TODO - tfgoals
+                        break;
+                    case "building_sentrygun":
+                        // TODO - sentry class
+                        break;
+                    case "player":
+                        player_c player = (player_c)ent;
+                        if (player.class.class == CLASS::SPY)
+                        {
+                            if (player.tfteam.team_no == own.tfteam.team_no)
+                            {
+                                tno = player.tfteam.team_no;
+                            }
+                            else
+                            {
+                                // TODO - invis, if we ever bother writing it considering no one uses it
+                                if (player.is_feigning)
+                                {
+                                    ent = ent.chain;
+                                    continue;
+                                }
+
+                                tno = player.disguised_team_no;
+                            }
+                        }
+                        tno = player.tfteam.team_no;
+                        break;
+                }
+
+                float true_scan = FALSE;
+                if (own.tfteam.team_no == tno)
+                {
+                    if (this.scan_mode & SCAN::FRIENDLY)
+                    {
+                        true_scan = TRUE;
+                    }
+                }
+                else if (this.scan_mode & SCAN::ENEMY)
+                {
+                    true_scan = TRUE;
+                }
+
+                if (true_scan)
+                {
+                    this.scanned_ent = ent;
+                    te_lightning1(this.owner, this.owner.origin, ent.origin); // TODO - do we need to trim begin/end of beam?
+                    if (this.scan_mode && SCAN::SOUND)
+                        sound(this.owner, CHAN_AUTO, this.scan_sound, 1, ATTN_NONE, 100, SOUNDFLAG_UNICAST, 0);
+                        
+                    return TRUE;
+                }
+            }
+            ent = ent.chain;
+        }
+
+        this.scanned_ent = world;
+        return FALSE;
     };
 
     static void (player_c player) ToggleScan =

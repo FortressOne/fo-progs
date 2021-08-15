@@ -25,16 +25,6 @@
 
 */
 
-void() T_MissileTouch;
-void() info_player_start;
-void(entity inflictor, entity attacker, float damage, entity ignore, string dtype) T_RadiusDamage;
-
-/*SERVER
-void() monster_death_use;
-*/
-
-//============================================================================
-
 /*
 ============
 CanDamage
@@ -128,7 +118,6 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
 
 // used by buttons and triggers to set activator for target firing
 	damage_attacker = attacker;
-
 
 // check for quad damage powerup on the attacker
 	if (attacker.super_damage_finished > time && inflictor.classname != "door")
@@ -236,7 +225,7 @@ float (entity targ, entity inflictor, entity attacker) GetDeathType =
 T_RadiusDamage
 ============
 */
-void(entity inflictor, entity attacker, float damage, entity ignore, string dtype) T_RadiusDamage =
+void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDamage =
 {
 	local   float   points;
 	local   entity  head;
@@ -262,7 +251,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore, string dtyp
 				{
 					if (CanDamage (head, inflictor))
 					{
-						head.deathtype = dtype;
+						head.deathtype = inflictor.classname;
 						T_Damage (head, inflictor, attacker, points);
 					}
 				}

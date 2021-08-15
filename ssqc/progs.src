@@ -36,6 +36,10 @@ weapons/assaultcannon.qc
 weapons/rocketlauncher.qc
 weapons/railgun.qc
 
+weapons/handgrenades/handgrenade.qc
+weapons/handgrenades/flashgrenade.qc
+weapons/handgrenades/concussiongrenade.qc
+
 
 
 entities/trigger_changelevel.qc
@@ -49,6 +53,7 @@ entities/item_sigil.qc
 entities/item_powerup.qc
 entities/item_backpack.qc
 entities/misc_entities.qc
+entities/misc_bubble.qc
 entities/func_train.qc
 entities/func_plat.qc
 entities/func_button.qc

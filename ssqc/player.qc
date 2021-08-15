@@ -360,6 +360,31 @@ void()  player_die_ax9  =       [       $axdeth9,       player_die_ax9  ] {playe
 
 class player_c : entity 
 {
+	float _is_invincible;
+	get float is_invincible =
+	{
+		return _is_invincible;
+	};
+	set float is_invincible =
+	{
+		if (value)
+		{
+			invincible_time = 1;
+			items = items | IT_INVULNERABILITY;
+			effects = effects | EF_DIMLIGHT | EF_RED;
+		}
+		else
+		{
+			items = items - IT_INVULNERABILITY;
+			effects = effects - (effects & EF_DIMLIGHT);
+			effects = effects - (effects & EF_RED);
+			invincible_finished = 0;
+			invincible_time = 0;
+		}
+
+		_is_invincible = value;
+	};
+
 	team_c tfteam;
 	class_t *class;
 	float menu;
@@ -370,13 +395,6 @@ class player_c : entity
 	float tf_attributes;
 	float ammunition_gren1;
 	float ammunition_gren2;
-	float type_gren1;
-	float type_gren2;
-
-	// scout
-	float dash_cooldown;
-	float is_scanning;
-	float scan_mode;
 
 	get float ammunition_shells =
 	{
@@ -429,11 +447,71 @@ class player_c : entity
 	weapon_c weapon2;
 	weapon_c weapon3;
 	weapon_c weapon4;
+	handgrenade_c primed_grenade;
 
 	float is_reloading;
 	float is_using_old_impulses;
 
+
+	// scout
+	float dash_cooldown;
+	float is_scanning;
+	float scan_mode;
+	float flash_time; // time left on flash amount
+
+	float _is_flashed;
+	get float is_flashed =
+	{
+		return _is_flashed;
+	};
+	set float is_flashed =
+	{
+		if (value)
+		{
+			GameManager.flash_dimension = GameManager.flash_dimension + 1;
+			float dmn = 1<<GameManager.flash_dimension;
+			this.dimension_see = DIMENSION::FLASH | dmn;
+			this.dimension_seen = dmn | DIMENSION::ALL;
+		}
+		else
+		{
+			this.dimension_see = DIMENSION::ALL;
+			this.dimension_seen = DIMENSION::ALL;
+		}
+	};
+
+	float _is_concussed;
+	get float is_concussed =
+	{
+		return _is_concussed;
+	};
+	set float is_concussed =
+	{
+		if (value == FALSE)
+		{
+			sprint(this, PRINT_HIGH, "Your head feels better now\n");
+		}
+
+		_is_concussed = value;
+	};
+
 	// spy
+	float is_disguised; // TODO - maybe not needed due to gets/sets
+	float _disguised_team_no;
+	get float disguised_team_no =
+	{
+		return _disguised_team_no == 0 ? this.tfteam.team_no : _disguised_team_no;
+	};
+	set float disguised_team_no =
+	{
+		if (this.tfteam.team_no != value)
+			is_disguised = TRUE;
+		else
+			is_disguised = FALSE;
+
+		_disguised_team_no = value;
+	};
+
 	float is_feigning;
 
 	// sniper, hwguy
@@ -461,6 +539,53 @@ class player_c : entity
 		bprint(PRINT_HIGH, this.netname, " has joined the ", teamName, " team!\n");
 
 		this.SetTeamName();
+	};
+
+	nonvirtual void (float choice) PrimeThrowGrenade =
+	{
+		if (this.primed_grenade)
+		{
+			primed_grenade.Throw();
+			return;
+		}
+
+		PrimeGrenade(choice);
+	};
+
+	nonvirtual void (float choice) PrimeGrenade =
+	{
+		float *ammo = __NULL__;
+		GRENADE type = __NULL__;
+		if (choice == 1)
+		{
+			ammo = &(this.ammunition_gren1);
+			type = this.class.type_gren1;
+		}
+		else if (choice == 2)
+		{
+			ammo = &(this.ammunition_gren2);
+			type = this.class.type_gren2;
+		}
+
+		if (ammo > 0)
+		{
+			ammo = ammo - 1;
+			switch (type)
+			{
+				case GRENADE::FLASH:
+					flashgrenade_c::Prime(this);
+					break;
+				case GRENADE::CONCUSSION:
+					concussiongrenade_c::Prime(this);
+					break;
+			}
+		}
+	};
+
+	nonvirtual void () ThrowGrenade =
+	{
+		if (this.primed_grenade)
+			primed_grenade.Throw();
 	};
 
 	nonvirtual void () SetTeamName =
@@ -600,7 +725,7 @@ class player_c : entity
 				sound (this, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
 		}
 
-		this.jump_flag = self.velocity_z;
+		this.jump_flag = this.velocity_z;
 
 		this.CheckPowerups();
 
@@ -628,160 +753,148 @@ class player_c : entity
 	Check for turning off powerups
 	================
 	*/
-	nonvirtual void() CheckPowerups =
+	nonvirtual void () CheckPowerups =
 	{
-		if (self.health <= 0)
+		if (this.health <= 0)
 			return;
 
-	// invisibility
-		if (self.invisible_finished)
+		// invisibility
+		if (this.invisible_finished)
 		{
-	// sound and screen flash when items starts to run out
-			if (self.invisible_sound < time)
+			// sound and screen flash when items starts to run out
+			if (this.invisible_sound < time)
 			{
-				sound (self, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
-				self.invisible_sound = time + ((random() * 3) + 1);
+				sound (this, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
+				this.invisible_sound = time + ((random() * 3) + 1);
 			}
 
-			if (self.invisible_finished < time + 3)
+			if (this.invisible_finished < time + 3)
 			{
-				if (self.invisible_time == 1)
+				if (this.invisible_time == 1)
 				{
-					sprint (self, PRINT_HIGH, "Ring of Shadows magic is fading\n");
-					stuffcmd (self, "bf\n");
-					sound (self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
-					self.invisible_time = time + 1;
+					sprint (this, PRINT_HIGH, "Ring of Shadows magic is fading\n");
+					stuffcmd (this, "bf\n");
+					sound (this, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
+					this.invisible_time = time + 1;
 				}
 				
-				if (self.invisible_time < time)
+				if (this.invisible_time < time)
 				{
-					self.invisible_time = time + 1;
-					stuffcmd (self, "bf\n");
+					this.invisible_time = time + 1;
+					stuffcmd (this, "bf\n");
 				}
 			}
 
-			if (self.invisible_finished < time)
+			if (this.invisible_finished < time)
 			{       // just stopped
-				self.items = self.items - IT_INVISIBILITY;
-				self.invisible_finished = 0;
-				self.invisible_time = 0;
+				this.items = this.items - IT_INVISIBILITY;
+				this.invisible_finished = 0;
+				this.invisible_time = 0;
 			}
 			
-		// use the eyes
-			self.frame = 0;
-			self.modelindex = modelindex_eyes;
+			// use the eyes
+			this.frame = 0;
+			this.modelindex = modelindex_eyes;
 		}
 		else
-			self.modelindex = modelindex_player;    // don't use eyes
+			this.modelindex = modelindex_player;    // don't use eyes
 
-	// invincibility
-		if (self.invincible_finished)
+		// invincibility
+		if (this.invincible_finished)
 		{
-	// sound and screen flash when items starts to run out
-			if (self.invincible_finished < time + 3)
+			// sound and screen flash when items starts to run out
+			if (this.invincible_finished < time + 3)
 			{
-				if (self.invincible_time == 1)
+				if (this.invincible_time == 1)
 				{
-					sprint (self, PRINT_HIGH, "Protection is almost burned out\n");
-					stuffcmd (self, "bf\n");
-					sound (self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
-					self.invincible_time = time + 1;
+					sprint (this, PRINT_HIGH, "Protection is almost burned out\n");
+					stuffcmd (this, "bf\n");
+					sound (this, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
+					this.invincible_time = time + 1;
 				}
 				
-				if (self.invincible_time < time)
+				if (this.invincible_time < time)
 				{
-					self.invincible_time = time + 1;
-					stuffcmd (self, "bf\n");
+					this.invincible_time = time + 1;
+					stuffcmd (this, "bf\n");
 				}
 			}
 			
-			if (self.invincible_finished < time)
-			{       // just stopped
-				self.items = self.items - IT_INVULNERABILITY;
-				self.invincible_time = 0;
-				self.invincible_finished = 0;
-			}
-			if (self.invincible_finished > time)
+			if (this.invincible_finished < time)
 			{
-				self.effects = self.effects | EF_DIMLIGHT;
-				self.effects = self.effects | EF_RED;
-			}
-			else
-			{
-				self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-				self.effects = self.effects - (self.effects & EF_RED);
-			}
+				this.is_invincible = FALSE;
+			} 
 		}
 
-	// super damage
-		if (self.super_damage_finished)
+		// super damage
+		if (this.super_damage_finished)
 		{
-	// sound and screen flash when items starts to run out
-			if (self.super_damage_finished < time + 3)
+			// sound and screen flash when items starts to run out
+			if (this.super_damage_finished < time + 3)
 			{
-				if (self.super_time == 1)
+				if (this.super_time == 1)
 				{
 					if (deathmatch == 4)
-						sprint (self, PRINT_HIGH, "OctaPower is wearing off\n");
+						sprint (this, PRINT_HIGH, "OctaPower is wearing off\n");
 					else
-						sprint (self, PRINT_HIGH, "Quad Damage is wearing off\n");
-					stuffcmd (self, "bf\n");
-					sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
-					self.super_time = time + 1;
+						sprint (this, PRINT_HIGH, "Quad Damage is wearing off\n");
+					stuffcmd (this, "bf\n");
+					sound (this, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
+					this.super_time = time + 1;
 				}         
 				
-				if (self.super_time < time)
+				if (this.super_time < time)
 				{
-					self.super_time = time + 1;
-					stuffcmd (self, "bf\n");
+					this.super_time = time + 1;
+					stuffcmd (this, "bf\n");
 				}
 			}
 
-			if (self.super_damage_finished < time)
+			if (this.super_damage_finished < time)
 			{       // just stopped
-				self.items = self.items - IT_QUAD;
-				self.super_damage_finished = 0;
-				self.super_time = 0;
+				this.items = this.items - IT_QUAD;
+				this.super_damage_finished = 0;
+				this.super_time = 0;
 			}
-			if (self.super_damage_finished > time)
+			if (this.super_damage_finished > time)
 			{
-				self.effects = self.effects | EF_DIMLIGHT;
-				self.effects = self.effects | EF_BLUE;
+				this.effects = this.effects | EF_DIMLIGHT;
+				this.effects = this.effects | EF_BLUE;
 			}
 			else
 			{
-				self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-				self.effects = self.effects - (self.effects & EF_BLUE);
+				this.effects = this.effects - (this.effects & EF_DIMLIGHT);
+				this.effects = this.effects - (this.effects & EF_BLUE);
 			}
 		}       
 
-	// suit 
-		if (self.radsuit_finished)
+		// suit 
+		if (this.radsuit_finished)
 		{
-			self.air_finished = time + 12;          // don't drown
-	// sound and screen flash when items starts to run out
-			if (self.radsuit_finished < time + 3)
+			this.air_finished = time + 12;          // don't drown
+			// sound and screen flash when items starts to run out
+			if (this.radsuit_finished < time + 3)
 			{
-				if (self.rad_time == 1)
+				if (this.rad_time == 1)
 				{
-					sprint (self, PRINT_HIGH, "Air supply in Biosuit expiring\n");
-					stuffcmd (self, "bf\n");
-					sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
-					self.rad_time = time + 1;
+					sprint (this, PRINT_HIGH, "Air supply in Biosuit expiring\n");
+					stuffcmd (this, "bf\n");
+					sound (this, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
+					this.rad_time = time + 1;
 				}
 				
-				if (self.rad_time < time)
+				if (this.rad_time < time)
 				{
-					self.rad_time = time + 1;
-					stuffcmd (self, "bf\n");
+					this.rad_time = time + 1;
+					stuffcmd (this, "bf\n");
 				}
 			}
 
-			if (self.radsuit_finished < time)
+			if (this.radsuit_finished < time)
 			{       // just stopped
-				self.items = self.items - IT_SUIT;
-				self.rad_time = 0;
-				self.radsuit_finished = 0;
+				this.items = this.items - IT_SUIT;
+				this.rad_time = 0;
+				this.radsuit_finished = 0;
 			}
 		}       
 	};
@@ -1001,27 +1114,42 @@ class player_c : entity
 		if (this.impulse == 0)
 			return;
 
-		bprint(PRINT_HIGH, "impulse: ", ftos(this.impulse), "\n");
-		if (this.impulse <= 8 && this.impulse >= 1)
+		IMPULSE imp = (IMPULSE)this.impulse;
+		if (imp<= 8 && imp >= 1)
 		{
-			this.ChangeWeapon(this.impulse);
+			this.ChangeWeapon(imp);
 		}
 
-		switch (this.impulse)
+		switch (imp)
 		{
-			case TF_DASH:
+			case IMPULSE::PRIME_GREN1:
+				this.PrimeGrenade(1);
+				break;
+			case IMPULSE::PRIME_GREN2:
+				this.PrimeGrenade(2);
+				break;
+			case IMPULSE::THROW_GREN:
+				this.ThrowGrenade();
+				break;
+			case IMPULSE::PRIMETHROW_GREN1:
+				this.PrimeThrowGrenade(1);
+				break;
+			case IMPULSE::PRIMETHROW_GREN2:
+				this.PrimeThrowGrenade(2);
+				break;
+			case IMPULSE::DASH:
 				Scout::Dash(this);
 				break;
-			case TF_SCAN:
+			case IMPULSE::SCAN:
 				scan_c::ToggleScan(this);
 				break;
-			case TF_SCAN_FRIENDLY:
+			case IMPULSE::SCAN_FRIENDLY:
 				scan_c::ToggleMode(this, SCAN::FRIENDLY);
 				break;
-			case TF_SCAN_ENEMY:
+			case IMPULSE::SCAN_ENEMY:
 				scan_c::ToggleMode(this, SCAN::ENEMY);
 				break;
-			case TF_SCAN_SOUND:
+			case IMPULSE::SCAN_SOUND:
 				scan_c::ToggleMode(this, SCAN::SOUND);
 				break;
 		}
@@ -1062,8 +1190,6 @@ class player_c : entity
 		this.ammunition_cells = this.class.init_cells;
 		this.ammunition_gren1 = this.class.init_gren1;
 		this.ammunition_gren2 = this.class.init_gren2;
-		this.type_gren1 = this.class.type_gren1;
-		this.type_gren2 = this.class.type_gren2;
 		this.tf_attributes = this.class.tf_attributes;
 
 		if (this.weapon1)
@@ -1123,6 +1249,8 @@ class player_c : entity
 		this.origin = spot.origin + '0 0 1';
 		this.angles = spot.angles;
 		this.fixangle = TRUE;           // turn this way immediately
+
+		this.is_flashed = FALSE;
 
 	// oh, this is a hack!
 		setmodel(this, "progs/eyes.mdl");
@@ -1270,7 +1398,7 @@ class player_c : entity
 		// water death sounds
 		if (self.waterlevel == 3)
 		{
-			DeathBubbles(5);
+			bubble_spawner_c::Spawn(5, this);
 			sound (self, CHAN_VOICE, "player/h2odeath.wav", 1, ATTN_NONE);
 			return;
 		}
@@ -1339,7 +1467,7 @@ class player_c : entity
 			case CONTENT_WATER:
 				if (this.waterlevel == 3)
 				{
-					DeathBubbles(1);
+					bubble_spawner_c::Spawn(1, this);
 					if (random() > 0.5)
 						sound (self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
 					else
@@ -1412,46 +1540,6 @@ class player_c : entity
 		if (!nailgun_c::NailLogic(this))
 			return;
 	};
-};
-
-void() DeathBubblesSpawn =
-{
-	local entity    bubble;
-	if (self.owner.waterlevel != 3)
-		return;
-	bubble = spawn();
-	setmodel (bubble, "progs/s_bubble.spr");
-	setorigin (bubble, self.owner.origin + '0 0 24');
-	bubble.movetype = MOVETYPE_NOCLIP;
-	bubble.solid = SOLID_NOT;
-	bubble.velocity = '0 0 15';
-	bubble.nextthink = time + 0.5;
-	bubble.think = bubble_bob;
-	bubble.classname = "bubble";
-	bubble.frame = 0;
-	bubble.cnt = 0;
-	setsize (bubble, '-8 -8 -8', '8 8 8');
-	self.nextthink = time + 0.1;
-	self.think = DeathBubblesSpawn;
-	self.air_finished = self.air_finished + 1;
-	if (self.air_finished >= self.bubble_count)
-		remove(self);
-};
-
-void(float num_bubbles) DeathBubbles =
-{
-	local entity    bubble_spawner;
-	
-	bubble_spawner = spawn();
-	setorigin (bubble_spawner, self.origin);
-	bubble_spawner.movetype = MOVETYPE_NONE;
-	bubble_spawner.solid = SOLID_NOT;
-	bubble_spawner.nextthink = time + 0.1;
-	bubble_spawner.think = DeathBubblesSpawn;
-	bubble_spawner.air_finished = 0;
-	bubble_spawner.owner = self;
-	bubble_spawner.bubble_count = num_bubbles;
-	return;
 };
 
 vector(float dm) VelocityForDamage =

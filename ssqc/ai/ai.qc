@@ -71,7 +71,7 @@ moving towards it, change the next destination and continue.
 */
 void() t_movetarget =
 {
-local entity    temp;
+	local entity    temp;
 
 	if (other.movetarget != self)
 		return;
