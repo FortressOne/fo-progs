@@ -430,9 +430,11 @@ class player_c : entity
 	};
 
 	weapon_c _current_weapon; // private
+	weapon_c last_weapon;
 	set weapon_c current_weapon =
 	{
 		this.items = this.items - ( this.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+		last_weapon = _current_weapon;
 		_current_weapon = value;
 		player_run();          // get out of any weapon firing states
 		this.currentammo = value.ammo_count;
@@ -449,7 +451,25 @@ class player_c : entity
 	weapon_c weapon4;
 	handgrenade_c primed_grenade;
 
-	float is_reloading;
+	float _is_reloading;
+	get float is_reloading =
+	{
+		return _is_reloading;
+	};
+	set float is_reloading =
+	{
+		if (value == TRUE)
+		{
+			this.weaponmodel = "";
+		}
+		else
+		{
+			this.weaponmodel = this.current_weapon.weaponmodel;
+			sprint(this, PRINT_HIGH, "Finished reloading\n");
+		}
+
+		_is_reloading = value;
+	};
 	float is_using_old_impulses;
 
 
@@ -1063,6 +1083,12 @@ class player_c : entity
             item_artifact_super_damage::ShootSound(this);
             this.current_weapon.Attack();
         }
+
+		// check for reload
+		if (this.current_weapon.clip_left == 0 && this.current_weapon.clip_size > 0)
+		{
+			this.current_weapon.Reload();
+		}
     };
 
 	nonvirtual void (float input) ChangeWeapon =

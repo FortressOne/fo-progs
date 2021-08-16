@@ -14,6 +14,8 @@ class weapon_c : entity
     float ammo_per_shot;
     float attack_finish_delay;
     float clip_size;
+    float clip_left;
+    float reload_time;
     float weapon_type;
 
     virtual void_f animation_func = __NULL__;
@@ -33,6 +35,11 @@ class weapon_c : entity
                 return player.ammunition_cells;
         }
         return 0;
+    };
+
+    void () weapon_c =
+    {
+        clip_left = clip_size;
     };
 
     static weapon_c (WEAPON weap, entity player) spawn =
@@ -73,9 +80,83 @@ class weapon_c : entity
         return TRUE;
     };
 
+    nonvirtual void () Reload =
+    {
+        player_c player = (player_c)this.owner;
+        if (player.is_reloading)
+            return;
+
+        if (this.clip_left == this.clip_size)
+        {
+            sprint(player, PRINT_HIGH, "Clip full\n");
+            return;
+        }
+
+        string ammo_type_string = "";
+        switch (this.ammo_type)
+        {
+            case IT_SHELLS:
+                ammo_type_string = "shells";
+                break;
+            case IT_NAILS:
+                ammo_type_string = "nails";
+                break;
+            case IT_ROCKETS:
+                if (this.weapon_type == WEAPON::GRENADELAUNCHER)
+                {
+                    ammo_type_string = "grenades";
+                }
+                else
+                {
+                    ammo_type_string = "rockets";
+                }
+                break;
+            case IT_CELLS:
+                ammo_type_string = "cells";
+                break;
+        }
+
+        float ammo_left = this.ammo_count;
+
+        if (this.clip_left == ammo_left)
+        {
+            sprint(player, PRINT_HIGH, strcat("All ", ammo_type_string, " are in the clip\n"));
+            return;
+        }
+
+        if (ammo_left <= 0)
+        {
+            sprint(player, PRINT_HIGH, "Out of ", ammo_type_string, "\n");
+            return;
+        }
+
+        float amount = this.clip_size - this.clip_left;
+        if (amount > ammo_left)
+            amount = ammo_left;
+
+        float time_to_reload = this.reload_time - (1 - (amount / this.clip_size));
+        sprint(player, PRINT_HIGH, strcat("Reloading ", this.netname, "...\n"));
+        entity timer = ::spawn();
+        timer.owner = this;
+        timer.nextthink = time + time_to_reload;
+        timer.think = weapon_c::ReloadNow;
+        player.is_reloading = TRUE;
+    };
+
+    static void () ReloadNow =
+    {
+        weapon_c weap = (weapon_c)self.owner;
+        weap.clip_left = weap.clip_size;
+        player_c player = (player_c)weap.owner;
+        player.is_reloading = FALSE;
+    };
+
     virtual float () Attack = 
     {
         player_c player = (player_c)this.owner;
+        if (player.is_reloading)
+            return FALSE;
+
         if (!this.HasAmmo())
         {
             player.current_weapon = player.GetBestWeapon();
@@ -97,7 +178,7 @@ class weapon_c : entity
         return TRUE;
     };
 
-    static void (entity p, entity w) AdjustAmmo =
+    nonvirtual void (entity p, entity w) AdjustAmmo =
     {
         player_c player = (player_c)p;
         weapon_c weapon = (weapon_c)w;
@@ -117,6 +198,8 @@ class weapon_c : entity
                 player.currentammo = player.ammunition_cells = player.ammunition_cells - weapon.ammo_per_shot;
                 break;
         }
+
+        weapon.clip_left = weapon.clip_left - weapon.ammo_per_shot;
     };
 
     nonvirtual void(float damage, vector dir) TraceAttack =

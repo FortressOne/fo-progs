@@ -49,6 +49,7 @@ enum SOUNDS : string
     DASH = "dash.wav",
     SCAN = "misc/basekey.wav",
     FLASH = "weapons/flashgrenburst.wav",
+    SHOTGUN_SHOOT = "weapons/guncock.wav"
 };
 
 enum MODELS : string
@@ -56,6 +57,7 @@ enum MODELS : string
     FLASH = "progs/flashgren.mdl",
     HANDGRENADE = "progs/hgren2.mdl",
     BUBBLE = "progs/s_bubble.spr",
+    VIEW_SHOTGUN = "progs/v_shot.mdl",
 };
 
 enum IMPULSE
