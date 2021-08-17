@@ -1384,7 +1384,7 @@ void(vector vang) makevectors = #1; /*
 void(entity e, vector o) setorigin = #2; /*
 		Changes e's origin to be equal to o. Also relinks collision state (as well as setting absmin+absmax), which is required after changing .solid */
 
-void(entity e, string m) setmodel = #3; /*
+void(entity e, string m) fte_setmodel = #3; /*
 		Looks up m in the model precache list, and sets both e.model and e.modelindex to match. BSP models will set e.mins and e.maxs accordingly, other models depend upon the value of sv_gameplayfix_setmodelrealbox - for compatibility you should always call setsize after all pickups or non-bsp models. Also relinks collision state. */
 
 void(entity e, vector min, vector max) setsize = #4; /*
@@ -1400,7 +1400,7 @@ void() breakpoint = #6; /*
 float() random = #7; /*
 		Returns a random value between 0 and 1. Be warned, this builtin can return 1 in most engines, which can break arrays. */
 
-void(entity e, float chan, string samp, float vol, float atten, optional float speedpct, optional float flags, optional float timeofs) sound = #8; /*
+void(entity e, float chan, string samp, float vol, float atten, optional float speedpct, optional float flags, optional float timeofs) fte_sound = #8; /*
 		Starts a sound centered upon the given entity.
 		chan is the entity sound channel to use, channel 0 will allow you to mix many samples at once, others will replace the old sample
 		'samp' must have been precached first

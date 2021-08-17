@@ -25,7 +25,7 @@ class supershotgun_c : shotgun_c
         if (this.owner.currentammo == 1)
         {
             //shoot_sound = shotgun_c::SHOOT_SOUND_STATIC; // or something
-            shoot_sound = SHOTGUN_SHOOT_SOUND;
+            shoot_sound = SOUNDS::SHOTGUN_SHOOT;
             //spread = shotgun_c::SPREAD_STATIC;
             spread = SHOTGUN_SPREAD;
             //shot_count = shotgun_c::SHOT_COUNT_STATIC;

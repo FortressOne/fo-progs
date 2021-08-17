@@ -126,6 +126,9 @@ void()  player_stand1 =[        $axstnd1,       player_stand1   ]
 		if (self.walkframe >= 12)
 			self.walkframe = 0;
 		self.frame = $axstnd1 + self.walkframe;
+
+		if (self.weaponframe % 4 == 0)
+			self.weaponframe = 0;
 	}
 	else
 	{
@@ -153,7 +156,7 @@ void()  player_run =[   $rockrun1,      player_run      ]
 		if (self.walkframe == 6)
 			self.walkframe = 0;
 		self.frame = $axrun1 + self.walkframe;
-		if (self.weaponframe == 4)
+		if (self.weaponframe % 4 == 0)
 			self.weaponframe = 0;
 	}
 	else
@@ -430,9 +433,11 @@ class player_c : entity
 	};
 
 	weapon_c _current_weapon; // private
+	weapon_c last_weapon;
 	set weapon_c current_weapon =
 	{
 		this.items = this.items - ( this.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+		last_weapon = _current_weapon;
 		_current_weapon = value;
 		player_run();          // get out of any weapon firing states
 		this.currentammo = value.ammo_count;
@@ -449,7 +454,25 @@ class player_c : entity
 	weapon_c weapon4;
 	handgrenade_c primed_grenade;
 
-	float is_reloading;
+	float _is_reloading;
+	get float is_reloading =
+	{
+		return _is_reloading;
+	};
+	set float is_reloading =
+	{
+		if (value == TRUE)
+		{
+			this.weaponmodel = "";
+		}
+		else
+		{
+			this.weaponmodel = this.current_weapon.weaponmodel;
+			sprint(this, PRINT_HIGH, "Finished reloading\n");
+		}
+
+		_is_reloading = value;
+	};
 	float is_using_old_impulses;
 
 
@@ -471,12 +494,12 @@ class player_c : entity
 			GameManager.flash_dimension = GameManager.flash_dimension + 1;
 			float dmn = 1<<GameManager.flash_dimension;
 			this.dimension_see = DIMENSION::FLASH | dmn;
-			this.dimension_seen = dmn | DIMENSION::ALL;
+			this.dimension_seen = dmn | DIMENSION::NOFLASH;
 		}
 		else
 		{
-			this.dimension_see = DIMENSION::ALL;
-			this.dimension_seen = DIMENSION::ALL;
+			this.dimension_see = DIMENSION::NOFLASH;
+			this.dimension_seen = DIMENSION::NOFLASH;
 		}
 	};
 
@@ -1063,6 +1086,12 @@ class player_c : entity
             item_artifact_super_damage::ShootSound(this);
             this.current_weapon.Attack();
         }
+
+		// check for reload
+		if (this.current_weapon.clip_left == 0 && this.current_weapon.clip_size > 0)
+		{
+			this.current_weapon.Reload();
+		}
     };
 
 	nonvirtual void (float input) ChangeWeapon =

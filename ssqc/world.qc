@@ -360,6 +360,7 @@ void() worldspawn =
 	// 63 testing
 	lightstyle(63, "a");
 
+	dimension_send = DIMENSION::NOFLASH;
 	GameManager = spawn(gamemanager_c);
 };
 
@@ -426,8 +427,7 @@ void(void() fnc)CheckSpawn = {
     if(fnc)
     {
 		// ensure doors etc can be seen whilst flashed
-        self.dimension_seen = DMN_NOFLASH | DMN_FLASH;
-        //bprint(PRINT_HIGH, strcat("spawning: ", self.classname, "\n"));
+        self.dimension_seen = DIMENSION::NOFLASH | DIMENSION::FLASH;
         fnc();
     }
     else 

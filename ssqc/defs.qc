@@ -627,7 +627,7 @@ float   AS_MISSILE              = 4;
 
 void(vector ang)        makevectors             = #1;           // sets v_forward, etc globals
 void(entity e, vector o) setorigin      = #2;
-void(entity e, string m) setmodel       = #3;           // set movetype and solid first
+void(entity e, string m) fte_setmodel       = #3;           // set movetype and solid first
 void(entity e, vector min, vector max) setsize = #4;
 // #5 was removed
 void() break                                            = #6;
