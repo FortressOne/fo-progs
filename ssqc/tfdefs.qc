@@ -2,6 +2,20 @@
 #pragma target fte
 #pragma autoproto
 
+void (entity e, string ent_model) setmodel =
+{
+    e.dimension_seen = DIMENSION::NOFLASH;
+    fte_setmodel(e, ent_model);
+};
+
+void(entity e, float chan, string samp, float vol, float atten, optional float speedpct, optional float flags, optional float timeofs) sound =
+{
+    float olddimens = e.dimension_seen;
+    // make the sound go to no flash, so it isn't heard by those that are flashed
+    e.dimension_seen = DIMENSION::NOFLASH;
+    fte_sound(e, chan, samp, vol, atten, speedpct, flags, timeofs);
+    e.dimension_seen = olddimens;
+};
 
 typedef void () void_f;
 
@@ -27,7 +41,13 @@ enum TEAM
 enum DIMENSION
 {
     FLASH = 1, // when flash, dimension see is set to this
-    ALL = 256, // see everything
+    // all bits between 1 and 255 are reserved for flash
+    NOFLASH = 256, // see can't been see by those that are flashed
+    BLUE = 512,
+    RED = 1024,
+    YELLOW = 2048,
+    GREEN = 4096,
+    INVISIBLE = 8192 // special dimension to hide stuff in
 };
 
 enum SEASON

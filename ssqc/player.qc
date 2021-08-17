@@ -126,6 +126,9 @@ void()  player_stand1 =[        $axstnd1,       player_stand1   ]
 		if (self.walkframe >= 12)
 			self.walkframe = 0;
 		self.frame = $axstnd1 + self.walkframe;
+
+		if (self.weaponframe % 4 == 0)
+			self.weaponframe = 0;
 	}
 	else
 	{
@@ -153,7 +156,7 @@ void()  player_run =[   $rockrun1,      player_run      ]
 		if (self.walkframe == 6)
 			self.walkframe = 0;
 		self.frame = $axrun1 + self.walkframe;
-		if (self.weaponframe == 4)
+		if (self.weaponframe % 4 == 0)
 			self.weaponframe = 0;
 	}
 	else
@@ -491,12 +494,12 @@ class player_c : entity
 			GameManager.flash_dimension = GameManager.flash_dimension + 1;
 			float dmn = 1<<GameManager.flash_dimension;
 			this.dimension_see = DIMENSION::FLASH | dmn;
-			this.dimension_seen = dmn | DIMENSION::ALL;
+			this.dimension_seen = dmn | DIMENSION::NOFLASH;
 		}
 		else
 		{
-			this.dimension_see = DIMENSION::ALL;
-			this.dimension_seen = DIMENSION::ALL;
+			this.dimension_see = DIMENSION::NOFLASH;
+			this.dimension_seen = DIMENSION::NOFLASH;
 		}
 	};
 

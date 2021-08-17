@@ -73,8 +73,6 @@ class nailgun_c : weapon_c
         sound(player, CHAN_WEAPON, ng.shoot_sound, 1, ATTN_NORM);
         player.attack_finished = time + ng.attack_finish_delay;
 
-        // FIXME - regression recently, broke nailgun nails, even particles on shotgun/axe etc
-        // assume related to bad origin from player...
         vector dir = aim (player, 1000);
         vector org = player.origin + '0 0 16' + v_right*offset;
         proj_spike_c ent = ::spawn(proj_spike_c, origin: org, direction: dir, owner: player);

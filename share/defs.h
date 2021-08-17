@@ -557,16 +557,6 @@
 #define FLAGEMU_NORM        1
 #define FLAGEMU_WARSTANDARD 2
 
-// Dimensions
-#define DMN_FLASH 1 // when flashed, we set dimension see to this
-// all bits between 1 and 255 are reserved for flash
-#define DMN_NOFLASH	256	// see all the things
-#define DMN_TEAMBLUE	512
-#define DMN_TEAMRED		1024
-#define DMN_TEAMYELL	2048
-#define DMN_TEAMGREN	4096
-#define DMN_INVISIBLE	8192	// special dimension to hide stuff in
-
 // Defines for Goal Item types, : goal_activation (in items)
 #define TFGI_GLOW		1   // Players carrying this GoalItem will glow
 #define TFGI_SLOW		2   // Players carrying this GoalItem will move at half-speed
