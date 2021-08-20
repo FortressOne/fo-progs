@@ -5,6 +5,7 @@ class concussiongrenade_c : handgrenade_c
         //damage = 10;
         explode_radius = 240;
         classname = "concussiongrenade";
+        netname = "Concussion grenade";
         model = MODELS::HANDGRENADE;
         skin = 1;
     };

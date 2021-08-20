@@ -427,7 +427,9 @@ void(void() fnc)CheckSpawn = {
     if(fnc)
     {
 		// ensure doors etc can be seen whilst flashed
+		
         self.dimension_seen = DIMENSION::NOFLASH | DIMENSION::FLASH;
+		bprint(PRINT_HIGH, self.classname, " dim: ", ftos(self.dimension_seen), "\n");
         fnc();
     }
     else 

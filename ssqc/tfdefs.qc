@@ -13,7 +13,11 @@ void(entity e, float chan, string samp, float vol, float atten, optional float s
     float olddimens = e.dimension_seen;
     // make the sound go to no flash, so it isn't heard by those that are flashed
     e.dimension_seen = DIMENSION::NOFLASH;
-    fte_sound(e, chan, samp, vol, atten, speedpct, flags, timeofs);
+    // FIXME - funny sounds, hard to pass optionals
+    speedpct = ((speedpct == 0) ? __NULL__ : speedpct);
+    flags = ((flags == 0) ? __NULL__ : flags);
+    timeofs = ((timeofs == 0) ? __NULL__ : timeofs);
+    fte_sound(e, chan, samp, vol, atten, __NULL__, __NULL__, __NULL__);
     e.dimension_seen = olddimens;
 };
 
@@ -93,6 +97,20 @@ enum IMPULSE
     SCAN_ENEMY = 43,
     SCAN_FRIENDLY = 44,
     SCAN_SOUND = 45,
+};
+
+typedef struct 
+{
+    string command;
+    IMPULSE impulse;
+    IMPULSE impulse2;
+} alias_t;
+
+alias_t Aliases[3] =
+{
+    {"primeone", IMPULSE::PRIME_GREN1, 0},
+    {"primetwo", IMPULSE::PRIME_GREN2, 0},
+    {"throwgren", IMPULSE::THROW_GREN, 0},
 };
 
 class player_c;
@@ -187,10 +205,6 @@ float DOOR_TOGGLE = 32;
 float PLAT_LOW_TRIGGER = 1;
 
 
-
-float WEAPON_SHOTGUN = 1;
-float WEAPON_ROCKET = 2;
-float WEAPON_SPIKES = 4;
 float WEAPON_BIG = 8;
 
 float SECRET_OPEN_ONCE = 1;             // stays open

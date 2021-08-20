@@ -20,6 +20,8 @@ class handgrenade_c : entity
         classname = "handgrenade";
         model = MODELS::HANDGRENADE;
         
+        if (owner)
+            sprint(owner, PRINT_HIGH, strcat(netname, " primed, 3 seconds...\n"));
     };
 
     static void (player_c player) Prime =

@@ -391,6 +391,7 @@ class player_c : entity
 	team_c tfteam;
 	class_t *class;
 	float menu;
+	float has_aliases;
 	string status_string;
 	float status_string_lines;
 	float status_string_refresh_time;
@@ -499,8 +500,11 @@ class player_c : entity
 		else
 		{
 			this.dimension_see = DIMENSION::NOFLASH;
-			this.dimension_seen = DIMENSION::NOFLASH;
+			this.dimension_seen = DIMENSION::NOFLASH;			
 		}
+
+		bprint(PRINT_HIGH, "player dim: ", ftos(this.dimension_see), "\n");
+		_is_flashed = value;
 	};
 
 	float _is_concussed;
@@ -510,7 +514,7 @@ class player_c : entity
 	};
 	set float is_concussed =
 	{
-		if (value == FALSE)
+		if (!value)
 		{
 			sprint(this, PRINT_HIGH, "Your head feels better now\n");
 		}
@@ -753,6 +757,8 @@ class player_c : entity
 		this.CheckPowerups();
 
 		this.WeaponFrame();
+
+		GameManager.SendAliases(this);
 	};
 
 	nonvirtual void (entity et, float f) Pain =
@@ -1142,6 +1148,8 @@ class player_c : entity
 	{
 		if (this.impulse == 0)
 			return;
+
+		bprint(PRINT_HIGH, strcat("imp: ", ftos(this.impulse), "\n"));
 
 		IMPULSE imp = (IMPULSE)this.impulse;
 		if (imp<= 8 && imp >= 1)

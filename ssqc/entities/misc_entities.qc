@@ -358,29 +358,6 @@ void() trap_shooter =
 	self.think = shooter_think;
 };
 
-
-
-/*
-===============================================================================
-
-
-===============================================================================
-*/
-
-/*QUAKED viewthing (0 .5 .8) (-8 -8 -8) (8 8 8)
-
-Just for the debugging level.  Don't use
-*/
-
-void() viewthing =
-{
-	self.movetype = MOVETYPE_NONE;
-	self.solid = SOLID_NOT;
-	precache_model ("progs/player.mdl");
-	setmodel (self, "progs/player.mdl");
-};
-
-
 /*
 ==============================================================================
 
