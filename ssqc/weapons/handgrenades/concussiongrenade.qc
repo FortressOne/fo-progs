@@ -2,8 +2,6 @@ class concussiongrenade_c : handgrenade_c
 {
     void () concussiongrenade_c =
     {
-        //damage = 10;
-        explode_radius = 240;
         classname = "concussiongrenade";
         netname = "Concussion grenade";
         model = MODELS::HANDGRENADE;
@@ -14,6 +12,7 @@ class concussiongrenade_c : handgrenade_c
     {
         concussiongrenade_c gren = spawn(concussiongrenade_c, owner: player);
         gren.damage = 0;
+        gren.explode_radius = 240;
         player.primed_grenade = gren;
     };
 
@@ -42,7 +41,7 @@ class concussiongrenade_c : handgrenade_c
                     player.velocity = org - this.origin;
                     player.velocity = player.velocity * (dist / 20);
 
-                    if (player.class.class == CLASS::MEDIC)
+                    if (player.tf_class.class == CLASS::MEDIC)
                     {
                         if (GameSettings.medic_no_cuss)
                         {
@@ -111,7 +110,7 @@ class concussiontimer_c : entity
         {
             bubble_c bubble = spawn(bubble_c, origin: player.origin);
         }
-        float val = player.class.class == CLASS::MEDIC ? 20 : 10;
+        float val = player.tf_class.class == CLASS::MEDIC ? 20 : 10;
         this.ticks_left = this.ticks_left - val;
 
         vector org = player.origin;

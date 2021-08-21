@@ -54,6 +54,11 @@ class Scout : entity
         player.velocity_z = 181;
         sound(player, CHAN_BODY, SOUNDS::DASH, 1, ATTN_NORM);
     };
+
+    static void (player_c player) Special =
+    {
+        Scout::Dash(player);
+    };
 };
 
 enumflags SCAN
@@ -147,11 +152,11 @@ class scan_c : entity
                         break;
                     case "player":
                         player_c player = (player_c)ent;
-                        if (player.class.class == CLASS::SPY)
+                        if (player.tf_class.class == CLASS::SPY)
                         {
-                            if (player.tfteam.team_no == own.tfteam.team_no)
+                            if (player.tf_team.team_no == own.tf_team.team_no)
                             {
-                                tno = player.tfteam.team_no;
+                                tno = player.tf_team.team_no;
                             }
                             else
                             {
@@ -165,12 +170,12 @@ class scan_c : entity
                                 tno = player.disguised_team_no;
                             }
                         }
-                        tno = player.tfteam.team_no;
+                        tno = player.tf_team.team_no;
                         break;
                 }
 
                 float true_scan = FALSE;
-                if (own.tfteam.team_no == tno)
+                if (own.tf_team.team_no == tno)
                 {
                     if (this.scan_mode & SCAN::FRIENDLY)
                     {

@@ -388,8 +388,8 @@ class player_c : entity
 		_is_invincible = value;
 	};
 
-	team_c tfteam;
-	class_t *class;
+	team_c tf_team;
+	class_t *tf_class;
 	float menu;
 	float has_aliases;
 	string status_string;
@@ -406,7 +406,7 @@ class player_c : entity
 	};
 	set float ammunition_shells =
 	{
-		ammo_shells = value > this.class.max_shells ? this.class.max_shells : value;
+		ammo_shells = value > this.tf_class.max_shells ? this.tf_class.max_shells : value;
 	};
 	get float ammunition_nails =
 	{
@@ -414,7 +414,7 @@ class player_c : entity
 	};
 	set float ammunition_nails =
 	{
-		ammo_nails = value > this.class.max_nails ? this.class.max_nails : value;
+		ammo_nails = value > this.tf_class.max_nails ? this.tf_class.max_nails : value;
 	};
 	get float ammunition_rockets =
 	{
@@ -422,7 +422,7 @@ class player_c : entity
 	};
 	set float ammunition_rockets =
 	{
-		ammo_rockets = value > this.class.max_rockets ? this.class.max_rockets : value;
+		ammo_rockets = value > this.tf_class.max_rockets ? this.tf_class.max_rockets : value;
 	};
 	get float ammunition_cells =
 	{
@@ -430,7 +430,7 @@ class player_c : entity
 	};
 	set float ammunition_cells =
 	{
-		ammo_cells = value > this.class.max_cells ? this.class.max_cells : value;
+		ammo_cells = value > this.tf_class.max_cells ? this.tf_class.max_cells : value;
 	};
 
 	weapon_c _current_weapon; // private
@@ -526,11 +526,11 @@ class player_c : entity
 	float _disguised_team_no;
 	get float disguised_team_no =
 	{
-		return _disguised_team_no == 0 ? this.tfteam.team_no : _disguised_team_no;
+		return _disguised_team_no == 0 ? this.tf_team.team_no : _disguised_team_no;
 	};
 	set float disguised_team_no =
 	{
-		if (this.tfteam.team_no != value)
+		if (this.tf_team.team_no != value)
 			is_disguised = TRUE;
 		else
 			is_disguised = FALSE;
@@ -547,7 +547,7 @@ class player_c : entity
 	{
 		string teamName = Teams[teamnum-1].name;
 		
-		if (teamnum == this.tfteam.team_no)
+		if (teamnum == this.tf_team.team_no)
 		{
 			sprint(this, PRINT_HIGH, "You are already on the ", teamName, " team!\n");
 			return;
@@ -559,7 +559,7 @@ class player_c : entity
 			return;
 		}
 
-		this.tfteam = Teams[teamnum-1];
+		this.tf_team = Teams[teamnum-1];
 		this.Suicide();
 
 		bprint(PRINT_HIGH, this.netname, " has joined the ", teamName, " team!\n");
@@ -585,12 +585,12 @@ class player_c : entity
 		if (choice == 1)
 		{
 			ammo = &(this.ammunition_gren1);
-			type = this.class.type_gren1;
+			type = this.tf_class.type_gren1;
 		}
 		else if (choice == 2)
 		{
 			ammo = &(this.ammunition_gren2);
-			type = this.class.type_gren2;
+			type = this.tf_class.type_gren2;
 		}
 
 		if (ammo > 0)
@@ -616,13 +616,13 @@ class player_c : entity
 
 	nonvirtual void () SetTeamName =
 	{
-		stuffcmd(this, strcat("team ", this.tfteam.scoreboard_name, "\n"));
+		stuffcmd(this, strcat("team ", this.tf_team.scoreboard_name, "\n"));
 	};
 
 	nonvirtual void (float choice) SetClass = 
 	{
-		this.class = &Classes[choice-1];
-		sprint(this, PRINT_HIGH, strcat("You will return as a ", this.class.classname, "\n"));
+		this.tf_class = &Classes[choice-1];
+		sprint(this, PRINT_HIGH, strcat("You will return as a ", this.tf_class.classname, "\n"));
 	};
 
 	nonvirtual float (float choice) CanChooseClass =
@@ -637,7 +637,7 @@ class player_c : entity
 		{
 			// TODO - check map restrictions
 			class_t *class = &Classes[choice-1];
-			if (this.tfteam.illegal_classes & class.illegal_bit)
+			if (this.tf_team.illegal_classes & class.illegal_bit)
 			{
 				return FALSE;
 			}
@@ -652,7 +652,7 @@ class player_c : entity
 			float numPlaying = 0;
 			while (p)
 			{
-				if (p.tfteam.team_no == this.tfteam.team_no)
+				if (p.tf_team.team_no == this.tf_team.team_no)
 				{
 					if (p.playerclass == choice)
 					{
@@ -1173,6 +1173,14 @@ class player_c : entity
 			case IMPULSE::PRIMETHROW_GREN2:
 				this.PrimeThrowGrenade(2);
 				break;
+			case IMPULSE::SPECIAL:
+				switch(this.tf_class.class)
+				{
+					case CLASS::SCOUT:
+						Scout::Special(this);
+						break;
+				}
+				break;
 			case IMPULSE::DASH:
 				Scout::Dash(this);
 				break;
@@ -1215,34 +1223,34 @@ class player_c : entity
 	nonvirtual void () SetupClass =
 	{
 		// for now let's force scout
-		this.class = &Classes[0];
+		this.tf_class = &Classes[0];
 
-		this.health = this.class.max_health;
-		this.armorvalue = this.class.init_armor;
-		this.armortype = this.class.init_armor_type;
-		this.ammunition_shells = this.class.init_shells;
-		this.ammunition_nails = this.class.init_nails;
-		this.ammunition_rockets = this.class.init_rockets;
-		this.ammunition_cells = this.class.init_cells;
-		this.ammunition_gren1 = this.class.init_gren1;
-		this.ammunition_gren2 = this.class.init_gren2;
-		this.tf_attributes = this.class.tf_attributes;
+		this.health = this.tf_class.max_health;
+		this.armorvalue = this.tf_class.init_armor;
+		this.armortype = this.tf_class.init_armor_type;
+		this.ammunition_shells = this.tf_class.init_shells;
+		this.ammunition_nails = this.tf_class.init_nails;
+		this.ammunition_rockets = this.tf_class.init_rockets;
+		this.ammunition_cells = this.tf_class.init_cells;
+		this.ammunition_gren1 = this.tf_class.init_gren1;
+		this.ammunition_gren2 = this.tf_class.init_gren2;
+		this.tf_attributes = this.tf_class.tf_attributes;
 
 		if (this.weapon1)
 			remove(this.weapon1);
-		this.weapon1 = weapon_c::spawn(this.class.weapon1, this);
+		this.weapon1 = weapon_c::spawn(this.tf_class.weapon1, this);
 		
 		if (this.weapon2)
 			remove(this.weapon2);
-		this.weapon2 = weapon_c::spawn(this.class.weapon2, this);
+		this.weapon2 = weapon_c::spawn(this.tf_class.weapon2, this);
 
 		if (this.weapon3)
 			remove(this.weapon3);
-		this.weapon3 = weapon_c::spawn(this.class.weapon3, this);
+		this.weapon3 = weapon_c::spawn(this.tf_class.weapon3, this);
 
 		if (this.weapon4)
 			remove(this.weapon4);
-		this.weapon4 = weapon_c::spawn(this.class.weapon4, this);
+		this.weapon4 = weapon_c::spawn(this.tf_class.weapon4, this);
 	};
 
 	nonvirtual void(float spawnBody) Respawn =

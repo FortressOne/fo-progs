@@ -29,7 +29,7 @@ class team_c : entity {
         player_c p = (player_c)find(world, ::classname, "player");
         while (p)
         {
-            if (p.tfteam.team_no == this.team_no)
+            if (p.tf_team.team_no == this.team_no)
             {
                 count++;
             }
@@ -88,7 +88,7 @@ class team_c : entity {
             player_c e = (player_c)find(world, ::classname, "player");
             while (e) 
             {
-                if (e.tfteam.team_no == this.team_no)
+                if (e.tf_team.team_no == this.team_no)
                     e.frags = this.score;
 
                 e = (player_c)find(e, ::classname, "player");

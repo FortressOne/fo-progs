@@ -37,7 +37,7 @@ class item_ammo_c : item_c
         // shotgun
         if (self.weapon == 1)
         {
-            if (player.ammunition_shells >= player.class.max_shells)
+            if (player.ammunition_shells >= player.tf_class.max_shells)
                 return;
             player.ammunition_shells = player.ammunition_shells + self.aflag;
         }
@@ -45,7 +45,7 @@ class item_ammo_c : item_c
         // spikes
         if (self.weapon == 2)
         {
-            if (player.ammunition_nails >= player.class.max_nails)
+            if (player.ammunition_nails >= player.tf_class.max_nails)
                 return;
             player.ammunition_nails = player.ammunition_nails + self.aflag;
         }
@@ -53,7 +53,7 @@ class item_ammo_c : item_c
         //      rockets
         if (self.weapon == 3)
         {
-            if (player.ammunition_rockets >= player.class.max_rockets)
+            if (player.ammunition_rockets >= player.tf_class.max_rockets)
                 return;
             player.ammunition_rockets = player.ammunition_rockets + self.aflag;
         }
@@ -61,7 +61,7 @@ class item_ammo_c : item_c
         //      cells
         if (self.weapon == 4)
         {
-            if (player.ammunition_cells >= player.class.max_cells)
+            if (player.ammunition_cells >= player.tf_class.max_cells)
                 return;
             player.ammunition_cells = player.ammunition_cells + self.aflag;
         }

@@ -90,11 +90,38 @@ enum IMPULSE
     PRIMETHROW_GREN1 = 17, // Prime and throw grenade type 1 (two clicks)
     PRIMETHROW_GREN2 = 18, // Prime and throw grenade type 2 (two clicks)
     SWITCH_GREN_TYPE = 19, // Switch grenade mode 1/2
+    SPECIAL = 30,
     DASH = 41,
     SCAN = 42,
     SCAN_ENEMY = 43,
     SCAN_FRIENDLY = 44,
     SCAN_SOUND = 45,
+};
+
+enum WEAPON
+{
+    AXE,
+    SPANNER,
+    SNIPERRIFLE,
+    TRANQUILISER,
+    SUPERSHOTGUN,
+    NAILGUN,
+    SUPERNAILGUN,
+    GRENADELAUNCHER,
+    FLAMETHROWER,
+    INCENDIARYCANNON,
+    ASSAULTCANNON,
+    ROCKETLAUNCHER,
+    RAILGUN,
+    KNIFE,
+    SHOTGUN,
+    MEDIKIT
+};
+
+enum GRENADE
+{
+    FLASH,
+    CONCUSSION
 };
 
 typedef struct 
@@ -104,11 +131,14 @@ typedef struct
     IMPULSE impulse2;
 } alias_t;
 
-alias_t Aliases[3] =
+alias_t Aliases[6] =
 {
     {"primeone", IMPULSE::PRIME_GREN1, 0},
     {"primetwo", IMPULSE::PRIME_GREN2, 0},
+    {"gren1", IMPULSE::PRIMETHROW_GREN1, 0}, // FIXME - this also acts as a double tap
+    {"gren2", IMPULSE::PRIMETHROW_GREN2, 0},
     {"throwgren", IMPULSE::THROW_GREN, 0},
+    {"special", IMPULSE::SPECIAL, 0},
 };
 
 class player_c;

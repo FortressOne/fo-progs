@@ -240,7 +240,6 @@
 #define TF_RELOAD_SLOT3         27  // Reload weapon slot 3
 #define TF_RELOAD               28  // Reload current weapon
 #define TF_RELOAD_NEXT          29  // Reload next weapon with a non-full clip
-#define TF_SPECIAL_SKILL        30  // Class special
 #define TF_DROPFLAG             31  // Drop flag
 #define TF_DROPKEY              32  // Drop key
 #define TF_DISCARD              33  // Discard useless ammo

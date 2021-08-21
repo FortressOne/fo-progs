@@ -2,8 +2,6 @@ class flashgrenade_c : handgrenade_c
 {
     void () flashgrenade_c =
     {
-        //damage = 10;
-        explode_radius = 300;
         classname = "flashgrenade";
         netname = "Flash grenade";
         model = MODELS::FLASH;
@@ -13,6 +11,7 @@ class flashgrenade_c : handgrenade_c
     {
         flashgrenade_c gren = spawn(flashgrenade_c, owner: player);
         gren.damage = 10;
+        gren.explode_radius = 300;
         player.primed_grenade = gren;
     };
 
