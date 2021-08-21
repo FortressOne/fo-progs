@@ -82,21 +82,7 @@ enum MODELS : string
     VIEW_SHOTGUN = "progs/v_shot.mdl",
 };
 
-enum IMPULSE
-{
-    PRIME_GREN1 = 14,
-    PRIME_GREN2 = 15,
-    THROW_GREN = 16,
-    PRIMETHROW_GREN1 = 17, // Prime and throw grenade type 1 (two clicks)
-    PRIMETHROW_GREN2 = 18, // Prime and throw grenade type 2 (two clicks)
-    SWITCH_GREN_TYPE = 19, // Switch grenade mode 1/2
-    SPECIAL = 30,
-    DASH = 41,
-    SCAN = 42,
-    SCAN_ENEMY = 43,
-    SCAN_FRIENDLY = 44,
-    SCAN_SOUND = 45,
-};
+
 
 enum WEAPON
 {
@@ -124,6 +110,22 @@ enum GRENADE
     CONCUSSION
 };
 
+enum IMPULSE
+{
+    PRIME_GREN1 = 14,
+    PRIME_GREN2 = 15,
+    THROW_GREN = 16,
+    PRIMETHROW_GREN1 = 17, // Prime and throw grenade type 1 (two clicks)
+    PRIMETHROW_GREN2 = 18, // Prime and throw grenade type 2 (two clicks)
+    SWITCH_GREN_TYPE = 19, // Switch grenade mode 1/2
+    SPECIAL = 30,
+    DASH = 41,
+    SCAN = 42,
+    SCAN_ENEMY = 43,
+    SCAN_FRIENDLY = 44,
+    SCAN_SOUND = 45,
+};
+
 typedef struct 
 {
     string command;
@@ -139,6 +141,11 @@ alias_t Aliases[6] =
     {"gren2", IMPULSE::PRIMETHROW_GREN2, 0},
     {"throwgren", IMPULSE::THROW_GREN, 0},
     {"special", IMPULSE::SPECIAL, 0},
+    {"autoscan", IMPULSE::SCAN, 0},
+    {"scanf", IMPULSE::SCAN_FRIENDLY, 0},
+    {"scane", IMPULSE::SCAN_ENEMY, 0},
+    {"dash", IMPULSE::DASH, 0},
+    {"scansound", IMPULSE::SCAN_SOUND, 0},
 };
 
 class player_c;
