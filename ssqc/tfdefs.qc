@@ -4,11 +4,13 @@
 
 void (entity e, string ent_model) setmodel =
 {
-    e.dimension_seen = DIMENSION::NOFLASH;
+    // assume func_* are world models that need to be seen while flashed
+    if (strstrofs(e.classname, "func_") == -1)
+        e.dimension_seen = DIMENSION::NOFLASH;
     fte_setmodel(e, ent_model);
 };
 
-void(entity e, float chan, string samp, float vol, float atten, optional float speedpct, optional float flags, optional float timeofs) sound =
+void(entity e, float chan, string samp, float vol, float atten, float speedpct = 0, float flags = 0, float timeofs = 0) sound =
 {
     float olddimens = e.dimension_seen;
     // make the sound go to no flash, so it isn't heard by those that are flashed
@@ -42,7 +44,7 @@ enum DIMENSION
 {
     FLASH = 1, // when flash, dimension see is set to this
     // all bits between 1 and 255 are reserved for flash
-    NOFLASH = 256, // see can't been see by those that are flashed
+    NOFLASH = 256, // can't been seen by those that are flashed
     BLUE = 512,
     RED = 1024,
     YELLOW = 2048,
@@ -80,6 +82,34 @@ enum MODELS : string
     VIEW_SHOTGUN = "progs/v_shot.mdl",
 };
 
+
+
+enum WEAPON
+{
+    AXE,
+    SPANNER,
+    SNIPERRIFLE,
+    TRANQUILISER,
+    SUPERSHOTGUN,
+    NAILGUN,
+    SUPERNAILGUN,
+    GRENADELAUNCHER,
+    FLAMETHROWER,
+    INCENDIARYCANNON,
+    ASSAULTCANNON,
+    ROCKETLAUNCHER,
+    RAILGUN,
+    KNIFE,
+    SHOTGUN,
+    MEDIKIT
+};
+
+enum GRENADE
+{
+    FLASH,
+    CONCUSSION
+};
+
 enum IMPULSE
 {
     PRIME_GREN1 = 14,
@@ -88,11 +118,34 @@ enum IMPULSE
     PRIMETHROW_GREN1 = 17, // Prime and throw grenade type 1 (two clicks)
     PRIMETHROW_GREN2 = 18, // Prime and throw grenade type 2 (two clicks)
     SWITCH_GREN_TYPE = 19, // Switch grenade mode 1/2
+    SPECIAL = 30,
     DASH = 41,
     SCAN = 42,
     SCAN_ENEMY = 43,
     SCAN_FRIENDLY = 44,
     SCAN_SOUND = 45,
+};
+
+typedef struct 
+{
+    string command;
+    IMPULSE impulse;
+    IMPULSE impulse2;
+} alias_t;
+
+alias_t Aliases[6] =
+{
+    {"primeone", IMPULSE::PRIME_GREN1, 0},
+    {"primetwo", IMPULSE::PRIME_GREN2, 0},
+    {"gren1", IMPULSE::PRIMETHROW_GREN1, 0}, // FIXME - this also acts as a double tap
+    {"gren2", IMPULSE::PRIMETHROW_GREN2, 0},
+    {"throwgren", IMPULSE::THROW_GREN, 0},
+    {"special", IMPULSE::SPECIAL, 0},
+    {"autoscan", IMPULSE::SCAN, 0},
+    {"scanf", IMPULSE::SCAN_FRIENDLY, 0},
+    {"scane", IMPULSE::SCAN_ENEMY, 0},
+    {"dash", IMPULSE::DASH, 0},
+    {"scansound", IMPULSE::SCAN_SOUND, 0},
 };
 
 class player_c;
@@ -187,10 +240,6 @@ float DOOR_TOGGLE = 32;
 float PLAT_LOW_TRIGGER = 1;
 
 
-
-float WEAPON_SHOTGUN = 1;
-float WEAPON_ROCKET = 2;
-float WEAPON_SPIKES = 4;
 float WEAPON_BIG = 8;
 
 float SECRET_OPEN_ONCE = 1;             // stays open

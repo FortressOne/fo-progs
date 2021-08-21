@@ -43,13 +43,23 @@ class gamemanager_c : entity
     {
         this.nextthink = time + 0.01;
         this.think = this.FirstFrame;
+
+        this.Precache_Sounds();
+        this.Precache_Models();
     };
 
-    static void () Precache_Sounds =
+    // TODO - macro
+    nonvirtual void () Precache_Sounds =
     {
         precache_sound(SOUNDS::DASH);
         precache_sound(SOUNDS::SCAN);
         precache_sound(SOUNDS::FLASH);
+    };
+
+    // TODO - macro
+    nonvirtual void () Precache_Models =
+    {
+        precache_model(MODELS::BUBBLE);
     };
 
     nonvirtual void () FirstFrame =
@@ -422,6 +432,33 @@ class gamemanager_c : entity
             o.think = this.ExecuteChangeLevel;
             o.nextthink = time + 0.1;
         }
+    };
+
+    nonvirtual void (player_c player) SendAliases =
+    {
+        if (player.has_aliases)
+            return;
+
+        for(float i = 0; i < Aliases.length; i++)
+        {
+            string cmd = Aliases[i].command;
+            float imp = Aliases[i].impulse;
+            float imp2 = Aliases[i].impulse2;
+            AliasCommand(player, cmd, imp, imp2);
+        }
+
+        player.has_aliases = TRUE;
+    };
+
+    nonvirtual void (player_c player, string cmd, float imp, float imp2) AliasCommand =
+    {
+        string s = strcat("alias ", cmd, " \"impulse ", ftos(imp));
+        if (imp2)
+            s = strcat(s, "; wait; impulse ", ftos(imp2));
+            
+        s = strcat(s, "\"\n");
+
+        stuffcmd(player, s);
     };
 
     nonvirtual void() CheckRules =

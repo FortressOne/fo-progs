@@ -1,29 +1,3 @@
-enum WEAPON
-{
-    AXE,
-    SPANNER,
-    SNIPERRIFLE,
-    TRANQUILISER,
-    SUPERSHOTGUN,
-    NAILGUN,
-    SUPERNAILGUN,
-    GRENADELAUNCHER,
-    FLAMETHROWER,
-    INCENDIARYCANNON,
-    ASSAULTCANNON,
-    ROCKETLAUNCHER,
-    RAILGUN,
-    KNIFE,
-    SHOTGUN,
-    MEDIKIT
-};
-
-enum GRENADE
-{
-    FLASH,
-    CONCUSSION
-};
-
 // TODO: pre-initialised struct members are not implemented yet (FTE issue)
 typedef struct
 {

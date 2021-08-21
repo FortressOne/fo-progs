@@ -438,7 +438,6 @@ Key doors are allways wait -1.
 */
 
 void() func_door =
-
 {
 
 	if (world.worldtype == 0)

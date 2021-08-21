@@ -12,12 +12,12 @@ class menumanager_c : entity {
         }
 
         // if no team set
-        if (!player.tfteam.team_no)
+        if (!player.tf_team.team_no)
         { 
             this.TeamMenu(player);
             return;
         }
-        if (!player.class)
+        if (!player.tf_class)
         {
             this.ClassMenu(player);
             return;
@@ -145,7 +145,7 @@ class menumanager_c : entity {
         }
         
         // don't show auto team if already assigned a team
-        string autoteam = (player.tfteam.team_no) ? "" : Q"\s[\s5\s]\s Auto-assign team";
+        string autoteam = (player.tf_team.team_no) ? "" : Q"\s[\s5\s]\s Auto-assign team";
 
         this.SetMenu(player, MENU_TEAM, select, autoteam);
     };
