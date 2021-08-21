@@ -420,16 +420,12 @@ void(entity ent) CopyToBodyQue =
 	bodyque_head = bodyque_head.owner;
 };
 
-
-
 // this is used for spawning world objects on map load.. not player, projectiles etc - also disables the engine's conditional spawning based on spawnflags, you're expected to do that part yourself
 void(void() fnc)CheckSpawn = {
     if(fnc)
     {
 		// ensure doors etc can be seen whilst flashed
-		
         self.dimension_seen = DIMENSION::NOFLASH | DIMENSION::FLASH;
-		bprint(PRINT_HIGH, self.classname, " dim: ", ftos(self.dimension_seen), "\n");
         fnc();
     }
     else 

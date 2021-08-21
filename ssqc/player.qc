@@ -503,7 +503,6 @@ class player_c : entity
 			this.dimension_seen = DIMENSION::NOFLASH;			
 		}
 
-		bprint(PRINT_HIGH, "player dim: ", ftos(this.dimension_see), "\n");
 		_is_flashed = value;
 	};
 
