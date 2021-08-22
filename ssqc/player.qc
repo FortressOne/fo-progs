@@ -621,8 +621,15 @@ class player_c : entity
 
 	nonvirtual void (float choice) SetClass = 
 	{
+		float spawn = FALSE;
+		if (!this.tf_class)
+			spawn = TRUE;
+
 		this.tf_class = &Classes[choice-1];
 		sprint(this, PRINT_HIGH, strcat("You will return as a ", this.tf_class.classname, "\n"));
+
+		if (spawn)
+			this.Respawn(FALSE);
 	};
 
 	nonvirtual float (float choice) CanChooseClass =
@@ -731,6 +738,8 @@ class player_c : entity
 
 	nonvirtual void() PostThink =
 	{
+		MenuManager.FrameThink(this);
+
 		if (this.view_ofs == '0 0 0')
 			return;         // intermission or finale
 		if (this.deadflag)
@@ -758,6 +767,8 @@ class player_c : entity
 		this.WeaponFrame();
 
 		GameManager.SendAliases(this);
+
+		
 	};
 
 	nonvirtual void (entity et, float f) Pain =
@@ -1222,8 +1233,10 @@ class player_c : entity
 
 	nonvirtual void () SetupClass =
 	{
+		if (!this.tf_class)
+			return;
 		// for now let's force scout
-		this.tf_class = &Classes[0];
+		//this.tf_class = &Classes[0];
 
 		this.health = this.tf_class.max_health;
 		this.armorvalue = this.tf_class.init_armor;

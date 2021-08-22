@@ -21,7 +21,6 @@ void(entity e, float chan, string samp, float vol, float atten, float speedpct =
 
 typedef void () void_f;
 
-
 enum CLASS
 {
     NONE = 0,
@@ -133,7 +132,7 @@ typedef struct
     IMPULSE impulse2;
 } alias_t;
 
-alias_t Aliases[6] =
+alias_t Aliases[11] =
 {
     {"primeone", IMPULSE::PRIME_GREN1, 0},
     {"primetwo", IMPULSE::PRIME_GREN2, 0},

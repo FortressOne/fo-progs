@@ -4,8 +4,10 @@ enum {
     MENU_CLASS,
 };
 
-class menumanager_c : entity {
-    nonvirtual void (player_c player) CheckMenu = {
+class menumanager_c : entity 
+{
+    nonvirtual void (player_c player) CheckMenu = 
+    {
         if (player.classname == "observer")
         {
             return;
@@ -14,17 +16,18 @@ class menumanager_c : entity {
         // if no team set
         if (!player.tf_team.team_no)
         { 
-            this.TeamMenu(player);
+            this.MenuTeam(player);
             return;
         }
         if (!player.tf_class)
         {
-            this.ClassMenu(player);
+            this.MenuClass(player);
             return;
         }
     };
 
-    nonvirtual void (player_c player, float menuType, string... count) SetMenu = {
+    nonvirtual void (player_c player, float menuType, string... count) SetMenu = 
+    {
         // no printing while menu open
         if (player.menu != MENU_NONE)
         {
@@ -60,7 +63,8 @@ class menumanager_c : entity {
     };
 
 // TODO - force update of status bar
-    nonvirtual void (player_c player) RefreshScreen = {
+    nonvirtual void (player_c player) RefreshScreen = 
+    {
         if (player.status_string_refresh_time > time)
         {
             return;
@@ -75,12 +79,14 @@ class menumanager_c : entity {
         centerprint(player, player.status_string);
     };
 
-    nonvirtual void (player_c player) ClearScreen = {
+    nonvirtual void (player_c player) ClearScreen = 
+    {
         player.status_string = "";
         player.status_string_lines = 0;
     };
 
-    nonvirtual void (player_c player) FrameThink = {
+    nonvirtual void (player_c player) FrameThink = 
+    {
         if (player.menu != MENU_NONE)
         {
             this.MenuInput(player);
@@ -92,7 +98,8 @@ class menumanager_c : entity {
         this.RefreshScreen(player);
     };
 
-    nonvirtual void (player_c player, string... count) CenterPrint = {
+    nonvirtual void (player_c player, string... count) CenterPrint = 
+    {
         float i, len, lineCount = 0;
         string s;
         s = "";
@@ -120,7 +127,8 @@ class menumanager_c : entity {
         player.status_string_lines = lineCount;
     };
 
-    nonvirtual void (player_c player) MenuInput = {
+    nonvirtual void (player_c player) MenuInput = 
+    {
         switch (player.menu)
         {
             case MENU_NONE:
@@ -136,7 +144,8 @@ class menumanager_c : entity {
         player.impulse = 0;
     };
 
-    nonvirtual void (player_c player) TeamMenu = {
+    nonvirtual void (player_c player) MenuTeam = 
+    {
         string select = "Select team:\n\n";
         for (float i = 0; i < GameSettings.number_of_teams; i++)
         {
@@ -150,7 +159,8 @@ class menumanager_c : entity {
         this.SetMenu(player, MENU_TEAM, select, autoteam);
     };
 
-    nonvirtual void (player_c player) MenuTeamInput = {
+    nonvirtual void (player_c player) MenuTeamInput = 
+    {
         if (player.classname == "observer")
         {
             return;
@@ -185,9 +195,12 @@ class menumanager_c : entity {
                 player.menu = MENU_NONE;
                 break;
         }
+
+        player.impulse = 0;
     };
 
-    nonvirtual void (player_c player) ClassMenu = {
+    nonvirtual void (player_c player) MenuClass = 
+    {
         string select = "Select class: \n\n";
         for (float i = 0; i < GameSettings.number_of_classes; i++)
         {
@@ -200,7 +213,8 @@ class menumanager_c : entity {
         this.SetMenu(player, MENU_CLASS, select, random);
     };
 
-    nonvirtual void (player_c player) MenuClassInput = {
+    nonvirtual void (player_c player) MenuClassInput = 
+    {
         if (player.classname == "observer")
         {
             return;
@@ -208,7 +222,7 @@ class menumanager_c : entity {
 
         switch (player.impulse)
         {
-            case 0:
+            case 10:
             case 1:
             case 2:
             case 3:
