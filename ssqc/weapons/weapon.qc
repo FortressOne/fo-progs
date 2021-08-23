@@ -134,7 +134,7 @@ class weapon_c : entity
         if (amount > ammo_left)
             amount = ammo_left;
 
-        float time_to_reload = this.reload_time - (1 - (amount / this.clip_size));
+        float time_to_reload = this.reload_time * (amount / this.clip_size));
         sprint(player, PRINT_HIGH, strcat("Reloading ", this.netname, "...\n"));
         entity timer = ::spawn();
         timer.owner = this;
