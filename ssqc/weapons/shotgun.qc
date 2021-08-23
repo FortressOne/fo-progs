@@ -17,7 +17,6 @@ class shotgun_c : weapon_c
         shoot_sound = SOUNDS::SHOTGUN_SHOOT;
         //spread = shotgun_c::SPREAD_STATIC;
         spread = SHOTGUN_SPREAD;
-        //shot_count = shotgun_c::SHOT_COUNT_STATIC;
         shot_count = SHOTGUN_SHOT_COUNT;
         weapon = IT_SHOTGUN; // hud
         weapon_type = WEAPON::SHOTGUN;

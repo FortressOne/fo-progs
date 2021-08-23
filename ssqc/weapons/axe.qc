@@ -3,11 +3,11 @@ class axe_c : weapon_c
     void () axe_c = 
     {
         classname = "player_axe";
-        shoot_sound = "weapons/ax1.wav";
+        shoot_sound = SOUNDS::AXE_SHOOT;
         weapon = IT_AXE; // hud
         weapon_type = WEAPON::AXE;
         ammo_type = 0;
-        weaponmodel = "progs/v_axe.mdl";
+        weaponmodel = MODELS::VIEW_AXE;
         attack_finish_delay = 0.5;
         animation_func = player_axe1;
         ammo_per_shot = 0;
@@ -49,7 +49,7 @@ class axe_c : weapon_c
         }
         else
         {       // hit wall
-            sound (self.owner, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+            sound (self.owner, CHAN_WEAPON, SOUNDS::AXE_HIT, 1, ATTN_NORM);
 
             WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
             WriteByte (MSG_MULTICAST, TE_GUNSHOT);

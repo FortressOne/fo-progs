@@ -1,0 +1,43 @@
+enum SOLDIER
+{
+    CLASS = CLASS::SOLDIER,
+    MAXSPEED = 240,
+    MAXSTRAFESPEED = 240,
+    MAXARMORTYPE = .8,
+    INITARMORTYPE = .8,
+    INITARMORCLASS = 0,
+    MAXAMMO_SHOT = 100,
+    MAXAMMO_NAIL = 100,
+    MAXAMMO_ROCKET = 50,
+    MAXAMMO_CELL = 50,
+    
+    INITAMMO_SHOT = 50,
+    INITAMMO_NAIL = 0,
+    INITAMMO_ROCKET = 10,
+    INITAMMO_CELL = 0,
+    
+    INITAMMO_GREN1 = 4,
+    INITAMMO_GREN2 = 1,
+    MAXAMMO_GREN1 = 4,
+    MAXAMMO_GREN2 = 1,
+    WEAPON1 = WEAPON::ROCKETLAUNCHER,
+    WEAPON2 = WEAPON::SUPERSHOTGUN,
+    WEAPON3 = WEAPON::SHOTGUN,
+    WEAPON4 = WEAPON::AXE,
+    TYPE_GREN1 = GRENADE::HIGHEXPLOSIVE,
+    TYPE_GREN2 = GRENADE::SHOCK,
+    ILLEGALBIT = ILLEGALBIT::SOLDIER, // Legal Playerclass Handling
+    MAXHEALTH = 100,
+    MAXHEALTH_FO = 100,
+    MAXARMOR_FO = 200,
+    MAXARMOR = 200,
+    TF_ATTRIBUTES = 0
+};
+
+class Soldier : entity
+{
+    static void (player_c player) Special =
+    {
+        player.current_weapon.Reload();
+    };
+};

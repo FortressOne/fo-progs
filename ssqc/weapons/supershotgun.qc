@@ -1,5 +1,8 @@
-class supershotgun_c : shotgun_c 
+class supershotgun_c : weapon_c 
 {
+    vector spread;
+    float shot_count;
+    
     void () supershotgun_c =
     {
         SetDefaults();
@@ -7,17 +10,20 @@ class supershotgun_c : shotgun_c
 
     nonvirtual void() SetDefaults =
     {
-        shoot_sound = "weapons/shotgn2.wav";
+        classname = "player_supershotgun";
+        netname = "Super Shotgun";
+        shoot_sound = SOUNDS::SUPERSHOTGUN_SHOOT;
         spread = '0.14 0.08 0';
         shot_count = 14;
         weapon = IT_SUPER_SHOTGUN; // hud
         weapon_type = WEAPON::SUPERSHOTGUN;
         ammo_type = IT_SHELLS;
-        weaponmodel = "progs/v_shot2.mdl";
+        weaponmodel = MODELS::VIEW_SUPERSHOTGUN;
         attack_finish_delay = 0.7;
         animation_func = player_shot1;
         ammo_per_shot = 2;
         clip_size = 16;
+        reload_time = 3;
     };
 
     virtual float () Attack =
