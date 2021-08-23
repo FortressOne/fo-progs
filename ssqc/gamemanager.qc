@@ -127,6 +127,7 @@ class gamemanager_c : entity
     {
         Classes = memalloc(sizeof(*Classes)*(GameSettings.number_of_classes+1));
         this.ProcessClass(CLASS::SCOUT);
+        this.ProcessClass(CLASS::SOLDIER);
     };
 
     nonvirtual void (CLASS class) ProcessClass =
@@ -134,7 +135,7 @@ class gamemanager_c : entity
         // imagine if default values on structs was a thing!
         string tclassname = "bloop";
         float tmax_speed = 0, tmax_strafe_speed = 0, tmax_armor_type = 0, tinit_armor_type = 0;
-        float tinit_armor_classes = 0, tillegal_bit = 0, tweapon1 = 0, tweapon2 = 0, tweapon3 = 0;
+        float tinit_armor_classes = 0, tillegal_bit = 0, tweapon1 = 0, tweapon2 = 0, tweapon3 = 0, tweapon4 = 0;
         float ttf_attributes = 0, tmax_shells = 0, tinit_shells = 0, tmax_nails = 0, tinit_nails = 0;
         float tmax_rockets = 0, tinit_rockets = 0, tmax_cells = 0, tinit_cells = 0, ttype_gren1 = 0;
         float ttype_gren2 = 0, tmax_health = 0, tmax_armor = 0, tinit_armor = 0, tmax_gren1 = 0;
@@ -145,17 +146,17 @@ class gamemanager_c : entity
             case CLASS::NONE:
                 break;
             case CLASS::SCOUT:
-                tclassname = PC_SCOUT_NAME;
+                tclassname = TFCLASSNAMES::SCOUT;
                 tmax_speed = SCOUT::MAXSPEED;
                 tmax_strafe_speed = SCOUT::MAXSTRAFESPEED;
                 tmax_armor_type = SCOUT::MAXARMORTYPE;
                 tinit_armor_type = SCOUT::INITARMORTYPE;
                 tinit_armor_classes = SCOUT::INITARMORCLASS;
                 tillegal_bit = SCOUT::ILLEGALBIT;
-                tweapon1 = WEAPON::NAILGUN;
-                tweapon2 = WEAPON::SHOTGUN;
-                tweapon3 = WEAPON::AXE;
-                ttf_attributes = ATTRIBUTE::SCAN | ATTRIBUTE::DASH | ATTRIBUTE::DISARM;
+                tweapon1 = SCOUT::WEAPON1;
+                tweapon2 = SCOUT::WEAPON2;
+                tweapon3 = SCOUT::WEAPON3;
+                ttf_attributes = SCOUT::TF_ATTRIBUTES;
                 tmax_shells = SCOUT::MAXAMMO_SHOT;
                 tinit_shells = SCOUT::INITAMMO_SHOT;
                 tmax_nails = SCOUT::MAXAMMO_NAIL;
@@ -173,8 +174,8 @@ class gamemanager_c : entity
                         tmax_health = SCOUT::MAXHEALTH_FO;
                         tmax_armor = SCOUT::MAXARMOR_FO;
                         tinit_armor = tmax_armor;
-                        tmax_gren1 = SCOUT::MAX_GREN1;
-                        tmax_gren2 = SCOUT::MAX_GREN2;
+                        tmax_gren1 = SCOUT::MAXAMMO_GREN1;
+                        tmax_gren2 = SCOUT::MAXAMMO_GREN2;
                         tinit_gren1 = tmax_gren1;
                         tinit_gren2 = tmax_gren2;
                         break;
@@ -190,8 +191,8 @@ class gamemanager_c : entity
                             tmax_health = SCOUT::MAXHEALTH_FO;
                             tmax_armor = SCOUT::MAXARMOR_FO;
                         }
-                        tmax_gren1 = SCOUT::MAX_GREN1;
-                        tmax_gren2 = SCOUT::MAX_GREN2;
+                        tmax_gren1 = SCOUT::MAXAMMO_GREN1;
+                        tmax_gren2 = SCOUT::MAXAMMO_GREN2;
                         tmax_shells = SCOUT::MAXAMMO_SHOT;
                         tmax_nails = SCOUT::MAXAMMO_NAIL;
                         tmax_rockets = SCOUT::MAXAMMO_ROCKET;
@@ -202,9 +203,72 @@ class gamemanager_c : entity
                         tinit_nails = SCOUT::INITAMMO_NAIL;
                         tinit_rockets = SCOUT::INITAMMO_ROCKET;
                         tinit_cells = SCOUT::INITAMMO_CELL;
-                        tinit_gren1 = SCOUT::INIT_GREN1;
-                        tinit_gren2 = SCOUT::INIT_GREN2;
-                        
+                        tinit_gren1 = SCOUT::INITAMMO_GREN1;
+                        tinit_gren2 = SCOUT::INITAMMO_GREN2;
+                        break;
+                }
+                break;
+            case CLASS::SOLDIER:
+                tclassname = TFCLASSNAMES::SOLDIER;
+                tmax_speed = SOLDIER::MAXSPEED;
+                tmax_strafe_speed = SOLDIER::MAXSTRAFESPEED;
+                tmax_armor_type = SOLDIER::MAXARMORTYPE;
+                tinit_armor_type = SOLDIER::INITARMORTYPE;
+                tinit_armor_classes = SOLDIER::INITARMORCLASS;
+                tillegal_bit = SOLDIER::ILLEGALBIT;
+                tweapon1 = SOLDIER::WEAPON1;
+                tweapon2 = SOLDIER::WEAPON2;
+                tweapon3 = SOLDIER::WEAPON3;
+                tweapon4 = SOLDIER::WEAPON4;
+                ttf_attributes = SOLDIER::TF_ATTRIBUTES;
+                tmax_shells = SOLDIER::MAXAMMO_SHOT;
+                tinit_shells = SOLDIER::INITAMMO_SHOT;
+                tmax_nails = SOLDIER::MAXAMMO_NAIL;
+                tinit_nails = SOLDIER::INITAMMO_NAIL;
+                tmax_rockets = SOLDIER::MAXAMMO_ROCKET;
+                tinit_rockets = SOLDIER::INITAMMO_ROCKET;
+                tmax_cells = SOLDIER::MAXAMMO_CELL;
+                tinit_cells = SOLDIER::INITAMMO_CELL;
+                ttype_gren1 = SOLDIER::TYPE_GREN1;
+                ttype_gren2 = SOLDIER::TYPE_GREN2;
+                
+                switch (GameSettings.season)
+                {
+                    case SEASON::ONE:
+                        tmax_health = SOLDIER::MAXHEALTH_FO;
+                        tmax_armor = SOLDIER::MAXARMOR_FO;
+                        tinit_armor = tmax_armor;
+                        tmax_gren1 = SOLDIER::MAXAMMO_GREN1;
+                        tmax_gren2 = SOLDIER::MAXAMMO_GREN2;
+                        tinit_gren1 = tmax_gren1;
+                        tinit_gren2 = tmax_gren2;
+                        break;
+                    case SEASON::FO:
+                    case SEASON::TF28:
+                        if (GameSettings.old_hp_armor)
+                        {
+                            tmax_health = SOLDIER::MAXHEALTH;
+                            tmax_armor = SOLDIER::MAXARMOR;
+                        }
+                        else
+                        {
+                            tmax_health = SOLDIER::MAXHEALTH_FO;
+                            tmax_armor = SOLDIER::MAXARMOR_FO;
+                        }
+                        tmax_gren1 = SOLDIER::MAXAMMO_GREN1;
+                        tmax_gren2 = SOLDIER::MAXAMMO_GREN2;
+                        tmax_shells = SOLDIER::MAXAMMO_SHOT;
+                        tmax_nails = SOLDIER::MAXAMMO_NAIL;
+                        tmax_rockets = SOLDIER::MAXAMMO_ROCKET;
+                        tmax_cells = SOLDIER::MAXAMMO_CELL;
+
+                        tinit_armor = tmax_armor / 2;
+                        tinit_shells = SOLDIER::INITAMMO_SHOT;
+                        tinit_nails = SOLDIER::INITAMMO_NAIL;
+                        tinit_rockets = SOLDIER::INITAMMO_ROCKET;
+                        tinit_cells = SOLDIER::INITAMMO_CELL;
+                        tinit_gren1 = SOLDIER::INITAMMO_GREN1;
+                        tinit_gren2 = SOLDIER::INITAMMO_GREN2;
                         break;
                 }
                 break;
@@ -238,6 +302,7 @@ class gamemanager_c : entity
         Classes[class-1].weapon1 = tweapon1;
         Classes[class-1].weapon2 = tweapon2;
         Classes[class-1].weapon3 = tweapon3;
+        Classes[class-1].weapon4 = tweapon4;
         Classes[class-1].tf_attributes = ttf_attributes;
         Classes[class-1].max_shells = tmax_shells;
         Classes[class-1].init_shells = tinit_shells;
@@ -265,8 +330,6 @@ class gamemanager_c : entity
             Teams[i-1] = team;
         }
     };
-
-    
 
     /*
     ============

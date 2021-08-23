@@ -25,6 +25,7 @@ enum CLASS
 {
     NONE = 0,
     SCOUT = 1,
+    SOLDIER = 3,
     MEDIC = 5,
     SPY = 8,
 };
@@ -51,6 +52,20 @@ enum DIMENSION
     INVISIBLE = 8192 // special dimension to hide stuff in
 };
 
+enum ILLEGALBIT
+{
+    SCOUT = 1,
+    SNIPER = 2,
+    SOLDIER = 4,
+    DEMOMAN = 8,
+    MEDIC = 16,
+    HWGUY = 32,
+    PYRO = 64,
+    RANDOMPC = 128,
+    SPY = 256,
+    ENGINEER = 512,
+};
+
 enum SEASON
 {
     FO = 0,
@@ -70,7 +85,11 @@ enum SOUNDS : string
     DASH = "dash.wav",
     SCAN = "misc/basekey.wav",
     FLASH = "weapons/flashgrenburst.wav",
-    SHOTGUN_SHOOT = "weapons/guncock.wav"
+    SHOTGUN_SHOOT = "weapons/guncock.wav",
+    SUPERSHOTGUN_SHOOT = "weapons/shotgn2.wav",
+    ROCKETLAUNCHER_SHOOT = "weapons/sgun1.wav",
+    AXE_SHOOT = "weapons/ax1.wav",
+    AXE_HIT = "player/axhit2.wav",
 };
 
 enum MODELS : string
@@ -79,9 +98,17 @@ enum MODELS : string
     HANDGRENADE = "progs/hgren2.mdl",
     BUBBLE = "progs/s_bubble.spr",
     VIEW_SHOTGUN = "progs/v_shot.mdl",
+    VIEW_SUPERSHOTGUN = "progs/v_shot2.mdl",
+    VIEW_AXE = "progs/v_axe.mdl",
+    VIEW_ROCKETLAUNCHER = "progs/v_rock2.mdl",
+    ROCKET = "progs/missile.mdl",
 };
 
-
+enum TFCLASSNAMES : string
+{
+    SCOUT = "scout",
+    SOLDIER = "soldier"
+};
 
 enum WEAPON
 {
@@ -106,7 +133,9 @@ enum WEAPON
 enum GRENADE
 {
     FLASH,
-    CONCUSSION
+    CONCUSSION,
+    HIGHEXPLOSIVE,
+    SHOCK,
 };
 
 enum IMPULSE

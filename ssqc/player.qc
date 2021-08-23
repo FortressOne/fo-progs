@@ -175,7 +175,6 @@ void() muzzleflash =
 	multicast (self.origin, MULTICAST_PVS);
 };
 
-
 void()  player_shot1 =  [$shotatt1, player_shot2        ] {
 	self.owner.weaponframe=1;
 	muzzleflash();
@@ -264,13 +263,13 @@ void() player_light2   =[$light2, player_light1  ]
 //============================================================================
 
 
-void() player_rocket1   =[$rockatt1, player_rocket2  ] {self.weaponframe=1;
+void() player_rocket1   =[$rockatt1, player_rocket2  ] {self.owner.weaponframe=1;
 	muzzleflash();};
-void() player_rocket2   =[$rockatt2, player_rocket3  ] {self.weaponframe=2;};
-void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.weaponframe=3;};
-void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.weaponframe=4;};
-void() player_rocket5   =[$rockatt5, player_rocket6  ] {self.weaponframe=5;};
-void() player_rocket6   =[$rockatt6, player_run  ] {self.weaponframe=6;};
+void() player_rocket2   =[$rockatt2, player_rocket3  ] {self.owner.weaponframe=2;};
+void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.owner.weaponframe=3;};
+void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.owner.weaponframe=4;};
+void() player_rocket5   =[$rockatt5, player_rocket6  ] {self.owner.weaponframe=5;};
+void() player_rocket6   =[$rockatt6, player_run  ] {self.owner.weaponframe=6;};
 
 void()  player_pain1 =  [       $pain1, player_pain2    ] {
 	player_c player = (player_c)self;
@@ -729,9 +728,9 @@ class player_c : entity
 
 		if (time > this.attack_finished && this.currentammo == 0 && this.weapon != IT_AXE)
 		{
-			bprint(PRINT_HIGH, "prethink\n");
-			bprint(PRINT_HIGH, "currentammo: ", ftos(this.currentammo), "\n");
-			bprint(PRINT_HIGH, "weapon: ", ftos(this.weapon), "\n");
+			//bprint(PRINT_HIGH, "prethink\n");
+			//bprint(PRINT_HIGH, "currentammo: ", ftos(this.currentammo), "\n");
+			//bprint(PRINT_HIGH, "weapon: ", ftos(this.weapon), "\n");
 			this.current_weapon = this.GetBestWeapon();
 		}
 	};
@@ -1190,6 +1189,9 @@ class player_c : entity
 					case CLASS::SCOUT:
 						Scout::Special(this);
 						break;
+					case CLASS::SOLDIER:
+						Soldier::Special(this);
+						break;
 				}
 				break;
 			case IMPULSE::DASH:
@@ -1235,9 +1237,6 @@ class player_c : entity
 	{
 		if (!this.tf_class)
 			return;
-		// for now let's force scout
-		//this.tf_class = &Classes[0];
-
 		this.health = this.tf_class.max_health;
 		this.armorvalue = this.tf_class.init_armor;
 		this.armortype = this.tf_class.init_armor_type;

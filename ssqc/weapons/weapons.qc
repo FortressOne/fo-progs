@@ -91,39 +91,6 @@ void(float damage) spawn_touchblood =
 	SpawnBlood (self.origin + vel*0.01, damage);
 };
 
-
-/*
-==============================================================================
-
-ROCKETS
-
-==============================================================================
-*/
-
-void() T_MissileTouch =
-{
-	
-};
-
-
-
-/*
-================
-W_FireRocket
-================
-*/
-void() W_FireRocket =
-{	
-	sound(self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
-
-	msg_entity = self;
-	WriteByte (MSG_ONE, SVC_SMALLKICK);
-
-	makevectors(self.v_angle);
-	vector org = self.origin + v_forward*8 + '0 0 16';
-	proj_rocket_c ent = spawn(proj_rocket_c, origin: org, direction: aim(self, 1000), owner: self);
-};
-
 /*
 ===============================================================================
 LIGHTNING

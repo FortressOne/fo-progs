@@ -530,23 +530,6 @@
 #define DMSG_GREN_FLASH			35
 #define DMSG_TRIGGER			36
 
-
-
-// Legal Playerclass Handling
-#define TF_ILL_SCOUT 		1
-#define TF_ILL_SNIPER		2
-#define TF_ILL_SOLDIER		4
-#define TF_ILL_DEMOMAN		8
-#define TF_ILL_MEDIC		16
-#define TF_ILL_HVYWEP		32
-#define TF_ILL_PYRO		    64
-#define TF_ILL_RANDOMPC		128
-#define TF_ILL_SPY		    256
-#define TF_ILL_ENGINEER		512
-
-// Classes
-#define PC_SCOUT_NAME               "scout"
-
 // Seasons
 #define SEASON_TF28 2.8
 #define SEASON_FO 0

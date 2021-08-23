@@ -7,6 +7,7 @@ defs.qc
 tfdefs.qc
 classes/class.qc
 classes/scout.qc
+classes/soldier.qc
 gamemanager.qc
 menumanager.qc
 csqcmanager.qc
