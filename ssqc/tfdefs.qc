@@ -80,6 +80,27 @@ enumflags ATTRIBUTE
     DISARM,
 };
 
+enumflags DAMAGE
+{
+    NONE = 0,
+    IGNOREARMOR,
+    NOTTEAM,
+    NOTSELF,
+};
+
+enumflags DAMAGETYPE
+{
+    OTHER, // Ignore armorclass (as in ignore asbestos etc... essentially a "none"
+    SHELL,
+    NAIL,
+    EXPLOSION,
+    SHOCK,
+    FIRE,
+    NOSOUND, // Special damage. Makes no sound/painframe, etc
+    NOMOMENTUM, // Special damage, don't change momentum
+    CRUSH, // World stuff, not really used
+};
+
 enum SOUNDS : string
 {
     DASH = "dash.wav",
@@ -90,6 +111,8 @@ enum SOUNDS : string
     ROCKETLAUNCHER_SHOOT = "weapons/sgun1.wav",
     AXE_SHOOT = "weapons/ax1.wav",
     AXE_HIT = "player/axhit2.wav",
+    BOUNCE = "weapons/bounce.wav",
+    SHOCK_HIT = "weapons/lhit.wav",
 };
 
 enum MODELS : string
@@ -102,6 +125,7 @@ enum MODELS : string
     VIEW_AXE = "progs/v_axe.mdl",
     VIEW_ROCKETLAUNCHER = "progs/v_rock2.mdl",
     ROCKET = "progs/missile.mdl",
+    SHOCKGRENADE = "progs/biggren.mdl",
 };
 
 enum TFCLASSNAMES : string
@@ -134,7 +158,7 @@ enum GRENADE
 {
     FLASH,
     CONCUSSION,
-    HIGHEXPLOSIVE,
+    HANDGRENADE,
     SHOCK,
 };
 

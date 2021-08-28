@@ -1,5 +1,6 @@
 class axe_c : weapon_c
 {
+    float damage;
     void () axe_c = 
     {
         classname = "player_axe";
@@ -11,6 +12,7 @@ class axe_c : weapon_c
         attack_finish_delay = 0.5;
         animation_func = player_axe1;
         ammo_per_shot = 0;
+        damage = 20;
     };
 
     virtual float () Attack =
@@ -30,9 +32,9 @@ class axe_c : weapon_c
 
     nonvirtual void () Swing =
     {
-        makevectors (self.owner.v_angle);
-        vector source = self.owner.origin + '0 0 16';
-        traceline (source, source + v_forward*64, FALSE, self.owner);
+        makevectors (this.owner.v_angle);
+        vector source = this.owner.origin + '0 0 16';
+        traceline (source, source + v_forward*64, FALSE, this.owner);
         if (trace_fraction == 1.0)
             return;
         
@@ -42,14 +44,11 @@ class axe_c : weapon_c
         {
             trace_ent.axhitme = 1;
             SpawnBlood (org, 20);
-            if (deathmatch > 3)
-                T_Damage (trace_ent, self.owner, self.owner, 75);
-            else
-                T_Damage (trace_ent, self.owner, self.owner, 20);
+            T_Damage (trace_ent, this.owner, this.owner, this.damage, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
         }
         else
         {       // hit wall
-            sound (self.owner, CHAN_WEAPON, SOUNDS::AXE_HIT, 1, ATTN_NORM);
+            sound(this.owner, CHAN_WEAPON, SOUNDS::AXE_HIT, 1, ATTN_NORM);
 
             WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
             WriteByte (MSG_MULTICAST, TE_GUNSHOT);

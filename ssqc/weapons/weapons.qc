@@ -106,7 +106,7 @@ void(entity from, float damage) LightningHit =
 	WriteCoord (MSG_MULTICAST, trace_endpos_z);
 	multicast (trace_endpos, MULTICAST_PVS);
 
-	T_Damage (trace_ent, from, from, damage);
+	T_Damage (trace_ent, from, from, damage, DAMAGE::NOTTEAM, DAMAGETYPE::SHOCK);
 };
 
 /*
@@ -236,7 +236,7 @@ void() W_FireGrenade =
 		newmis.nextthink = time + 2.5;		
 		self.attack_finished = time + 1.1;
 //		self.health = self.health - 1;
-		T_Damage (self, self, self.owner, 10 );
+		T_Damage (self, self, self.owner, 10, DAMAGE::NOTTEAM, DAMAGETYPE::EXPLOSION);
 	}
 	else
 		newmis.nextthink = time + 2.5;
@@ -288,7 +288,7 @@ void() superspike_touch = {
 	{
 		spawn_touchblood (18);
 		other.deathtype = "supernail";
-		T_Damage (other, self, self.owner, 18);
+		T_Damage (other, self, self.owner, 18, DAMAGE::NOTTEAM, DAMAGETYPE::NAIL);
 	}
 	else
 	{

@@ -49,7 +49,7 @@ THINK FUNCTIONS
 void() door_blocked =
 {
 	other.deathtype = "squish";
-	T_Damage (other, self, self.goalentity, self.dmg);
+	T_Damage (other, self, self.goalentity, self.dmg, DAMAGE::NOTTEAM, DAMAGETYPE::CRUSH);
 
 // if a door has a negative wait, it would never come back if blocked,
 // so let it just squash the object to death real fast

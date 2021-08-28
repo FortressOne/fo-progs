@@ -118,7 +118,7 @@ void() secret_blocked =
 		return;
 	self.attack_finished = time + 0.5;
 	other.deathtype = "squish";
-	T_Damage (other, self, self, self.dmg);
+	T_Damage (other, self, self, self.dmg, DAMAGE::NOTTEAM, DAMAGETYPE::CRUSH);
 };
 
 /*

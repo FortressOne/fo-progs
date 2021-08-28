@@ -28,7 +28,7 @@ class proj_rocket_c : proj_c
         if (other.health)
         {
             other.deathtype = "rocket";
-            T_Damage(other, this, this.owner, damg );
+            T_Damage(other, this, this.owner, damg, DAMAGE::NOTTEAM, DAMAGETYPE::EXPLOSION);
         }
 
         // don't do radius damage to the other, because all the damage

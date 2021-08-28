@@ -29,9 +29,9 @@ class proj_spike_c : proj_c
     // hit something that bleeds
         if (other.takedamage)
         {
-            spawn_touchblood (9);
+            spawn_touchblood(9);
             other.deathtype = "nail";
-            T_Damage (other, self, self.owner, 9);
+            T_Damage(other, self, self.owner, 9, DAMAGE::NOTTEAM, DAMAGETYPE::NAIL);
         }
         else
         {

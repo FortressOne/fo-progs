@@ -105,13 +105,9 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
-	local   vector  dir;
-	local   entity  oldself;
-	local   float   save;
-	local   float   take;
-	local   string  attackerteam, targteam;
-
+void(entity targ, entity inflictor, entity attacker, float damage, 
+		DAMAGE DAMAGEFLAG, DAMAGETYPE DAMAGETYPEFLAG) T_Damage = 
+{
 
 	if (!targ.takedamage)
 		return;
@@ -128,7 +124,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
 
 // save damage based on the target's armor level
 
-	save = ceil(targ.armortype*damage);
+	float save = ceil(targ.armortype*damage);
 	if (save >= targ.armorvalue)
 	{
 		save = targ.armorvalue;
@@ -137,7 +133,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
 	}
 	
 	targ.armorvalue = targ.armorvalue - save;
-	take = ceil(damage-save);
+	float take = ceil(damage-save);
 
 // add to the damage total for clients, which will be sent as a single
 // message at the end of the frame
@@ -154,7 +150,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
 // figure momentum add
 	if ( (inflictor != world) && (targ.movetype == MOVETYPE_WALK) )
 	{
-		dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
+		vector dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
 		dir = normalize(dir);
 		targ.velocity = targ.velocity + dir * damage * 8;
 		
@@ -179,8 +175,8 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
 
 // team play damage avoidance
 //ZOID 12-13-96: self.team doesn't work in QW.  Use keys
-	attackerteam = infokey(attacker, "team");
-	targteam = infokey(targ, "team");
+	string attackerteam = infokey(attacker, "team");
+	string targteam = infokey(targ, "team");
 
 	if ((teamplay == 1) && (targteam == attackerteam) &&
 		(attacker.classname == "player") && (attackerteam != "") &&
@@ -203,7 +199,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage = {
 	}
 
 // react to the damage
-	oldself = self;
+	entity oldself = self;
 	self = targ;
 
 	if (self.th_pain)
@@ -252,7 +248,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 					if (CanDamage (head, inflictor))
 					{
 						head.deathtype = inflictor.classname;
-						T_Damage (head, inflictor, attacker, points);
+						T_Damage(head, inflictor, attacker, points, DAMAGE::NOTTEAM, DAMAGETYPE::EXPLOSION);
 					}
 				}
 			}
@@ -260,36 +256,3 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 		head = head.chain;
 	}
 };
-
-/*
-============
-T_BeamDamage
-============
-*/
-void(entity attacker, float damage) T_BeamDamage =
-{
-	local   float   points;
-	local   entity  head;
-	
-	head = findradius(attacker.origin, damage+40);
-	
-	while (head)
-	{
-		if (head.takedamage)
-		{
-			points = 0.5*vlen (attacker.origin - head.origin);
-			if (points < 0)
-				points = 0;
-			points = damage - points;
-			if (head == attacker)
-				points = points * 0.5;
-			if (points > 0)
-			{
-				if (CanDamage (head, attacker))
-					T_Damage (head, attacker, attacker, points);
-			}
-		}
-		head = head.chain;
-	}
-};
-

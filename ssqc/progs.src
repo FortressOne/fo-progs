@@ -40,6 +40,7 @@ weapons/railgun.qc
 weapons/handgrenades/handgrenade.qc
 weapons/handgrenades/flashgrenade.qc
 weapons/handgrenades/concussiongrenade.qc
+weapons/handgrenades/shockgrenade.qc
 
 
 

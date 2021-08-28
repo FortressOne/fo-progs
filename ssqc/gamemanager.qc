@@ -16,6 +16,13 @@ typedef struct
     float flash_time;
     float medic_no_cuss;
     float concussion_length;
+    float lasergren_rotationcount; // how many rotations the nailgren does
+    float lasergren_rotationtime; // time each rotation takes
+    float lasergren_damage;
+    float lasergren_thinktime;
+    float lasergren_range;
+    float lasergren_reqthinks;
+    float lasergren_angleperthink;
 
 } gamesettings_t;
 gamesettings_t GameSettings;
@@ -86,6 +93,13 @@ class gamemanager_c : entity
         GameSettings.flash_time = this.GetSetting(world, "ff", "fo_flashtime", "2");
         GameSettings.medic_no_cuss = this.GetSetting(world, "mnc", "medicnocuss", "on");
         GameSettings.concussion_length = this.GetSetting(world, "cgt", "cussgrentime", "on"); // bad naming
+        GameSettings.lasergren_rotationcount = this.GetSetting(world, "lgrc", "lasergren_rotationcount", "2"); // bad naming
+        GameSettings.lasergren_rotationtime = this.GetSetting(world, "lgrt", "lasergren_rotationtime", "1");
+        GameSettings.lasergren_damage = this.GetSetting(world, "lgd", "lasergren_damage", "20");
+        GameSettings.lasergren_thinktime = this.GetSetting(world, "lgtt", "lasergren_thinktime", "0.01");
+        GameSettings.lasergren_range = this.GetSetting(world, "lgr", "lasergren_range", "150");
+        GameSettings.lasergren_reqthinks = (GameSettings.lasergren_rotationcount * GameSettings.lasergren_rotationtime) / GameSettings.lasergren_thinktime;
+        GameSettings.lasergren_angleperthink = (GameSettings.lasergren_rotationcount * 360) / GameSettings.lasergren_reqthinks;
     };
 
     nonvirtual void () PopulatePostClassesSettings = 
@@ -139,7 +153,7 @@ class gamemanager_c : entity
         float ttf_attributes = 0, tmax_shells = 0, tinit_shells = 0, tmax_nails = 0, tinit_nails = 0;
         float tmax_rockets = 0, tinit_rockets = 0, tmax_cells = 0, tinit_cells = 0, ttype_gren1 = 0;
         float ttype_gren2 = 0, tmax_health = 0, tmax_armor = 0, tinit_armor = 0, tmax_gren1 = 0;
-        float tmax_gren2 = 0, tinit_gren1 = 0, tinit_gren2 = 0;
+        float tmax_gren2 = 0, tinit_gren1 = 0, tinit_gren2 = 0, tmax_activegren2;
 
         switch (class)
         {
@@ -231,6 +245,7 @@ class gamemanager_c : entity
                 tinit_cells = SOLDIER::INITAMMO_CELL;
                 ttype_gren1 = SOLDIER::TYPE_GREN1;
                 ttype_gren2 = SOLDIER::TYPE_GREN2;
+                tmax_activegren2 = SOLDIER::MAX_ACTIVEGREN2;
                 
                 switch (GameSettings.season)
                 {
@@ -318,6 +333,8 @@ class gamemanager_c : entity
         Classes[class-1].max_armor = tmax_armor;
         Classes[class-1].max_gren1 = tmax_gren1;
         Classes[class-1].max_gren2 = tmax_gren2;
+        Classes[class-1].max_activegren2 = tmax_activegren2;
+        
     };
 
     nonvirtual void () PopulateTeams =

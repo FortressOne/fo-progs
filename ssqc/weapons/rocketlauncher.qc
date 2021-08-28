@@ -26,7 +26,7 @@ class rocketlauncher_c : weapon_c
 
         makevectors(this.owner.v_angle);
         vector org = this.owner.origin + v_forward*8 + '0 0 16';
-        vector dir = aim(this.owner, 1000)
+        vector dir = aim(this.owner, 1000);
         proj_rocket_c ent = ::spawn(proj_rocket_c, origin: org, direction: dir, owner: this.owner);
 
         return TRUE;

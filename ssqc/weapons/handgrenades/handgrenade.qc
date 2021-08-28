@@ -18,6 +18,7 @@ class handgrenade_c : entity
     {
         nextthink = time + 3.8;
         classname = "handgrenade";
+        netname = "Grenade";
         model = MODELS::HANDGRENADE;
         
         if (owner)
@@ -58,7 +59,7 @@ class handgrenade_c : entity
         player_c player = (player_c)this.owner;
         player.primed_grenade = __NULL__;
 
-        sound(this.owner, CHAN_AUTO, "weapons/ax1.wav", 1, ATTN_NORM);
+        sound(this.owner, CHAN_AUTO, SOUNDS::AXE_SHOOT, 1, ATTN_NORM);
     };
 
     virtual void () Explode =
@@ -92,7 +93,7 @@ class handgrenade_c : entity
         if (other == this.owner)
             return;
 
-        sound(this, CHAN_AUTO, "weapons/bounce.wav", 1, ATTN_NORM);
+        sound(this, CHAN_AUTO, SOUNDS::BOUNCE, 1, ATTN_NORM);
         if (this.velocity == '0 0 0')
             this.avelocity = '0 0 0';
     };
@@ -100,5 +101,31 @@ class handgrenade_c : entity
     virtual void () think =
     {
         this.Explode();
+    };
+
+    virtual void () CheckMaxActiveGrenLimit =
+    {
+        float count = 1;
+        entity ent = find(world, ::classname, this.classname);
+
+        while (ent)
+        {
+            if (ent.owner == this.owner && ent != this)
+            {
+                count++;
+                player_c player = (player_c)this.owner;
+                float limit = player.tf_class.max_activegren2;
+                if (limit != 0)
+                {
+                    if (count >= limit)
+                    {
+                        remove(ent);
+                        count--;
+                    }
+                }
+            }
+
+            ent = find(ent, ::classname, this.classname);
+        }
     };
 };

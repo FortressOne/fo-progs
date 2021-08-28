@@ -603,6 +603,12 @@ class player_c : entity
 				case GRENADE::CONCUSSION:
 					concussiongrenade_c::Prime(this);
 					break;
+				case GRENADE::HANDGRENADE:
+					handgrenade_c::Prime(this);
+					break;
+				case GRENADE::SHOCKGRENADE:
+					shockgrenade_c::Prime(this);
+					break;
 			}
 		}
 	};
@@ -752,7 +758,7 @@ class player_c : entity
 			else if (this.jump_flag < -650)
 			{
 				this.deathtype = "falling";
-				T_Damage (this, world, world, 5); 
+				T_Damage (this, world, world, 5, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER); 
 				sound (this, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 			}
 			else
@@ -961,7 +967,7 @@ class player_c : entity
 				this.dmg = this.dmg + 2;
 				if (this.dmg > 15)
 					this.dmg = 10;
-				T_Damage(this, world, world, this.dmg);
+				T_Damage(this, world, world, this.dmg, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 				this.pain_finished = time + 1;
 			}
 		}
@@ -987,7 +993,7 @@ class player_c : entity
 				else
 					this.dmgtime = time + 0.2;
 
-				T_Damage(this, world, world, 10*this.waterlevel);
+				T_Damage(this, world, world, 10*this.waterlevel, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 			}
 		}
 		else if (this.watertype == CONTENT_SLIME)
@@ -996,7 +1002,7 @@ class player_c : entity
 			if (this.dmgtime < time && this.radsuit_finished < time)
 			{
 				this.dmgtime = time + 1;
-				T_Damage(this, world, world, 4*this.waterlevel);
+				T_Damage(this, world, world, 4*this.waterlevel, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 			}
 		}
 		

@@ -27,6 +27,7 @@ typedef struct
     float init_gren1;
     float init_gren2;
     float max_gren2;
+    float max_activegren2;
     float type_gren1;
     float type_gren2;
     int tf_attributes;
