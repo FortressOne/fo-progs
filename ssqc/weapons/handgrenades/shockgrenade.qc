@@ -25,11 +25,6 @@ class shockgrenade_c : handgrenade_c
         gren.damage = 120;
         player.primed_grenade = gren;
     };
-
-    virtual void () ApplyEffect =
-    {
-        
-    };
     
     nonvirtual void () DoShock =
     {
@@ -54,7 +49,6 @@ class shockgrenade_c : handgrenade_c
         if (trace_ent.takedamage)
         {
             te_lightningblood(trace_endpos);
-
             T_Damage(trace_ent, this, this.real_owner, this.shock_damage, DAMAGE::NOTTEAM, DAMAGETYPE::SHOCK);
         }
 

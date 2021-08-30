@@ -328,6 +328,7 @@ class gamemanager_c : entity
         Classes[class-1].max_armor_type = tmax_armor_type;
         Classes[class-1].init_armor_type = tinit_armor_type;
         Classes[class-1].init_armor_classes = tinit_armor_classes;
+        Classes[class-1].init_armor = tinit_armor;
         Classes[class-1].illegal_bit = tillegal_bit;
         Classes[class-1].weapon1 = tweapon1;
         Classes[class-1].weapon2 = tweapon2;
