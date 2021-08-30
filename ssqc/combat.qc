@@ -172,21 +172,6 @@ void(entity targ, entity inflictor, entity attacker, float damage,
 		}
 		return;
 	}
-
-// team play damage avoidance
-//ZOID 12-13-96: self.team doesn't work in QW.  Use keys
-	string attackerteam = infokey(attacker, "team");
-	string targteam = infokey(targ, "team");
-
-	if ((teamplay == 1) && (targteam == attackerteam) &&
-		(attacker.classname == "player") && (attackerteam != "") &&
-		inflictor.classname !="door")
-		return;
-
-	if ((teamplay == 3) && (targteam == attackerteam) &&
-		(attacker.classname == "player") && (attackerteam != "") &&
-		(targ != attacker)&& inflictor.classname !="door")
-		return;
 		
 // do the damage
 	targ.health = targ.health - take;

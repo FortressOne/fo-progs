@@ -61,12 +61,27 @@ class gamemanager_c : entity
         precache_sound(SOUNDS::DASH);
         precache_sound(SOUNDS::SCAN);
         precache_sound(SOUNDS::FLASH);
+        precache_sound(SOUNDS::SHOTGUN_SHOOT);
+        precache_sound(SOUNDS::SUPERSHOTGUN_SHOOT);
+        precache_sound(SOUNDS::ROCKETLAUNCHER_SHOOT);
+        precache_sound(SOUNDS::AXE_SHOOT);
+        precache_sound(SOUNDS::AXE_HIT);
+        precache_sound(SOUNDS::BOUNCE);
+        precache_sound(SOUNDS::SHOCK_HIT);
     };
 
     // TODO - macro
     nonvirtual void () Precache_Models =
     {
         precache_model(MODELS::BUBBLE);
+        precache_model(MODELS::FLASH);
+        precache_model(MODELS::HANDGRENADE);
+        precache_model(MODELS::VIEW_SHOTGUN);
+        precache_model(MODELS::VIEW_SUPERSHOTGUN);
+        precache_model(MODELS::VIEW_AXE);
+        precache_model(MODELS::VIEW_ROCKETLAUNCHER);
+        precache_model(MODELS::ROCKET);
+        precache_model(MODELS::SHOCKGRENADE);
     };
 
     nonvirtual void () FirstFrame =
@@ -153,7 +168,7 @@ class gamemanager_c : entity
         float ttf_attributes = 0, tmax_shells = 0, tinit_shells = 0, tmax_nails = 0, tinit_nails = 0;
         float tmax_rockets = 0, tinit_rockets = 0, tmax_cells = 0, tinit_cells = 0, ttype_gren1 = 0;
         float ttype_gren2 = 0, tmax_health = 0, tmax_armor = 0, tinit_armor = 0, tmax_gren1 = 0;
-        float tmax_gren2 = 0, tinit_gren1 = 0, tinit_gren2 = 0, tmax_activegren2;
+        float tmax_gren2 = 0, tinit_gren1 = 0, tinit_gren2 = 0, tmax_activegren2 = 0;
 
         switch (class)
         {

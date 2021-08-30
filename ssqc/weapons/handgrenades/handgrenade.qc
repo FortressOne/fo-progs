@@ -17,9 +17,6 @@ class handgrenade_c : entity
     void () handgrenade_c =
     {
         nextthink = time + 3.8;
-        classname = "handgrenade";
-        netname = "Grenade";
-        model = MODELS::HANDGRENADE;
         
         if (owner)
             sprint(owner, PRINT_HIGH, strcat(netname, " primed, 3 seconds...\n"));
@@ -27,7 +24,7 @@ class handgrenade_c : entity
 
     static void (player_c player) Prime =
     {
-        handgrenade_c gren = spawn(handgrenade_c, owner: player);
+        handgrenade_c gren = spawn(handgrenade_c, model: MODELS::HANDGRENADE, owner: player, classname: "handgrenade", netname: "Grenade");
         gren.damage = 180;
         player.primed_grenade = gren;
     };

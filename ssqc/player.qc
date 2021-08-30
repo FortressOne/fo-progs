@@ -606,7 +606,7 @@ class player_c : entity
 				case GRENADE::HANDGRENADE:
 					handgrenade_c::Prime(this);
 					break;
-				case GRENADE::SHOCKGRENADE:
+				case GRENADE::SHOCK:
 					shockgrenade_c::Prime(this);
 					break;
 			}

@@ -1,8 +1,6 @@
 class shockgrenade_c : handgrenade_c
 {
     float rotations;
-    float rotation_time;
-    float shock_range;
     float shock_damage;
     float nextthink_interval;
     player_c real_owner;
@@ -23,7 +21,7 @@ class shockgrenade_c : handgrenade_c
 
     static void (player_c player) Prime =
     {
-        shockgrenade_c gren = spawn(shockgrenade_c, owner: player, rotations: 2, rotation_time: 1, shock_range: 150, nextthink_interval: .01);
+        shockgrenade_c gren = spawn(shockgrenade_c, owner: player, nextthink_interval: .01);
         gren.damage = 120;
         player.primed_grenade = gren;
     };
@@ -35,12 +33,12 @@ class shockgrenade_c : handgrenade_c
     
     nonvirtual void () DoShock =
     {
-        this.v_angle = '0 0 0';
         if (rotations == 0)
         {
+            this.v_angle = '0 0 0';
             this.velocity = '0 0 0';
-            this.real_owner = (player_c)this.owner;
-            this.owner = world;			//work-around because traceent wouldnt hit self or self.owner
+            this.real_owner = this.owner;
+            this.owner = world;
         }
         else
         {
@@ -49,6 +47,7 @@ class shockgrenade_c : handgrenade_c
 
         this.angles = this.v_angle;
         makevectors(this.v_angle);
+        
         traceline(this.origin, this.origin + v_forward * GameSettings.lasergren_range, 0, this);
         te_lightning2(this, this.origin, trace_endpos);
 

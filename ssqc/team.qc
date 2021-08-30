@@ -33,6 +33,7 @@ class team_c : entity {
             {
                 count++;
             }
+            p = (player_c)find(p, ::classname, "player");
         }
 
         return count;
