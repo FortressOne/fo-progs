@@ -1,15 +1,15 @@
-class flashgrenade_c : handgrenade_c
+class grenade_flash_c : grenade_hand_c
 {
-    void () flashgrenade_c =
+    void () grenade_flash_c =
     {
         classname = "flashgrenade";
         netname = "Flash grenade";
-        model = MODELS::FLASH;
+        model = MODELS::GRENADE_FLASH;
     };
 
     static void (player_c player) Prime =
     {
-        flashgrenade_c gren = spawn(flashgrenade_c, owner: player);
+        grenade_flash_c gren = spawn(grenade_flash_c, owner: player);
         gren.damage = 10;
         gren.explode_radius = 300;
         player.primed_grenade = gren;
@@ -54,7 +54,7 @@ class flashgrenade_c : handgrenade_c
                     newmis = spawn();
                     newmis.classname = "flashtimer";
                     newmis.owner = player;
-                    newmis.think = flashgrenade_c::FlashTimer;
+                    newmis.think = grenade_flash_c::FlashTimer;
                     newmis.nextthink = time + .1;
                 }
                 vector org = player.origin + (player.mins + player.maxs) * 0.5;
@@ -62,7 +62,7 @@ class flashgrenade_c : handgrenade_c
                 float ftime = GameSettings.flash_time * (frac + frac * 0.5); // fall off is awful, let's half it
                 player.flash_time = ftime;
 
-                flashgrenade_c::StuffFlash(player);
+                grenade_flash_c::StuffFlash(player);
                 player.is_flashed = TRUE;
             }
 
@@ -83,7 +83,7 @@ class flashgrenade_c : handgrenade_c
             return;
         }
 
-        flashgrenade_c::StuffFlash(player);
+        grenade_flash_c::StuffFlash(player);
         self.nextthink = time + 0.1;
     };
 
@@ -107,7 +107,7 @@ class flashgrenade_c : handgrenade_c
 
     static void (player_c player) StuffFlash =
     {
-        float amt = flashgrenade_c::CalcFlash(player);
+        float amt = grenade_flash_c::CalcFlash(player);
         string st = ftos(amt);
         string cmd = strcat("v_cshift ", st, " ", st);
         cmd = strcat(cmd, " ", st, " ", st, "\n");

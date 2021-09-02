@@ -62,6 +62,9 @@ class weapon_c : entity
             case WEAPON::ROCKETLAUNCHER:
                 ret = ::spawn(rocketlauncher_c, owner: player);
                 break;
+            case WEAPON::GRENADELAUNCHER:
+                ret = ::spawn(grenadelauncher_c, owner: player);
+                break;
         }
         return ret;
     };
@@ -295,7 +298,7 @@ Collects multiple small damages into a single damage
         if (!this.multi_ent)
             return;
 
-        T_Damage(this.multi_ent, this.owner, this.owner, this.multi_damage);
+        T_Damage(this.multi_ent, this.owner, this.owner, this.multi_damage, DAMAGE::NOTTEAM, DAMAGETYPE::SHELL);
     };
 
     nonvirtual void() ClearMultiDamage =

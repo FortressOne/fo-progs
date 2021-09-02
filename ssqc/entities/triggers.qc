@@ -353,16 +353,16 @@ void() tdeath_touch =
 			self.classname = "teledeath3";
 			other.invincible_finished = 0;
 			self.owner.invincible_finished = 0;
-			T_Damage (other, self, self, 50000);
+			T_Damage (other, self, self, 50000, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 			other2 = self.owner;
 			self.owner = other;
-			T_Damage (other2, self, self, 50000);
+			T_Damage (other2, self, self, 50000, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 		}
 			
 		if (other.invincible_finished > time)
 		{
 			self.classname = "teledeath2";
-			T_Damage (self.owner, self, self, 50000);
+			T_Damage (self.owner, self, self, 50000, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 			return;
 		}
 		
@@ -370,7 +370,7 @@ void() tdeath_touch =
 
 	if (other.health)
 	{
-		T_Damage (other, self, self, 50000);
+		T_Damage (other, self, self, 50000, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 	}
 };
 
@@ -512,7 +512,7 @@ void() hurt_touch =
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;
-		T_Damage (other, self, self, self.dmg);
+		T_Damage (other, self, self, self.dmg, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
 		self.think = hurt_on;
 		self.nextthink = time + 1;
 	}

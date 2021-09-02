@@ -8,6 +8,7 @@ tfdefs.qc
 classes/class.qc
 classes/scout.qc
 classes/soldier.qc
+classes/demoman.qc
 gamemanager.qc
 menumanager.qc
 csqcmanager.qc
@@ -17,6 +18,8 @@ subs.qc
 combat.qc
 weapons/proj.qc
 weapons/proj_rocket.qc
+weapons/proj_grenade.qc
+weapons/proj_pipebomb.qc
 weapons/proj_spike.qc
 weapons/weapons.qc
 weapons/weapon.qc
@@ -36,10 +39,13 @@ weapons/incendiarycannon.qc
 weapons/assaultcannon.qc
 weapons/rocketlauncher.qc
 weapons/railgun.qc
+weapons/detpack.qc
 
-weapons/handgrenades/handgrenade.qc
-weapons/handgrenades/flashgrenade.qc
-weapons/handgrenades/concussiongrenade.qc
+weapons/handgrenades/grenade_hand.qc
+weapons/handgrenades/grenade_flash.qc
+weapons/handgrenades/grenade_concussion.qc
+weapons/handgrenades/grenade_shock.qc
+weapons/handgrenades/grenade_mirv.qc
 
 
 

@@ -126,10 +126,8 @@ void() plat_trigger_use =
 
 void() plat_crush =
 {
-//dprint ("plat_crush\n");
-
 	other.deathtype = "squish";
-	T_Damage (other, self, self, 1);
+	T_Damage (other, self, self, 1, DAMAGE::NOTTEAM, DAMAGETYPE::CRUSH);
 	
 	if (self.state == STATE_UP)
 		plat_go_down ();

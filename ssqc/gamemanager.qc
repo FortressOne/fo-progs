@@ -16,6 +16,17 @@ typedef struct
     float flash_time;
     float medic_no_cuss;
     float concussion_length;
+    float lasergren_rotationcount; // how many rotations the nailgren does
+    float lasergren_rotationtime; // time each rotation takes
+    float lasergren_damage;
+    float lasergren_thinktime;
+    float lasergren_range;
+    float lasergren_reqthinks;
+    float lasergren_angleperthink;
+    float det_delay; // tf was originally .8, we use .5
+    float pipebomb_limit_world;
+    float pipebomb_limit_team;
+    float pipebomb_limit_player;
 
 } gamesettings_t;
 gamesettings_t GameSettings;
@@ -39,6 +50,8 @@ class gamemanager_c : entity
             _flash_dimension = value;
     };
 
+    float pipebomb_count_world;
+
     void () gamemanager_c =
     {
         this.nextthink = time + 0.01;
@@ -54,12 +67,28 @@ class gamemanager_c : entity
         precache_sound(SOUNDS::DASH);
         precache_sound(SOUNDS::SCAN);
         precache_sound(SOUNDS::FLASH);
+        precache_sound(SOUNDS::SHOTGUN_SHOOT);
+        precache_sound(SOUNDS::SUPERSHOTGUN_SHOOT);
+        precache_sound(SOUNDS::ROCKETLAUNCHER_SHOOT);
+        precache_sound(SOUNDS::AXE_SHOOT);
+        precache_sound(SOUNDS::AXE_HIT);
+        precache_sound(SOUNDS::BOUNCE);
+        precache_sound(SOUNDS::SHOCK_HIT);
     };
 
     // TODO - macro
     nonvirtual void () Precache_Models =
     {
         precache_model(MODELS::BUBBLE);
+        precache_model(MODELS::GRENADE_FLASH);
+        precache_model(MODELS::GRENADE_HAND);
+        precache_model(MODELS::VIEW_SHOTGUN);
+        precache_model(MODELS::VIEW_SUPERSHOTGUN);
+        precache_model(MODELS::VIEW_AXE);
+        precache_model(MODELS::VIEW_ROCKETLAUNCHER);
+        precache_model(MODELS::ROCKET);
+        precache_model(MODELS::GRENADE_SHOCK);
+        
     };
 
     nonvirtual void () FirstFrame =
@@ -86,6 +115,17 @@ class gamemanager_c : entity
         GameSettings.flash_time = this.GetSetting(world, "ff", "fo_flashtime", "2");
         GameSettings.medic_no_cuss = this.GetSetting(world, "mnc", "medicnocuss", "on");
         GameSettings.concussion_length = this.GetSetting(world, "cgt", "cussgrentime", "on"); // bad naming
+        GameSettings.lasergren_rotationcount = this.GetSetting(world, "lgrc", "lasergren_rotationcount", "2"); // bad naming
+        GameSettings.lasergren_rotationtime = this.GetSetting(world, "lgrt", "lasergren_rotationtime", "1");
+        GameSettings.lasergren_damage = this.GetSetting(world, "lgd", "lasergren_damage", "20");
+        GameSettings.lasergren_thinktime = this.GetSetting(world, "lgtt", "lasergren_thinktime", "0.01");
+        GameSettings.lasergren_range = this.GetSetting(world, "lgr", "lasergren_range", "150");
+        GameSettings.lasergren_reqthinks = (GameSettings.lasergren_rotationcount * GameSettings.lasergren_rotationtime) / GameSettings.lasergren_thinktime;
+        GameSettings.lasergren_angleperthink = (GameSettings.lasergren_rotationcount * 360) / GameSettings.lasergren_reqthinks;
+        GameSettings.det_delay = this.GetSetting(world, "dd", "det_delay", "0.5");
+        GameSettings.pipebomb_limit_world = this.GetSetting(world, "dw", "pipebomb_limit_world", "-1");
+        GameSettings.pipebomb_limit_team = this.GetSetting(world, "dt", "pipebomb_limit_team", "-1");
+        GameSettings.pipebomb_limit_player = this.GetSetting(world, "dp", "pipebomb_limit_player", "6");
     };
 
     nonvirtual void () PopulatePostClassesSettings = 
@@ -128,6 +168,7 @@ class gamemanager_c : entity
         Classes = memalloc(sizeof(*Classes)*(GameSettings.number_of_classes+1));
         this.ProcessClass(CLASS::SCOUT);
         this.ProcessClass(CLASS::SOLDIER);
+        this.ProcessClass(CLASS::DEMOMAN);
     };
 
     nonvirtual void (CLASS class) ProcessClass =
@@ -139,7 +180,7 @@ class gamemanager_c : entity
         float ttf_attributes = 0, tmax_shells = 0, tinit_shells = 0, tmax_nails = 0, tinit_nails = 0;
         float tmax_rockets = 0, tinit_rockets = 0, tmax_cells = 0, tinit_cells = 0, ttype_gren1 = 0;
         float ttype_gren2 = 0, tmax_health = 0, tmax_armor = 0, tinit_armor = 0, tmax_gren1 = 0;
-        float tmax_gren2 = 0, tinit_gren1 = 0, tinit_gren2 = 0;
+        float tmax_gren2 = 0, tinit_gren1 = 0, tinit_gren2 = 0, tmax_activegren2 = 0;
 
         switch (class)
         {
@@ -231,6 +272,7 @@ class gamemanager_c : entity
                 tinit_cells = SOLDIER::INITAMMO_CELL;
                 ttype_gren1 = SOLDIER::TYPE_GREN1;
                 ttype_gren2 = SOLDIER::TYPE_GREN2;
+                tmax_activegren2 = SOLDIER::MAX_ACTIVEGREN2;
                 
                 switch (GameSettings.season)
                 {
@@ -272,6 +314,71 @@ class gamemanager_c : entity
                         break;
                 }
                 break;
+            case CLASS::DEMOMAN:
+                tclassname = TFCLASSNAMES::DEMOMAN;
+                tmax_speed = DEMOMAN::MAXSPEED;
+                tmax_strafe_speed = DEMOMAN::MAXSTRAFESPEED;
+                tmax_armor_type = DEMOMAN::MAXARMORTYPE;
+                tinit_armor_type = DEMOMAN::INITARMORTYPE;
+                tinit_armor_classes = DEMOMAN::INITARMORCLASS;
+                tillegal_bit = DEMOMAN::ILLEGALBIT;
+                tweapon1 = DEMOMAN::WEAPON1;
+                tweapon2 = DEMOMAN::WEAPON2;
+                tweapon3 = DEMOMAN::WEAPON3;
+                tweapon4 = DEMOMAN::WEAPON4;
+                ttf_attributes = DEMOMAN::TF_ATTRIBUTES;
+                tmax_shells = DEMOMAN::MAXAMMO_SHOT;
+                tinit_shells = DEMOMAN::INITAMMO_SHOT;
+                tmax_nails = DEMOMAN::MAXAMMO_NAIL;
+                tinit_nails = DEMOMAN::INITAMMO_NAIL;
+                tmax_rockets = DEMOMAN::MAXAMMO_ROCKET;
+                tinit_rockets = DEMOMAN::INITAMMO_ROCKET;
+                tmax_cells = DEMOMAN::MAXAMMO_CELL;
+                tinit_cells = DEMOMAN::INITAMMO_CELL;
+                ttype_gren1 = DEMOMAN::TYPE_GREN1;
+                ttype_gren2 = DEMOMAN::TYPE_GREN2;
+                tmax_activegren2 = DEMOMAN::MAX_ACTIVEGREN2;
+                
+                switch (GameSettings.season)
+                {
+                    case SEASON::ONE:
+                        tmax_health = DEMOMAN::MAXHEALTH_FO;
+                        tmax_armor = DEMOMAN::MAXARMOR_FO;
+                        tinit_armor = tmax_armor;
+                        tmax_gren1 = DEMOMAN::MAXAMMO_GREN1;
+                        tmax_gren2 = DEMOMAN::MAXAMMO_GREN2;
+                        tinit_gren1 = tmax_gren1;
+                        tinit_gren2 = tmax_gren2;
+                        break;
+                    case SEASON::FO:
+                    case SEASON::TF28:
+                        if (GameSettings.old_hp_armor)
+                        {
+                            tmax_health = DEMOMAN::MAXHEALTH;
+                            tmax_armor = DEMOMAN::MAXARMOR;
+                        }
+                        else
+                        {
+                            tmax_health = DEMOMAN::MAXHEALTH_FO;
+                            tmax_armor = DEMOMAN::MAXARMOR_FO;
+                        }
+                        tmax_gren1 = DEMOMAN::MAXAMMO_GREN1;
+                        tmax_gren2 = DEMOMAN::MAXAMMO_GREN2;
+                        tmax_shells = DEMOMAN::MAXAMMO_SHOT;
+                        tmax_nails = DEMOMAN::MAXAMMO_NAIL;
+                        tmax_rockets = DEMOMAN::MAXAMMO_ROCKET;
+                        tmax_cells = DEMOMAN::MAXAMMO_CELL;
+
+                        tinit_armor = tmax_armor / 2;
+                        tinit_shells = DEMOMAN::INITAMMO_SHOT;
+                        tinit_nails = DEMOMAN::INITAMMO_NAIL;
+                        tinit_rockets = DEMOMAN::INITAMMO_ROCKET;
+                        tinit_cells = DEMOMAN::INITAMMO_CELL;
+                        tinit_gren1 = DEMOMAN::INITAMMO_GREN1;
+                        tinit_gren2 = DEMOMAN::INITAMMO_GREN2;
+                        break;
+                }
+                break;
         }
 
         switch (GameSettings.season)
@@ -298,6 +405,7 @@ class gamemanager_c : entity
         Classes[class-1].max_armor_type = tmax_armor_type;
         Classes[class-1].init_armor_type = tinit_armor_type;
         Classes[class-1].init_armor_classes = tinit_armor_classes;
+        Classes[class-1].init_armor = tinit_armor;
         Classes[class-1].illegal_bit = tillegal_bit;
         Classes[class-1].weapon1 = tweapon1;
         Classes[class-1].weapon2 = tweapon2;
@@ -318,6 +426,7 @@ class gamemanager_c : entity
         Classes[class-1].max_armor = tmax_armor;
         Classes[class-1].max_gren1 = tmax_gren1;
         Classes[class-1].max_gren2 = tmax_gren2;
+        Classes[class-1].max_activegren2 = tmax_activegren2;
     };
 
     nonvirtual void () PopulateTeams =

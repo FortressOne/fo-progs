@@ -212,7 +212,7 @@ void() fire_fly =
 
 void() fire_touch =
 {
-	T_Damage (other, self, self, 20);
+	T_Damage (other, self, self, 20, DAMAGE::NOTTEAM, DAMAGETYPE::FIRE);
 	remove(self);
 };
 
@@ -256,7 +256,7 @@ void() Laser_Touch =
 	{
 		SpawnBlood (org, 15);
 		other.deathtype = "laser";
-		T_Damage (other, self, self.owner, 15);
+		T_Damage (other, self, self.owner, 15, DAMAGE::NOTTEAM, DAMAGETYPE::SHOCK);
 	}
 	else
 	{

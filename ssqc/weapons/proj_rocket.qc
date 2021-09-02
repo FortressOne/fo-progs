@@ -4,7 +4,12 @@ class proj_rocket_c : proj_c
     {
         classname = "rocket";
         model = MODELS::ROCKET;
-        duration = 5;
+        nextthink_interval = 5;
+        speed = 1000;
+        think = SUB_Remove;
+        movetype = MOVETYPE_FLYMISSILE;
+        damage = 100;
+        damage_bonus = 20;
     };
 
     virtual void () touch =
@@ -23,21 +28,14 @@ class proj_rocket_c : proj_c
             return;
         }
 
-        float damg = 100 + random()*20;
+        float damg = this.damage + random()*this.damage_bonus;
         
         if (other.health)
         {
             other.deathtype = "rocket";
-            T_Damage(other, this, this.owner, damg );
+            T_Damage(other, this, this.owner, damg, DAMAGE::NOTTEAM, DAMAGETYPE::EXPLOSION);
         }
 
-        // don't do radius damage to the other, because all the damage
-        // was done in the impact
-        T_RadiusDamage(this, this.owner, 120, other);
-
-        this.origin = this.origin - 8 * normalize(this.velocity);
-
-        te_explosion(this.origin);
-        remove(this);
+        this.Explode();
     };
 };

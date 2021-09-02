@@ -1,4 +1,4 @@
-class handgrenade_c : entity
+class grenade_hand_c : entity
 {
     float explode_radius;
     float _damage;
@@ -14,11 +14,9 @@ class handgrenade_c : entity
 
     float is_thrown;
 
-    void () handgrenade_c =
+    void () grenade_hand_c =
     {
         nextthink = time + 3.8;
-        classname = "handgrenade";
-        model = MODELS::HANDGRENADE;
         
         if (owner)
             sprint(owner, PRINT_HIGH, strcat(netname, " primed, 3 seconds...\n"));
@@ -26,7 +24,7 @@ class handgrenade_c : entity
 
     static void (player_c player) Prime =
     {
-        handgrenade_c gren = spawn(handgrenade_c, owner: player);
+        grenade_hand_c gren = spawn(grenade_hand_c, model: MODELS::GRENADE_HAND, owner: player, classname: "handgrenade", netname: "Grenade");
         gren.damage = 180;
         player.primed_grenade = gren;
     };
@@ -58,7 +56,7 @@ class handgrenade_c : entity
         player_c player = (player_c)this.owner;
         player.primed_grenade = __NULL__;
 
-        sound(this.owner, CHAN_AUTO, "weapons/ax1.wav", 1, ATTN_NORM);
+        sound(this.owner, CHAN_AUTO, SOUNDS::AXE_SHOOT, 1, ATTN_NORM);
     };
 
     virtual void () Explode =
@@ -92,7 +90,7 @@ class handgrenade_c : entity
         if (other == this.owner)
             return;
 
-        sound(this, CHAN_AUTO, "weapons/bounce.wav", 1, ATTN_NORM);
+        sound(this, CHAN_WEAPON, SOUNDS::BOUNCE, 1, ATTN_NORM);
         if (this.velocity == '0 0 0')
             this.avelocity = '0 0 0';
     };
@@ -100,5 +98,31 @@ class handgrenade_c : entity
     virtual void () think =
     {
         this.Explode();
+    };
+
+    virtual void () CheckMaxActiveGrenLimit =
+    {
+        float count = 1;
+        entity ent = find(world, ::classname, this.classname);
+
+        while (ent)
+        {
+            if (ent.owner == this.owner && ent != this)
+            {
+                count++;
+                player_c player = (player_c)this.owner;
+                float limit = player.tf_class.max_activegren2;
+                if (limit != 0)
+                {
+                    if (count >= limit)
+                    {
+                        remove(ent);
+                        count--;
+                    }
+                }
+            }
+
+            ent = find(ent, ::classname, this.classname);
+        }
     };
 };

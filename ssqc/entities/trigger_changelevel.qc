@@ -27,7 +27,7 @@ class trigger_changelevel_c : entity
         //      if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
         if ((cvar("samelevel") == 2) || ((cvar("samelevel") == 3) && (mapname != "start")))
         {
-            T_Damage(other, this, this, 50000);
+            T_Damage(other, this, this, 50000, DAMAGE::NOTTEAM, DAMAGETYPE::OTHER);
             return;
         }
 
