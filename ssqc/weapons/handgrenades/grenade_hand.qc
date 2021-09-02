@@ -1,4 +1,4 @@
-class handgrenade_c : entity
+class grenade_hand_c : entity
 {
     float explode_radius;
     float _damage;
@@ -14,7 +14,7 @@ class handgrenade_c : entity
 
     float is_thrown;
 
-    void () handgrenade_c =
+    void () grenade_hand_c =
     {
         nextthink = time + 3.8;
         
@@ -24,7 +24,7 @@ class handgrenade_c : entity
 
     static void (player_c player) Prime =
     {
-        handgrenade_c gren = spawn(handgrenade_c, model: MODELS::HANDGRENADE, owner: player, classname: "handgrenade", netname: "Grenade");
+        grenade_hand_c gren = spawn(grenade_hand_c, model: MODELS::GRENADE_HAND, owner: player, classname: "handgrenade", netname: "Grenade");
         gren.damage = 180;
         player.primed_grenade = gren;
     };
@@ -90,7 +90,7 @@ class handgrenade_c : entity
         if (other == this.owner)
             return;
 
-        sound(this, CHAN_AUTO, SOUNDS::BOUNCE, 1, ATTN_NORM);
+        sound(this, CHAN_WEAPON, SOUNDS::BOUNCE, 1, ATTN_NORM);
         if (this.velocity == '0 0 0')
             this.avelocity = '0 0 0';
     };

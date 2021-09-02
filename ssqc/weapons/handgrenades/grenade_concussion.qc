@@ -1,16 +1,16 @@
-class concussiongrenade_c : handgrenade_c
+class grenade_concussion_c : grenade_hand_c
 {
-    void () concussiongrenade_c =
+    void () grenade_concussion_c =
     {
         classname = "concussiongrenade";
         netname = "Concussion grenade";
-        model = MODELS::HANDGRENADE;
+        model = MODELS::GRENADE_HAND;
         skin = 1;
     };
 
     static void (player_c player) Prime =
     {
-        concussiongrenade_c gren = spawn(concussiongrenade_c, owner: player);
+        grenade_concussion_c gren = spawn(grenade_concussion_c, owner: player);
         gren.damage = 0;
         gren.explode_radius = 240;
         player.primed_grenade = gren;

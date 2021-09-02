@@ -1,18 +1,17 @@
-class shockgrenade_c : handgrenade_c
+class grenade_shock_c : grenade_hand_c
 {
     float rotations;
     float shock_damage;
-    float nextthink_interval;
     player_c real_owner;
 
     float firstnextthink_interval;
     float lasthit_time;
     
-    void () shockgrenade_c =
+    void () grenade_shock_c =
     {
         classname = "shockgrenade";
         netname = "Shock grenade";
-        model = MODELS::SHOCKGRENADE;
+        model = MODELS::GRENADE_SHOCK;
         firstnextthink_interval = 0.7;
         this.skin = 1;
         this.avelocity = '0 300 0';
@@ -21,7 +20,7 @@ class shockgrenade_c : handgrenade_c
 
     static void (player_c player) Prime =
     {
-        shockgrenade_c gren = spawn(shockgrenade_c, owner: player, nextthink_interval: .01);
+        grenade_shock_c gren = spawn(grenade_shock_c, owner: player);
         gren.damage = 120;
         player.primed_grenade = gren;
     };
@@ -32,7 +31,7 @@ class shockgrenade_c : handgrenade_c
         {
             this.v_angle = '0 0 0';
             this.velocity = '0 0 0';
-            this.real_owner = this.owner;
+            this.real_owner = (player_c)this.owner;
             this.owner = world;
         }
         else
@@ -58,7 +57,7 @@ class shockgrenade_c : handgrenade_c
             this.lasthit_time = time + 0.8;
         }
 
-        this.nextthink = time + nextthink_interval;
+        this.nextthink = time + GameSettings.lasergren_thinktime;
         this.rotations++;
         if (this.rotations > GameSettings.lasergren_reqthinks)
         {
