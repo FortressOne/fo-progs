@@ -23,6 +23,10 @@ typedef struct
     float lasergren_range;
     float lasergren_reqthinks;
     float lasergren_angleperthink;
+    float det_delay; // tf was originally .8, we use .5
+    float pipebomb_limit_world;
+    float pipebomb_limit_team;
+    float pipebomb_limit_player;
 
 } gamesettings_t;
 gamesettings_t GameSettings;
@@ -45,6 +49,8 @@ class gamemanager_c : entity
         else
             _flash_dimension = value;
     };
+
+    float pipebomb_count_world;
 
     void () gamemanager_c =
     {
@@ -74,14 +80,15 @@ class gamemanager_c : entity
     nonvirtual void () Precache_Models =
     {
         precache_model(MODELS::BUBBLE);
-        precache_model(MODELS::FLASH);
-        precache_model(MODELS::HANDGRENADE);
+        precache_model(MODELS::GRENADE_FLASH);
+        precache_model(MODELS::GRENADE_HAND);
         precache_model(MODELS::VIEW_SHOTGUN);
         precache_model(MODELS::VIEW_SUPERSHOTGUN);
         precache_model(MODELS::VIEW_AXE);
         precache_model(MODELS::VIEW_ROCKETLAUNCHER);
         precache_model(MODELS::ROCKET);
-        precache_model(MODELS::SHOCKGRENADE);
+        precache_model(MODELS::GRENADE_SHOCK);
+        
     };
 
     nonvirtual void () FirstFrame =
@@ -115,6 +122,10 @@ class gamemanager_c : entity
         GameSettings.lasergren_range = this.GetSetting(world, "lgr", "lasergren_range", "150");
         GameSettings.lasergren_reqthinks = (GameSettings.lasergren_rotationcount * GameSettings.lasergren_rotationtime) / GameSettings.lasergren_thinktime;
         GameSettings.lasergren_angleperthink = (GameSettings.lasergren_rotationcount * 360) / GameSettings.lasergren_reqthinks;
+        GameSettings.det_delay = this.GetSetting(world, "dd", "det_delay", "0.5");
+        GameSettings.pipebomb_limit_world = this.GetSetting(world, "dw", "pipebomb_limit_world", "-1");
+        GameSettings.pipebomb_limit_team = this.GetSetting(world, "dt", "pipebomb_limit_team", "-1");
+        GameSettings.pipebomb_limit_player = this.GetSetting(world, "dp", "pipebomb_limit_player", "6");
     };
 
     nonvirtual void () PopulatePostClassesSettings = 
@@ -157,6 +168,7 @@ class gamemanager_c : entity
         Classes = memalloc(sizeof(*Classes)*(GameSettings.number_of_classes+1));
         this.ProcessClass(CLASS::SCOUT);
         this.ProcessClass(CLASS::SOLDIER);
+        this.ProcessClass(CLASS::DEMOMAN);
     };
 
     nonvirtual void (CLASS class) ProcessClass =
@@ -302,6 +314,71 @@ class gamemanager_c : entity
                         break;
                 }
                 break;
+            case CLASS::DEMOMAN:
+                tclassname = TFCLASSNAMES::DEMOMAN;
+                tmax_speed = DEMOMAN::MAXSPEED;
+                tmax_strafe_speed = DEMOMAN::MAXSTRAFESPEED;
+                tmax_armor_type = DEMOMAN::MAXARMORTYPE;
+                tinit_armor_type = DEMOMAN::INITARMORTYPE;
+                tinit_armor_classes = DEMOMAN::INITARMORCLASS;
+                tillegal_bit = DEMOMAN::ILLEGALBIT;
+                tweapon1 = DEMOMAN::WEAPON1;
+                tweapon2 = DEMOMAN::WEAPON2;
+                tweapon3 = DEMOMAN::WEAPON3;
+                tweapon4 = DEMOMAN::WEAPON4;
+                ttf_attributes = DEMOMAN::TF_ATTRIBUTES;
+                tmax_shells = DEMOMAN::MAXAMMO_SHOT;
+                tinit_shells = DEMOMAN::INITAMMO_SHOT;
+                tmax_nails = DEMOMAN::MAXAMMO_NAIL;
+                tinit_nails = DEMOMAN::INITAMMO_NAIL;
+                tmax_rockets = DEMOMAN::MAXAMMO_ROCKET;
+                tinit_rockets = DEMOMAN::INITAMMO_ROCKET;
+                tmax_cells = DEMOMAN::MAXAMMO_CELL;
+                tinit_cells = DEMOMAN::INITAMMO_CELL;
+                ttype_gren1 = DEMOMAN::TYPE_GREN1;
+                ttype_gren2 = DEMOMAN::TYPE_GREN2;
+                tmax_activegren2 = DEMOMAN::MAX_ACTIVEGREN2;
+                
+                switch (GameSettings.season)
+                {
+                    case SEASON::ONE:
+                        tmax_health = DEMOMAN::MAXHEALTH_FO;
+                        tmax_armor = DEMOMAN::MAXARMOR_FO;
+                        tinit_armor = tmax_armor;
+                        tmax_gren1 = DEMOMAN::MAXAMMO_GREN1;
+                        tmax_gren2 = DEMOMAN::MAXAMMO_GREN2;
+                        tinit_gren1 = tmax_gren1;
+                        tinit_gren2 = tmax_gren2;
+                        break;
+                    case SEASON::FO:
+                    case SEASON::TF28:
+                        if (GameSettings.old_hp_armor)
+                        {
+                            tmax_health = DEMOMAN::MAXHEALTH;
+                            tmax_armor = DEMOMAN::MAXARMOR;
+                        }
+                        else
+                        {
+                            tmax_health = DEMOMAN::MAXHEALTH_FO;
+                            tmax_armor = DEMOMAN::MAXARMOR_FO;
+                        }
+                        tmax_gren1 = DEMOMAN::MAXAMMO_GREN1;
+                        tmax_gren2 = DEMOMAN::MAXAMMO_GREN2;
+                        tmax_shells = DEMOMAN::MAXAMMO_SHOT;
+                        tmax_nails = DEMOMAN::MAXAMMO_NAIL;
+                        tmax_rockets = DEMOMAN::MAXAMMO_ROCKET;
+                        tmax_cells = DEMOMAN::MAXAMMO_CELL;
+
+                        tinit_armor = tmax_armor / 2;
+                        tinit_shells = DEMOMAN::INITAMMO_SHOT;
+                        tinit_nails = DEMOMAN::INITAMMO_NAIL;
+                        tinit_rockets = DEMOMAN::INITAMMO_ROCKET;
+                        tinit_cells = DEMOMAN::INITAMMO_CELL;
+                        tinit_gren1 = DEMOMAN::INITAMMO_GREN1;
+                        tinit_gren2 = DEMOMAN::INITAMMO_GREN2;
+                        break;
+                }
+                break;
         }
 
         switch (GameSettings.season)
@@ -350,7 +427,6 @@ class gamemanager_c : entity
         Classes[class-1].max_gren1 = tmax_gren1;
         Classes[class-1].max_gren2 = tmax_gren2;
         Classes[class-1].max_activegren2 = tmax_activegren2;
-        
     };
 
     nonvirtual void () PopulateTeams =

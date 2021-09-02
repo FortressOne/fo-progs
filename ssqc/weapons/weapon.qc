@@ -62,6 +62,9 @@ class weapon_c : entity
             case WEAPON::ROCKETLAUNCHER:
                 ret = ::spawn(rocketlauncher_c, owner: player);
                 break;
+            case WEAPON::GRENADELAUNCHER:
+                ret = ::spawn(grenadelauncher_c, owner: player);
+                break;
         }
         return ret;
     };

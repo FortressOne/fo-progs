@@ -452,7 +452,7 @@ class player_c : entity
 	weapon_c weapon2;
 	weapon_c weapon3;
 	weapon_c weapon4;
-	handgrenade_c primed_grenade;
+	grenade_hand_c primed_grenade;
 
 	float _is_reloading;
 	get float is_reloading =
@@ -519,6 +519,10 @@ class player_c : entity
 
 		_is_concussed = value;
 	};
+
+	// demoman
+	float det_cooldown;
+	float pipebomb_count;
 
 	// spy
 	float is_disguised; // TODO - maybe not needed due to gets/sets
@@ -598,16 +602,19 @@ class player_c : entity
 			switch (type)
 			{
 				case GRENADE::FLASH:
-					flashgrenade_c::Prime(this);
+					grenade_flash_c::Prime(this);
 					break;
 				case GRENADE::CONCUSSION:
-					concussiongrenade_c::Prime(this);
+					grenade_concussion_c::Prime(this);
 					break;
 				case GRENADE::HANDGRENADE:
-					handgrenade_c::Prime(this);
+					grenade_hand_c::Prime(this);
 					break;
 				case GRENADE::SHOCK:
-					shockgrenade_c::Prime(this);
+					grenade_shock_c::Prime(this);
+					break;
+				case GRENADE::MIRV:
+					grenade_mirv_c::Prime(this);
 					break;
 			}
 		}
@@ -671,7 +678,7 @@ class player_c : entity
 						numPlaying++;
 					}
 				}
-				p = (player_c)find(world, ::classname, "player");
+				p = (player_c)find(p, ::classname, "player");
 			}
 
 			if (numPlaying >= max)
@@ -1197,6 +1204,9 @@ class player_c : entity
 						break;
 					case CLASS::SOLDIER:
 						Soldier::Special(this);
+						break;
+					case CLASS::DEMOMAN:
+						Demoman::Special(this);
 						break;
 				}
 				break;

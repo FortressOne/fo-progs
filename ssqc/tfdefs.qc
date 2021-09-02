@@ -26,6 +26,7 @@ enum CLASS
     NONE = 0,
     SCOUT = 1,
     SOLDIER = 3,
+    DEMOMAN = 4,
     MEDIC = 5,
     SPY = 8,
 };
@@ -109,6 +110,7 @@ enum SOUNDS : string
     SHOTGUN_SHOOT = "weapons/guncock.wav",
     SUPERSHOTGUN_SHOOT = "weapons/shotgn2.wav",
     ROCKETLAUNCHER_SHOOT = "weapons/sgun1.wav",
+    GRENADELAUNCHER_SHOOT = "weapons/grenade.wav",
     AXE_SHOOT = "weapons/ax1.wav",
     AXE_HIT = "player/axhit2.wav",
     BOUNCE = "weapons/bounce.wav",
@@ -117,21 +119,27 @@ enum SOUNDS : string
 
 enum MODELS : string
 {
-    FLASH = "progs/flashgren.mdl",
-    HANDGRENADE = "progs/hgren2.mdl",
+    GRENADE_FLASH = "progs/flashgren.mdl",
+    GRENADE_HAND = "progs/hgren2.mdl",
     BUBBLE = "progs/s_bubble.spr",
     VIEW_SHOTGUN = "progs/v_shot.mdl",
     VIEW_SUPERSHOTGUN = "progs/v_shot2.mdl",
     VIEW_AXE = "progs/v_axe.mdl",
     VIEW_ROCKETLAUNCHER = "progs/v_rock2.mdl",
+    VIEW_GRENADELAUNCHER = "progs/v_rock.mdl",
     ROCKET = "progs/missile.mdl",
-    SHOCKGRENADE = "progs/biggren.mdl",
+    GRENADE = "progs/grenade2.mdl",
+    PIPEBOMB = MODELS::GRENADE,
+    SPIKE = "progs/spike.mdl",
+    GRENADE_SHOCK = "progs/biggren.mdl",
+    GRENADE_MIRV = MODELS::GRENADE_SHOCK,
 };
 
 enum TFCLASSNAMES : string
 {
     SCOUT = "scout",
-    SOLDIER = "soldier"
+    SOLDIER = "soldier",
+    DEMOMAN = "demoman"
 };
 
 enum WEAPON
@@ -144,6 +152,7 @@ enum WEAPON
     NAILGUN,
     SUPERNAILGUN,
     GRENADELAUNCHER,
+    PIPEBOMBLAUNCHER,
     FLAMETHROWER,
     INCENDIARYCANNON,
     ASSAULTCANNON,
@@ -160,6 +169,7 @@ enum GRENADE
     CONCUSSION,
     HANDGRENADE,
     SHOCK,
+    MIRV,
 };
 
 enum IMPULSE

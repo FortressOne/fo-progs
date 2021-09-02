@@ -1,4 +1,5 @@
-class team_c : entity {
+class team_c : entity 
+{
     string name;
     string scoreboard_name;
     float illegal_classes;
@@ -6,6 +7,7 @@ class team_c : entity {
     float max_players;
     float civilian_team;
     float _score;
+    float pipebomb_count;
     
     inline set float score =
     {
